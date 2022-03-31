@@ -27,20 +27,21 @@ export default function Register() {
 
   return (
     <div style={{ display: "flex" }}>
-      <textarea
+      <input
         onChange={handleChange}
         value={user.username}
         autoFocus
         autoComplete="off"
         name="username"
         placeholder="Username..."
-      ></textarea>
-      <textarea
+      ></input>
+      <input
         onChange={handleChange}
         value={user.password}
         name="password"
+        type="password"
         placeholder="Password..."
-      ></textarea>
+      ></input>
       <button onClick={handleSubmit}>Register</button>
 
       <div style={{ display: "block" }}>

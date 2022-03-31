@@ -6,8 +6,8 @@ import PageSelector from "./components/PageSelector";
 import { socketInit } from "./socket";
 
 export default function App() {
-  const [auth, setAuth] = useState("undefined");
-  const [page, setPage] = useState("home");
+  const [auth, setAuth] = useState("no auth");
+  const [page, setPage] = useState("login");
   const [chats, setChats] = useState([]);
   const [user, setUser] = useState("guest%");
 

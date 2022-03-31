@@ -12,7 +12,7 @@ export default function Coup() {
   };
 
   const displayChats = (chat) => {
-    return <li>{chat}</li>;
+    return <p>{chat}</p>;
   };
 
   const handleChange = (e) => {
@@ -23,7 +23,7 @@ export default function Coup() {
     <div>
       <h1>Coup Page</h1>
 
-      <ul>{chats.map(displayChats)}</ul>
+      <div>{chats.map(displayChats)}</div>
 
       <textarea
         placeholder="Chat..."

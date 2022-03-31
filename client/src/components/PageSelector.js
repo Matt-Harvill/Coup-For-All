@@ -40,11 +40,11 @@ export default function PageSelector() {
     <div>
       <p>Select Page</p>
       <select onChange={selectPage} value={page}>
-        <option value="login">login</option>
-        <option value="register">register</option>
-        <option value="home">home</option>
-        <option value="coup">coup</option>
-        <option value="splendor">splendor</option>
+        {auth === "no auth" && <option value="login">login</option>}
+        {auth === "no auth" && <option value="register">register</option>}
+        {auth === "auth" && <option value="home">home</option>}
+        {auth === "auth" && <option value="coup">coup</option>}
+        {auth === "auth" && <option value="splendor">splendor</option>}
       </select>
     </div>
   );
