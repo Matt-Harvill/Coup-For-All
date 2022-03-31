@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import AppContext from "./AppContext";
 
-const PageSelector = () => {
+export default function PageSelector() {
   const { page, setPage, auth } = useContext(AppContext);
 
   const selectPage = (e) => {
@@ -48,6 +48,4 @@ const PageSelector = () => {
       </select>
     </div>
   );
-};
-
-export default PageSelector;
+}

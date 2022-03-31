@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import AppContext from "./AppContext";
 
-const Authenticator = () => {
+export default function Authenticator() {
   const { auth, setAuth, page, setPage } = useContext(AppContext);
 
   // When auth changes, update pages
@@ -49,7 +49,5 @@ const Authenticator = () => {
     console.log("changeToNoAuth");
   };
 
-  return <button onClick={switchAuth}>Switch Auth (Current: {auth})</button>;
-};
-
-export default Authenticator;
+  // return <button onClick={switchAuth}>Switch Auth (Current: {auth})</button>;
+}

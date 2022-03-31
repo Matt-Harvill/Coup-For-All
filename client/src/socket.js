@@ -7,7 +7,7 @@ if (process.env.NODE_ENV === "development") {
   url = "websocket-game-website.herokuapp.com";
 }
 
-const socket = io(`http://${url}:80`, {
+export const socket = io(`http://${url}:80`, {
   transports: ["websocket"],
 });
 
@@ -32,5 +32,8 @@ export const socketInit = (appState) => {
 
   socket.on("connect", () => {
     appState.setAuth("auth");
+    socket.emit("get user", (user) => {
+      appState.setUser(user);
+    });
   });
 };

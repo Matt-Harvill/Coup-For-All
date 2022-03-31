@@ -6,6 +6,10 @@ const AppContext = createContext({
   setAuth: () => {},
   page: "default",
   setPage: () => {},
+  chats: [],
+  setChats: () => {},
+  user: "default",
+  setUser: () => {},
 });
 
 export default AppContext;

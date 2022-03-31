@@ -6,7 +6,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Splendor from "../pages/Splendor";
 
-const PageDisplayer = () => {
+export default function PageDisplayer() {
   const { page } = useContext(AppContext);
 
   const displayPage = () => {
@@ -27,6 +27,4 @@ const PageDisplayer = () => {
   };
 
   return <div>{displayPage()}</div>;
-};
-
-export default PageDisplayer;
+}
