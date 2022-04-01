@@ -2,13 +2,15 @@ import { createContext } from "react";
 
 // set the defaults
 const AppContext = createContext({
-  auth: "default",
+  auth: "",
   setAuth: () => {},
-  page: "default",
+  page: "",
   setPage: () => {},
+  newPage: "",
+  setNewPage: () => {},
   chats: [],
   setChats: () => {},
-  user: "default",
+  user: "",
   setUser: () => {},
 });
 

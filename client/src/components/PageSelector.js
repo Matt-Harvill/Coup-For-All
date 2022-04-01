@@ -2,10 +2,10 @@ import { useContext } from "react";
 import AppContext from "./AppContext";
 
 export default function PageSelector() {
-  const { page, setPage } = useContext(AppContext);
+  const { page, setNewPage } = useContext(AppContext);
 
   const selectPage = (e) => {
-    setPage(e.target.value);
+    setNewPage(e.target.value);
   };
 
   return (

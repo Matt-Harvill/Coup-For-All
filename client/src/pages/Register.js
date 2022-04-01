@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import AppContext from "../components/AppContext";
 
 export default function Register() {
-  const { setPage } = useContext(AppContext);
+  const { setNewPage } = useContext(AppContext);
   const [user, setUser] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
 
@@ -59,7 +59,7 @@ export default function Register() {
         <p
           style={{ textDecoration: "underline", cursor: "pointer" }}
           onClick={() => {
-            setPage("login");
+            setNewPage("login");
           }}
         >
           Login

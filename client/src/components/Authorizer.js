@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import AppContext from "./AppContext";
 
 export default function Authorizer() {
-  const { auth, page, setPage } = useContext(AppContext);
+  const { auth, page, setPage, newPage, setNewPage } = useContext(AppContext);
 
   // When auth/page changes, update pages (if authed for them)
   useEffect(() => {
@@ -18,7 +18,7 @@ export default function Authorizer() {
         break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [auth, page]);
+  }, [auth]);
 
   const handleAuth = () => {
     if (page === "login" || page === "register") {
@@ -29,6 +29,34 @@ export default function Authorizer() {
   const handleNoAuth = () => {
     if (page !== "register") {
       setPage("login");
+    }
+  };
+
+  // When newPage is requested, update pages (if authed for them)
+  useEffect(() => {
+    switch (auth) {
+      case "auth":
+        handleNewPageAuth();
+        break;
+      case "no auth":
+        handleNewPageNoAuth();
+        break;
+      default:
+        alert("Error with auth states");
+        break;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newPage]);
+
+  const handleNewPageAuth = () => {
+    if (newPage !== "login" && newPage !== "register") {
+      setPage(newPage);
+    }
+  };
+
+  const handleNewPageNoAuth = () => {
+    if (newPage === "login" || newPage === "register") {
+      setPage(newPage);
     }
   };
 }
