@@ -20,7 +20,6 @@ export const socketInit = (appState) => {
 
   socket.on("connect_error", (err) => {
     if (err.message === "unauthorized") {
-      // alert("Unauthorized");
       appState.setAuth("no auth");
     } else {
       alert("Socket Connection Issues");

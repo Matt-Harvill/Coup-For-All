@@ -4,6 +4,7 @@ import AppContext from "../components/AppContext";
 export default function Login() {
   const { setPage } = useContext(AppContext);
   const [user, setUser] = useState({ username: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     console.log("character typed", e.target);
@@ -13,6 +14,8 @@ export default function Login() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
+
     const response = await fetch("/login", {
       method: "POST",
       body: JSON.stringify(user),
@@ -22,6 +25,7 @@ export default function Login() {
     if (response.status !== 200) {
       alert("Incorrect Username and/or Password");
       setUser((prevState) => ({ ...prevState, password: "" }));
+      setLoading(false);
     }
   };
 
@@ -42,7 +46,14 @@ export default function Login() {
         type="password"
         placeholder="Password..."
       ></input>
-      <button onClick={handleSubmit}>Login</button>
+      <button onClick={handleSubmit}>
+        {!loading && "Login"}
+        {loading && (
+          <div className="spinner-border" role="status">
+            <span className="sr-only"></span>
+          </div>
+        )}
+      </button>
 
       <div style={{ display: "block" }}>
         <p

@@ -49,51 +49,36 @@ app.get("*", (req, res) => {
 
 // Login
 app.post("/login", (req, res) => {
-  const user = new User({
-    username: req.body.username,
-    password: req.body.password,
-  });
   passport.authenticate("local")(req, res, () => {
-    console.log(user.username, "logged in");
-    res.end();
+    return res.end();
   });
 });
 
 // Logout
 app.post("/logout", async (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.end();
-  }
-  const userName = req.session.passport.user;
-  console.log(userName, "logged out");
   req.logout();
-  res.end();
+  return res.end();
 });
 
 // Register
 app.post("/register", (req, res) => {
-  User.register(
-    { username: req.body.username },
-    req.body.password,
-    (err, user) => {
-      if (err) {
-        console.log(err);
-        res.status(401);
-      } else {
-        passport.authenticate("local")(req, res, () => {
-          console.log(user.username, "registered");
-          res.end();
-        });
-      }
+  User.register({ username: req.body.username }, req.body.password, (err) => {
+    if (err) {
+      console.log(err);
+      return res.sendStatus(401);
+    } else {
+      passport.authenticate("local")(req, res, () => {
+        return res.end();
+      });
     }
-  );
+  });
 });
 
-// socketio
+// Socket.IO
 const server = http.createServer(app);
 const io = new Server(server, { transports: ["websocket"] });
 
-// convert a connect middleware to a Socket.IO middleware
+// Convert Middleware to Socket.IO Middleware
 const wrap = (middleware) => (socket, next) =>
   middleware(socket.request, {}, next);
 

@@ -4,6 +4,7 @@ import AppContext from "../components/AppContext";
 export default function Register() {
   const { setPage } = useContext(AppContext);
   const [user, setUser] = useState({ username: "", password: "" });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     console.log("character typed", e.target);
@@ -13,6 +14,8 @@ export default function Register() {
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
+
     const response = await fetch("/register", {
       method: "POST",
       body: JSON.stringify(user),
@@ -20,8 +23,9 @@ export default function Register() {
     });
 
     if (response.status !== 200) {
-      alert("Error Registering User");
+      alert("Incorrect Username and/or Password");
       setUser((prevState) => ({ ...prevState, password: "" }));
+      setLoading(false);
     }
   };
 
@@ -42,7 +46,14 @@ export default function Register() {
         type="password"
         placeholder="Password..."
       ></input>
-      <button onClick={handleSubmit}>Register</button>
+      <button onClick={handleSubmit}>
+        {!loading && "Register"}
+        {loading && (
+          <div className="spinner-border" role="status">
+            <span className="sr-only"></span>
+          </div>
+        )}
+      </button>
 
       <div style={{ display: "block" }}>
         <p
