@@ -20,17 +20,27 @@ export default function Coup() {
   };
 
   return (
-    <div>
-      <h1>Coup Page</h1>
+    <div className="page">
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <h1>Coup Page</h1>
 
-      <div>{chats.map(displayChats)}</div>
+        <div>{chats.map(displayChats)}</div>
 
-      <textarea
-        placeholder="Chat..."
-        value={newChat}
-        onChange={handleChange}
-      ></textarea>
-      <button onClick={sendChat}>Submit</button>
+        <textarea
+          placeholder="Chat..."
+          value={newChat}
+          onChange={handleChange}
+        ></textarea>
+        <button onClick={sendChat}>Submit</button>
+      </div>
     </div>
   );
 }

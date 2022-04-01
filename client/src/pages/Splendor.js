@@ -1,6 +1,6 @@
 export default function Splendor() {
   return (
-    <div>
+    <div className="page">
       <h1>Splendor Page</h1>
     </div>
   );

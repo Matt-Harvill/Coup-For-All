@@ -8,45 +8,34 @@ export default function Navbar() {
 
   return (
     <div className="navbar">
-      <p
-        style={{
-          textDecoration: "underline",
-          cursor: "pointer",
-          display: "block",
-          flex: 1,
-        }}
+      <span
+        style={{ cursor: "pointer", flex: 1 }}
         onClick={() => {
           setNewPage("home");
         }}
       >
         Home
-      </p>
+      </span>
 
       <PageSelector />
 
-      <p
-        style={{
-          textDecoration: "underline",
-          cursor: "pointer",
-        }}
+      <span
+        style={{ cursor: "pointer" }}
         onClick={() => {
           setNewPage("coup");
         }}
       >
         Coup
-      </p>
+      </span>
 
-      <p
-        style={{
-          textDecoration: "underline",
-          cursor: "pointer",
-        }}
+      <span
+        style={{ cursor: "pointer" }}
         onClick={() => {
           setNewPage("splendor");
         }}
       >
         Splendor
-      </p>
+      </span>
     </div>
   );
 }

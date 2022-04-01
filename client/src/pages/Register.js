@@ -7,8 +7,6 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    console.log("character typed", e.target);
-
     const { name, value } = e.target;
     setUser((prevState) => ({ ...prevState, [name]: value }));
   };
@@ -23,14 +21,24 @@ export default function Register() {
     });
 
     if (response.status !== 200) {
-      alert("Incorrect Username and/or Password");
+      alert("Invalid Username and/or Password");
       setUser((prevState) => ({ ...prevState, password: "" }));
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div
+      className="page"
+      style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <h1>Register</h1>
       <input
         onChange={handleChange}
         value={user.username}

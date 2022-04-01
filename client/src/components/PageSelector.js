@@ -10,7 +10,7 @@ export default function PageSelector() {
 
   return (
     <div>
-      <p>Select Page</p>
+      <p style={{ display: "inline", marginRight: 6 }}>Select Page:</p>
       <select onChange={selectPage} value={page}>
         <option value="login">login</option>
         <option value="register">register</option>

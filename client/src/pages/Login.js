@@ -7,8 +7,6 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
-    console.log("character typed", e.target);
-
     const { name, value } = e.target;
     setUser((prevState) => ({ ...prevState, [name]: value }));
   };
@@ -30,7 +28,17 @@ export default function Login() {
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div
+      className="page"
+      style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <h1>Login</h1>
       <input
         onChange={handleChange}
         value={user.username}

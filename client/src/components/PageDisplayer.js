@@ -26,5 +26,5 @@ export default function PageDisplayer() {
     }
   };
 
-  return <div>{displayPage()}</div>;
+  return displayPage();
 }

@@ -34,9 +34,7 @@ export default function App() {
   return (
     <AppContext.Provider value={state}>
       <Navbar />
-      <p>{`Auth: ${auth}, Page: ${page}`}</p>
       <PageDisplayer />
-      <PageSelector />
       <Authorizer />
     </AppContext.Provider>
   );
