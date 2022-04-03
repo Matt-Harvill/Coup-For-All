@@ -10,7 +10,7 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { ServerApiVersion } from "mongodb";
 import { User } from "./schemas.js";
-import { coupAction } from "./coup.js";
+import * as coup from "./coup.js";
 
 // Dirname Setup
 const __filename = fileURLToPath(import.meta.url);
@@ -106,15 +106,34 @@ io.on("connection", (socket) => {
     io.emit("chat message", message);
   });
 
+  // Get User
   socket.on("get user", (callback) => {
     callback(socket.request.user.username); // Pass the user's name
   });
 
-  socket.on("coup", (action, target, callback) => {
-    coupAction(user, action, target);
-    callback("success");
+  // Coup
+  socket.on("coup online", (callback) => {
+    let coupOnlineUsers = Array.from(coup.coupOnline());
+    console.log("coup online:", coupOnlineUsers);
+    callback(coupOnlineUsers); // return online coup users
   });
 
+  socket.on("coup user add", (callback) => {
+    coup.coupUserAdd(socket.request.user.username); // add user to online coup user list
+    // callback("success");
+  });
+
+  socket.on("coup user remove", (callback) => {
+    coup.coupUserRemove(socket.request.user.username); // remove user from online coup user list
+    // callback("success");
+  });
+
+  socket.on("coup", (action, target, callback) => {
+    coup.coupAction(user, action, target);
+    // callback("success");
+  });
+
+  // Disconnect
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });

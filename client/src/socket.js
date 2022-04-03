@@ -31,8 +31,8 @@ export const socketInit = (appState) => {
 
   socket.on("connect", () => {
     appState.setAuth("auth");
-    socket.emit("get user", (user) => {
-      appState.setUser(user);
+    socket.emit("get user", (callback) => {
+      appState.setUser(callback);
     });
   });
 };
