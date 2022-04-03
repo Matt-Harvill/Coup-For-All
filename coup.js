@@ -1,17 +1,17 @@
-let coupOnlineUsers = new Set();
+let players = new Set();
 
-export const coupOnline = () => {
-  return coupOnlineUsers;
+export const getPlayers = () => {
+  return players;
 };
 
-export const coupUserAdd = (user) => {
-  coupOnlineUsers.add(user);
+export const addPlayer = (user) => {
+  players.add(user);
 };
 
-export const coupUserRemove = (user) => {
-  coupOnlineUsers.delete(user);
+export const removePlayer = (user) => {
+  players.delete(user);
 };
 
-export const coupAction = (user, action, target) => {
+export const action = (user, action, target) => {
   console.log(`${user} called ${action} on ${target}`);
 };

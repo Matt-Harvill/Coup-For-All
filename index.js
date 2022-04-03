@@ -112,24 +112,24 @@ io.on("connection", (socket) => {
   });
 
   // Coup
-  socket.on("coup online", (callback) => {
-    let coupOnlineUsers = Array.from(coup.coupOnline());
-    console.log("coup online:", coupOnlineUsers);
-    callback(coupOnlineUsers); // return online coup users
+  socket.on("coup addPlayer", () => {
+    coup.addPlayer(socket.request.user.username); // add user to online coup user list
+
+    let players = Array.from(coup.getPlayers());
+    console.log("coup online:", players);
+    io.emit("coup online", players);
   });
 
-  socket.on("coup user add", (callback) => {
-    coup.coupUserAdd(socket.request.user.username); // add user to online coup user list
-    // callback("success");
-  });
+  socket.on("coup removePlayer", () => {
+    coup.removePlayer(socket.request.user.username); // remove user from online coup user list
 
-  socket.on("coup user remove", (callback) => {
-    coup.coupUserRemove(socket.request.user.username); // remove user from online coup user list
-    // callback("success");
+    let players = Array.from(coup.getPlayers());
+    console.log("coup online:", players);
+    io.emit("coup online", players);
   });
 
   socket.on("coup", (action, target, callback) => {
-    coup.coupAction(user, action, target);
+    coup.action(user, action, target);
     // callback("success");
   });
 

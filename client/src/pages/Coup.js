@@ -8,18 +8,15 @@ export default function Coup() {
   const { chats, user } = useContext(AppContext);
 
   useEffect(() => {
-    socket.emit("coup user add", (callback) => {});
+    socket.on("coup online", (users) => {
+      setOnlineUsers(users);
+    });
 
-    const interval = setInterval(() => {
-      socket.emit("coup online", (callback) => {
-        console.log(callback);
-        setOnlineUsers(callback);
-      });
-    }, 5000);
+    socket.emit("coup addPlayer");
 
     return () => {
-      socket.emit("coup user remove", (callback) => {});
-      clearInterval(interval);
+      socket.off("coup online"); // remove coup online listener
+      socket.emit("coup removePlayer");
     };
   }, []);
 
