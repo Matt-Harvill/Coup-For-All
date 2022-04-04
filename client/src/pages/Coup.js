@@ -36,6 +36,22 @@ export default function Coup() {
     return <p>{chat}</p>;
   };
 
+  const parsePlayers = () => {
+    let playerString = "";
+    onlineUsers.forEach((user) => {
+      playerString = playerString.concat(user, "\n");
+    });
+    return playerString;
+  };
+
+  const parseChats = () => {
+    let chatString = "";
+    chats.forEach((chat) => {
+      chatString = chatString.concat(chat, "\n");
+    });
+    return chatString;
+  };
+
   const handleChange = (e) => {
     setNewChat(e.target.value);
   };
@@ -45,16 +61,16 @@ export default function Coup() {
       <div className="coupGrid">
         <div className="coupTile">
           <h3>Chats</h3>
-          <div
+          <textarea
+            readOnly={true}
             style={{
               padding: 10,
               flex: 1,
               width: "100%",
               backgroundColor: "#f5f5f5",
             }}
-          >
-            {chats.map(displayChats)}
-          </div>
+            value={parseChats()}
+          ></textarea>
           <textarea
             placeholder="Chat..."
             value={newChat}
@@ -68,7 +84,8 @@ export default function Coup() {
 
         <div className="coupTile">
           <h3>Online Players</h3>
-          <div
+          <textarea
+            readOnly={true}
             style={{
               padding: 10,
               textAlign: "center",
@@ -76,9 +93,8 @@ export default function Coup() {
               width: "100%",
               backgroundColor: "#f5f5f5",
             }}
-          >
-            {onlineUsers.map(displayChats)}
-          </div>
+            value={parsePlayers()}
+          ></textarea>
         </div>
 
         <div className="coupTile">
