@@ -14,8 +14,8 @@ export const action = (user, action, target) => {
 };
 
 export const socketInit = (socket) => {
-  socket.on("coup chat", (message) => {
-    io.emit("coup chat", message);
+  socket.on("coup chat", (user, message) => {
+    io.emit("coup chat", user, message);
   });
 
   socket.on("coup addPlayer", () => {

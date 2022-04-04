@@ -14,8 +14,8 @@ export default function Coup() {
       setOnlineUsers(users);
     });
 
-    socket.on("coup chat", (message) => {
-      setChats((oldChats) => [...oldChats, message]);
+    socket.on("coup chat", (user, message) => {
+      setChats((oldChats) => [...oldChats, [user, message]]);
     });
 
     socket.emit("coup addPlayer");
@@ -28,28 +28,31 @@ export default function Coup() {
   }, []);
 
   const sendChat = () => {
-    socket.emit("coup chat", `${user}: ${newChat}`);
+    socket.emit("coup chat", user, newChat);
     setNewChat("");
   };
 
   const displayChats = (chat) => {
-    return <p>{chat}</p>;
+    return (
+      <p style={{ wordBreak: "break-word" }}>
+        <strong>{`${chat[0]}: `}</strong>
+        {chat[1]}
+      </p>
+    );
   };
 
-  const parsePlayers = () => {
-    let playerString = "";
-    onlineUsers.forEach((user) => {
-      playerString = playerString.concat(user, "\n");
-    });
-    return playerString;
-  };
-
-  const parseChats = () => {
-    let chatString = "";
-    chats.forEach((chat) => {
-      chatString = chatString.concat(chat, "\n");
-    });
-    return chatString;
+  const displayPlayers = (player) => {
+    return (
+      <p
+        style={{
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
+        <strong>{player}</strong>
+      </p>
+    );
   };
 
   const handleChange = (e) => {
@@ -61,16 +64,9 @@ export default function Coup() {
       <div className="coupGrid">
         <div className="coupTile">
           <h3>Chats</h3>
-          <textarea
-            readOnly={true}
-            style={{
-              padding: 10,
-              flex: 1,
-              width: "100%",
-              backgroundColor: "#f5f5f5",
-            }}
-            value={parseChats()}
-          ></textarea>
+          <div readOnly={true} className="coupText">
+            {chats.map(displayChats)}
+          </div>
           <textarea
             placeholder="Chat..."
             value={newChat}
@@ -84,29 +80,20 @@ export default function Coup() {
 
         <div className="coupTile">
           <h3>Online Players</h3>
-          <textarea
+          <div
             readOnly={true}
+            className="coupText"
             style={{
-              padding: 10,
               textAlign: "center",
-              flex: 1,
-              width: "100%",
-              backgroundColor: "#f5f5f5",
             }}
-            value={parsePlayers()}
-          ></textarea>
+          >
+            {onlineUsers.map(displayPlayers)}
+          </div>
         </div>
 
         <div className="coupTile">
           <h3>Games</h3>
-          <div
-            style={{
-              padding: 10,
-              flex: 1,
-              width: "100%",
-              backgroundColor: "#f5f5f5",
-            }}
-          ></div>
+          <div className="coupText"></div>
           <button style={{ width: "100%" }}>Create Game</button>
         </div>
       </div>
