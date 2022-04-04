@@ -100,11 +100,6 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   console.log("New client connected");
 
-  // Chats
-  socket.on("chat", (message) => {
-    io.emit("chat", message);
-  });
-
   // Get User
   socket.on("get user", (callback) => {
     callback(socket.request.user.username); // Pass the user's name

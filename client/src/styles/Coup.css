@@ -1,0 +1,24 @@
+.coupGrid {
+  height: 100%;
+  padding: 5%;
+
+  display: flex;
+  gap: 30px;
+  justify-content: space-evenly;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.coupTile {
+  width: 340px;
+  height: 100%;
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 20px;
+
+  background-color: #c4c4c4;
+}

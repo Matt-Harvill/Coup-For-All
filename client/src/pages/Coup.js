@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import AppContext from "../components/AppContext";
 import { socket } from "../socket";
+import "../styles/Coup.css";
 
 export default function Coup() {
   const [newChat, setNewChat] = useState("");
@@ -13,7 +14,7 @@ export default function Coup() {
       setOnlineUsers(users);
     });
 
-    socket.on("chat", (message) => {
+    socket.on("coup chat", (message) => {
       setChats((oldChats) => [...oldChats, message]);
     });
 
@@ -21,13 +22,13 @@ export default function Coup() {
 
     return () => {
       socket.off("coup online"); // remove coup online listener
-      socket.off("chat"); // remove chat listener
+      socket.off("coup chat"); // remove chat listener
       socket.emit("coup removePlayer");
     };
   }, []);
 
   const sendChat = () => {
-    socket.emit("chat", `${user}: ${newChat}`);
+    socket.emit("coup chat", `${user}: ${newChat}`);
     setNewChat("");
   };
 
@@ -41,72 +42,57 @@ export default function Coup() {
 
   return (
     <div className="page">
-      <h1 style={{ width: "100%", textAlign: "center" }}>Coup Page</h1>
+      <div className="coupGrid">
+        <div className="coupTile">
+          <h3>Chats</h3>
+          <div
+            style={{
+              padding: 10,
+              flex: 1,
+              width: "100%",
+              backgroundColor: "#f5f5f5",
+            }}
+          >
+            {chats.map(displayChats)}
+          </div>
+          <textarea
+            placeholder="Chat..."
+            value={newChat}
+            onChange={handleChange}
+            style={{ width: "100%" }}
+          ></textarea>
+          <button style={{ width: "100%" }} onClick={sendChat}>
+            Submit
+          </button>
+        </div>
 
-      <div
-        style={{
-          position: "absolute",
-          top: 150,
-          left: 100,
-          width: 300,
-          minHeight: 200,
-          border: "solid",
-          borderWidth: 2,
+        <div className="coupTile">
+          <h3>Online Players</h3>
+          <div
+            style={{
+              padding: 10,
+              textAlign: "center",
+              flex: 1,
+              width: "100%",
+              backgroundColor: "#f5f5f5",
+            }}
+          >
+            {onlineUsers.map(displayChats)}
+          </div>
+        </div>
 
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          alignItems: "center",
-        }}
-      >
-        <h3>Chats</h3>
-        <div>{chats.map(displayChats)}</div>
-      </div>
-
-      <div
-        style={{
-          position: "absolute",
-          top: 150,
-          left: 450,
-          width: 300,
-          minHeight: 200,
-          border: "solid",
-          borderWidth: 2,
-
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          alignItems: "center",
-        }}
-      >
-        <h3>Online Players</h3>
-        <div>{onlineUsers.map(displayChats)}</div>
-      </div>
-
-      <div
-        style={{
-          position: "absolute",
-          top: 150,
-          left: 800,
-          width: 300,
-          minHeight: 200,
-          border: "solid",
-          borderWidth: 2,
-
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          alignItems: "center",
-        }}
-      >
-        <h3>New Chat</h3>
-        <textarea
-          placeholder="Chat..."
-          value={newChat}
-          onChange={handleChange}
-          style={{ display: "block" }}
-        ></textarea>
-        <button onClick={sendChat}>Submit</button>
+        <div className="coupTile">
+          <h3>Games</h3>
+          <div
+            style={{
+              padding: 10,
+              flex: 1,
+              width: "100%",
+              backgroundColor: "#f5f5f5",
+            }}
+          ></div>
+          <button style={{ width: "100%" }}>Create Game</button>
+        </div>
       </div>
     </div>
   );
