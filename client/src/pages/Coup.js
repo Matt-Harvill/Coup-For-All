@@ -5,17 +5,23 @@ import { socket } from "../socket";
 export default function Coup() {
   const [newChat, setNewChat] = useState("");
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const { chats, user } = useContext(AppContext);
+  const [chats, setChats] = useState([]);
+  const { user } = useContext(AppContext);
 
   useEffect(() => {
     socket.on("coup online", (users) => {
       setOnlineUsers(users);
     });
 
+    socket.on("chat message", (message) => {
+      setChats((oldChats) => [...oldChats, message]);
+    });
+
     socket.emit("coup addPlayer");
 
     return () => {
       socket.off("coup online"); // remove coup online listener
+      socket.off("chat message"); // remove chat message listener
       socket.emit("coup removePlayer");
     };
   }, []);
@@ -39,14 +45,18 @@ export default function Coup() {
 
       <div
         style={{
-          textAlign: "center",
           position: "absolute",
           top: 150,
           left: 100,
-          minWidth: 300,
+          width: 300,
           minHeight: 200,
           border: "solid",
           borderWidth: 2,
+
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          alignItems: "center",
         }}
       >
         <h3>Chats</h3>
@@ -55,14 +65,18 @@ export default function Coup() {
 
       <div
         style={{
-          textAlign: "center",
           position: "absolute",
           top: 150,
           left: 450,
-          minWidth: 300,
+          width: 300,
           minHeight: 200,
           border: "solid",
           borderWidth: 2,
+
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          alignItems: "center",
         }}
       >
         <h3>Online Players</h3>
@@ -71,14 +85,18 @@ export default function Coup() {
 
       <div
         style={{
-          textAlign: "center",
           position: "absolute",
           top: 150,
           left: 800,
-          minWidth: 300,
+          width: 300,
           minHeight: 200,
           border: "solid",
           borderWidth: 2,
+
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          alignItems: "center",
         }}
       >
         <h3>New Chat</h3>
@@ -86,6 +104,7 @@ export default function Coup() {
           placeholder="Chat..."
           value={newChat}
           onChange={handleChange}
+          style={{ display: "block" }}
         ></textarea>
         <button onClick={sendChat}>Submit</button>
       </div>

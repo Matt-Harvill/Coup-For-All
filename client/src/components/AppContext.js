@@ -8,8 +8,6 @@ const AppContext = createContext({
   setPage: () => {},
   newPage: "",
   setNewPage: () => {},
-  chats: [],
-  setChats: () => {},
   user: "",
   setUser: () => {},
 });

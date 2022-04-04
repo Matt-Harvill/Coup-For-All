@@ -10,7 +10,6 @@ export default function App() {
   const [auth, setAuth] = useState("no auth");
   const [page, setPage] = useState("login");
   const [newPage, setNewPage] = useState("login");
-  const [chats, setChats] = useState([]);
   const [user, setUser] = useState("guest%");
 
   const state = {
@@ -20,8 +19,6 @@ export default function App() {
     setPage,
     newPage,
     setNewPage,
-    chats,
-    setChats,
     user,
     setUser,
   };

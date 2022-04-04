@@ -14,10 +14,6 @@ export const socket = io(`http://${url}:80`, {
 export const socketInit = (appState) => {
   socket.connect();
 
-  socket.on("chat message", (message) => {
-    appState.setChats((oldChats) => [...oldChats, message]);
-  });
-
   socket.on("connect_error", (err) => {
     if (err.message === "unauthorized") {
       appState.setAuth("no auth");
