@@ -35,28 +35,59 @@ export default function Coup() {
 
   return (
     <div className="page">
+      <h1 style={{ width: "100%", textAlign: "center" }}>Coup Page</h1>
+
       <div
         style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
+          textAlign: "center",
+          position: "absolute",
+          top: 150,
+          left: 100,
+          minWidth: 300,
+          minHeight: 200,
+          border: "solid",
+          borderWidth: 2,
         }}
       >
-        <h1>Coup Page</h1>
-
+        <h3>Chats</h3>
         <div>{chats.map(displayChats)}</div>
+      </div>
 
+      <div
+        style={{
+          textAlign: "center",
+          position: "absolute",
+          top: 150,
+          left: 450,
+          minWidth: 300,
+          minHeight: 200,
+          border: "solid",
+          borderWidth: 2,
+        }}
+      >
+        <h3>Online Players</h3>
+        <div>{onlineUsers.map(displayChats)}</div>
+      </div>
+
+      <div
+        style={{
+          textAlign: "center",
+          position: "absolute",
+          top: 150,
+          left: 800,
+          minWidth: 300,
+          minHeight: 200,
+          border: "solid",
+          borderWidth: 2,
+        }}
+      >
+        <h3>New Chat</h3>
         <textarea
           placeholder="Chat..."
           value={newChat}
           onChange={handleChange}
         ></textarea>
         <button onClick={sendChat}>Submit</button>
-
-        <h3>Online users</h3>
-        <div>{onlineUsers.map(displayChats)}</div>
       </div>
     </div>
   );

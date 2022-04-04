@@ -34,7 +34,6 @@ export default function App() {
   return (
     <AppContext.Provider value={state}>
       <Navbar />
-      <p>{user}</p>
       <PageDisplayer />
       <Authorizer />
     </AppContext.Provider>
