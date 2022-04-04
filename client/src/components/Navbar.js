@@ -7,7 +7,7 @@ export default function Navbar() {
   const { setNewPage } = useContext(AppContext);
 
   return (
-    <div className="navbar">
+    <div className="appNavbar">
       <span
         style={{ cursor: "pointer", flex: 1 }}
         onClick={() => {
