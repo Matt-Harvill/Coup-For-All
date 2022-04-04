@@ -100,8 +100,8 @@ io.use((socket, next) => {
 io.on("connection", (socket) => {
   console.log("New client connected");
 
+  // Chats
   socket.on("chat", (message) => {
-    console.log(message);
     io.emit("chat", message);
   });
 

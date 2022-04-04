@@ -15,12 +15,12 @@ export const action = (user, action, target) => {
 
 export const socketInit = (socket) => {
   socket.on("coup addPlayer", () => {
-    addPlayer(socket.request.user.username); // add user to online coup user list
+    addPlayer(socket.request.user.username);
     io.emit("coup online", Array.from(players));
   });
 
   socket.on("coup removePlayer", () => {
-    removePlayer(socket.request.user.username); // remove user from online coup user list
+    removePlayer(socket.request.user.username);
     io.emit("coup online", Array.from(players));
   });
 
