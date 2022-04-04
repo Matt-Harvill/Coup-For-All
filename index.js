@@ -76,7 +76,7 @@ app.post("/register", (req, res) => {
 
 // Socket.IO
 const server = http.createServer(app);
-const io = new Server(server, { transports: ["websocket"] });
+export const io = new Server(server, { transports: ["websocket"] });
 
 // Convert Middleware to Socket.IO Middleware
 const wrap = (middleware) => (socket, next) =>
@@ -99,11 +99,10 @@ io.use((socket, next) => {
 
 io.on("connection", (socket) => {
   console.log("New client connected");
-  let user = socket.request.user.username;
 
-  socket.on("chat message", (message) => {
+  socket.on("chat", (message) => {
     console.log(message);
-    io.emit("chat message", message);
+    io.emit("chat", message);
   });
 
   // Get User
@@ -112,26 +111,7 @@ io.on("connection", (socket) => {
   });
 
   // Coup
-  socket.on("coup addPlayer", () => {
-    coup.addPlayer(socket.request.user.username); // add user to online coup user list
-
-    let players = Array.from(coup.getPlayers());
-    console.log("coup online:", players);
-    io.emit("coup online", players);
-  });
-
-  socket.on("coup removePlayer", () => {
-    coup.removePlayer(socket.request.user.username); // remove user from online coup user list
-
-    let players = Array.from(coup.getPlayers());
-    console.log("coup online:", players);
-    io.emit("coup online", players);
-  });
-
-  socket.on("coup", (action, target, callback) => {
-    coup.action(user, action, target);
-    // callback("success");
-  });
+  coup.socketInit(socket);
 
   // Disconnect
   socket.on("disconnect", () => {

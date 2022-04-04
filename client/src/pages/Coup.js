@@ -13,7 +13,7 @@ export default function Coup() {
       setOnlineUsers(users);
     });
 
-    socket.on("chat message", (message) => {
+    socket.on("chat", (message) => {
       setChats((oldChats) => [...oldChats, message]);
     });
 
@@ -21,13 +21,13 @@ export default function Coup() {
 
     return () => {
       socket.off("coup online"); // remove coup online listener
-      socket.off("chat message"); // remove chat message listener
+      socket.off("chat"); // remove chat listener
       socket.emit("coup removePlayer");
     };
   }, []);
 
   const sendChat = () => {
-    socket.emit("chat message", `${user}: ${newChat}`);
+    socket.emit("chat", `${user}: ${newChat}`);
     setNewChat("");
   };
 
