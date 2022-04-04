@@ -10,8 +10,8 @@
 }
 
 .coupTile {
-  width: 340px;
-  height: 78vh;
+  width: 320px;
+  height: 72vh;
   padding: 20px;
 
   display: flex;
@@ -21,6 +21,12 @@
   gap: 20px;
 
   background-color: #c4c4c4;
+}
+
+@media screen and (min-width: 580px) {
+  .coupTile {
+    width: 480px;
+  }
 }
 
 .coupText {
