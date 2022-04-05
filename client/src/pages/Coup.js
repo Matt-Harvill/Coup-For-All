@@ -1,17 +1,20 @@
-import { useState, useContext, useEffect } from "react";
-import AppContext from "../components/AppContext";
+import { useState, useEffect } from "react";
 import { socket } from "../socket";
 import "../styles/Coup.css";
 
 export default function Coup() {
   const [newChat, setNewChat] = useState("");
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [games, setGames] = useState([]);
   const [chats, setChats] = useState([]);
-  const { user } = useContext(AppContext);
 
   useEffect(() => {
     socket.on("coup online", (users) => {
       setOnlineUsers(users);
+    });
+
+    socket.on("coup games", (games) => {
+      setGames(games);
     });
 
     socket.on("coup chat", (user, message) => {
@@ -19,16 +22,18 @@ export default function Coup() {
     });
 
     socket.emit("coup addPlayer");
+    socket.emit("coup games");
 
     return () => {
       socket.off("coup online"); // remove coup online listener
       socket.off("coup chat"); // remove chat listener
+      socket.off("coup games"); // remove games listener
       socket.emit("coup removePlayer");
     };
   }, []);
 
   const sendChat = () => {
-    socket.emit("coup chat", user, newChat);
+    socket.emit("coup chat", newChat);
     setNewChat("");
   };
 
@@ -53,6 +58,18 @@ export default function Coup() {
         <strong>{player}</strong>
       </p>
     );
+  };
+
+  const displayGames = (game) => {
+    return (
+      <p style={{ wordBreak: "break-word" }}>
+        <strong>{JSON.stringify(game)}</strong>
+      </p>
+    );
+  };
+
+  const createGame = () => {
+    socket.emit("coup createGame", "public");
   };
 
   const handleChange = (e) => {
@@ -93,8 +110,12 @@ export default function Coup() {
 
         <div className="coupTile">
           <h3>Games</h3>
-          <div className="coupText"></div>
-          <button style={{ width: "100%" }}>Create Game</button>
+          <div readOnly={true} className="coupText">
+            {games.map(displayGames)}
+          </div>
+          <button onClick={createGame} style={{ width: "100%" }}>
+            Create Game
+          </button>
         </div>
       </div>
     </div>
