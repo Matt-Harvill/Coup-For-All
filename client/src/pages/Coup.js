@@ -63,7 +63,7 @@ export default function Coup() {
   const displayGames = (game) => {
     return (
       <p style={{ wordBreak: "break-word" }}>
-        <strong>{JSON.stringify(game)}</strong>
+        <strong>{`${game.founder}'s game, privacy: ${game.privacy}`}</strong>
       </p>
     );
   };
@@ -110,7 +110,13 @@ export default function Coup() {
 
         <div className="coupTile">
           <h3>Games</h3>
-          <div readOnly={true} className="coupText">
+          <div
+            readOnly={true}
+            className="coupText"
+            style={{
+              textAlign: "center",
+            }}
+          >
             {games.map(displayGames)}
           </div>
           <button onClick={createGame} style={{ width: "100%" }}>
