@@ -4,7 +4,7 @@ let url;
 if (process.env.NODE_ENV === "development") {
   url = "localhost";
 } else {
-  url = "websocket-game-website.herokuapp.com";
+  url = "game-website-sockets.herokuapp.com";
 }
 
 export const socket = io(`http://${url}:80`, {
