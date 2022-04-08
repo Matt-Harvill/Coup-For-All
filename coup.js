@@ -1,11 +1,12 @@
-import { io } from "./index.js";
+import { io, conn } from "./index.js";
 import { CoupGame } from "./schemas.js";
+import * as utils from "./utils.js";
 import crypto from "crypto";
+// Set of coup players in lobby
 let players = new Set();
+// Set of coup games forming in lobby
 let games = new Set();
 
-// Keep a list of the active coup games after initial database grab
-// This will be similar to the list of players that is stored in memory
 const getFormingGames = async () => {
   const dbGames = await CoupGame.find({ status: "forming" }).exec();
 
@@ -30,17 +31,22 @@ export const action = (user, action, target) => {
   console.log(`${user} called ${action} on ${target}`);
 };
 
-export const createGame = (user, privacy) => {
+export const createGame = async (user, privacy) => {
+  const gameTitle = "coup";
   const gameID = crypto.randomBytes(6).toString("hex");
+  const pStat = { coins: 2, roles: ["", ""] };
+
+  const pStats = new Map();
+  pStats.set(user, pStat);
 
   const game = new CoupGame({
-    gameTitle: "coup",
+    gameTitle: gameTitle,
     gameID: gameID,
     founder: user,
     status: "forming", // 'forming', 'in progress', 'complete'
     privacy: privacy, // 'public', 'private'
     players: [user],
-    pStats: { user: { coins: 2, roles: ["", ""] } },
+    pStats: pStats,
     availRoles: [
       "AM",
       "AM",
@@ -59,8 +65,28 @@ export const createGame = (user, privacy) => {
       "D",
     ],
   });
-  game.save();
-  games.add(game);
+
+  const session = await conn.startSession();
+  session.startTransaction();
+
+  let transactError = false;
+
+  try {
+    await game.save();
+    utils.updateUser(user, gameTitle, gameID, pStat);
+  } catch (err) {
+    console.log(err);
+    transactError = true;
+  }
+
+  if (transactError) {
+    session.abortTransaction();
+  } else {
+    session.commitTransaction();
+    games.add(game);
+  }
+
+  session.endSession();
 };
 
 const sendGames = () => {

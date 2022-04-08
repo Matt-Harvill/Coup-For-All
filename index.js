@@ -36,6 +36,7 @@ mongoose.connect(mongoURI, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
+export const conn = mongoose.connection;
 
 // Passport Setup
 passport.use(User.createStrategy());
