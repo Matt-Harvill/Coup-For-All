@@ -1,11 +1,11 @@
-import { io, conn } from "./index.js";
+import { io } from "./index.js";
 import { CoupGame } from "./schemas.js";
 import * as utils from "./utils.js";
 import crypto from "crypto";
 // Set of coup players in lobby
-let players = new Set();
+const players = new Set();
 // Set of coup games forming in lobby
-let games = new Set();
+export const games = new Set();
 
 const getFormingGames = async () => {
   const dbGames = await CoupGame.find({ status: "forming" }).exec();
@@ -66,27 +66,7 @@ export const createGame = async (user, privacy) => {
     ],
   });
 
-  const session = await conn.startSession();
-  session.startTransaction();
-
-  let transactError = false;
-
-  try {
-    await game.save();
-    utils.updateUser(user, gameTitle, gameID, pStat);
-  } catch (err) {
-    console.log(err);
-    transactError = true;
-  }
-
-  if (transactError) {
-    session.abortTransaction();
-  } else {
-    session.commitTransaction();
-    games.add(game);
-  }
-
-  session.endSession();
+  await utils.updateUserAndGame(user, game);
 };
 
 const sendGames = () => {
@@ -107,8 +87,8 @@ export const socketInit = (socket) => {
     sendGames();
   });
 
-  socket.on("coup createGame", (privacy) => {
-    createGame(socket.request.user.username, privacy);
+  socket.on("coup createGame", async (privacy) => {
+    await createGame(socket.request.user.username, privacy);
     sendGames();
   });
 
