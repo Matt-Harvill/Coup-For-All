@@ -55,12 +55,6 @@ app.post("/login", (req, res) => {
   });
 });
 
-// Logout
-app.post("/logout", async (req, res) => {
-  req.logout();
-  return res.end();
-});
-
 // Register
 app.post("/register", (req, res) => {
   User.register({ username: req.body.username }, req.body.password, (err) => {
@@ -98,12 +92,17 @@ io.use((socket, next) => {
   }
 });
 
+const socketIDMap = {}; // Keep track of socket ids so they can be deleted
+
 io.on("connection", (socket) => {
   console.log("New client connected");
 
+  const username = socket.request.user.username;
+  socketIDMap[username] = socket.id;
+
   // Get User
   socket.on("get user", (callback) => {
-    callback(socket.request.user.username); // Pass the user's name
+    callback(username); // Pass the user's name
   });
 
   // Coup
@@ -113,6 +112,18 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });
+});
+
+// Logout
+app.post("/logout", async (req, res) => {
+  const userSocket = io.sockets.sockets.get(socketIDMap[req.user.username]);
+  delete socketIDMap[req.user.username];
+
+  userSocket.disconnect(); // Disconnect the associated socket
+
+  req.logout();
+
+  return res.end();
 });
 
 const port = process.env.PORT;

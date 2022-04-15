@@ -22,7 +22,7 @@ export const socketInit = (appState) => {
     }
     setTimeout(() => {
       socket.connect();
-    }, 5000);
+    }, 1000);
   });
 
   socket.on("connect", () => {
@@ -30,5 +30,10 @@ export const socketInit = (appState) => {
     socket.emit("get user", (callback) => {
       appState.setUser(callback);
     });
+  });
+
+  socket.on("disconnect", () => {
+    appState.setAuth("no auth");
+    socket.connect();
   });
 };
