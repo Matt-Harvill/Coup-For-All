@@ -3,6 +3,7 @@ import { conn } from "./index.js";
 import { games } from "./coup.js";
 
 export const updateUser = (username, gameTitle, gameID, pStat) => {
+  throw new Error("updateUserForcedError");
   User.updateOne(
     { username: username },
     { gameID: gameID, gameTitle: gameTitle, pStat: pStat },

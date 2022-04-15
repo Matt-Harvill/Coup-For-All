@@ -51,12 +51,16 @@ export default function Authorizer() {
   const handleNewPageAuth = () => {
     if (newPage !== "login" && newPage !== "register") {
       setPage(newPage);
+    } else {
+      setNewPage(page); // Reset newPage if no change
     }
   };
 
   const handleNewPageNoAuth = () => {
     if (newPage === "login" || newPage === "register") {
       setPage(newPage);
+    } else {
+      setNewPage(page); // Reset newPage if no change
     }
   };
 }

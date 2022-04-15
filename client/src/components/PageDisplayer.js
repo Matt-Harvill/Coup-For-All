@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import AppContext from "./AppContext";
 import Coup from "../pages/Coup";
 import Home from "../pages/Home";
