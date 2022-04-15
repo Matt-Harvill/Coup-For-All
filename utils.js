@@ -2,17 +2,17 @@ import { User } from "./schemas.js";
 import { conn } from "./index.js";
 import { games } from "./coup.js";
 
-export const updateUser = (username, gameTitle, gameID, pStat) => {
-  throw new Error("updateUserForcedError");
-  User.updateOne(
+export const updateUser = async (
+  session,
+  username,
+  gameTitle,
+  gameID,
+  pStat
+) => {
+  await User.updateOne(
     { username: username },
     { gameID: gameID, gameTitle: gameTitle, pStat: pStat },
-    (err) => {
-      if (err) {
-        console.log(err);
-        throw new Error(err);
-      }
-    }
+    { session }
   );
 };
 
@@ -23,17 +23,23 @@ export const updateUserAndGame = async (user, game) => {
   let transactError = false;
 
   try {
-    await game.save();
-    updateUser(user, game.gameTitle, game.gameID, game.pStats.get(user));
+    await game.save({ session });
+    await updateUser(
+      session,
+      user,
+      game.gameTitle,
+      game.gameID,
+      game.pStats.get(user)
+    );
   } catch (err) {
     console.log(err);
     transactError = true;
   }
 
   if (transactError) {
-    session.abortTransaction();
+    await session.abortTransaction();
   } else {
-    session.commitTransaction();
+    await session.commitTransaction();
     games.add(game);
   }
 

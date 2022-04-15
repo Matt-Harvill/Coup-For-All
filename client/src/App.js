@@ -30,7 +30,7 @@ export default function App() {
 
   return (
     <AppContext.Provider value={state}>
-      <p>{`newPage: ${newPage}, page ${page}`}</p>
+      {/* <p>{`newPage: ${newPage}, page ${page}`}</p> */}
       <Navbar />
       <PageDisplayer />
       <Authorizer />
