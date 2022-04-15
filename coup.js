@@ -1,5 +1,5 @@
 import { io } from "./index.js";
-import { CoupGame } from "./schemas.js";
+import { CoupGame, User } from "./schemas.js";
 import * as utils from "./utils.js";
 import crypto from "crypto";
 // Set of coup players in lobby
@@ -31,7 +31,16 @@ export const action = (user, action, target) => {
   console.log(`${user} called ${action} on ${target}`);
 };
 
-export const createGame = async (user, privacy) => {
+export const createGame = async (userObj, privacy) => {
+  // Prevent user from creating multiple games
+  // console.log("userObj: ", userObj);
+  const currGameStatus = userObj.gameStatus;
+  // console.log(currGameStatus);
+  if (currGameStatus !== "completed" && currGameStatus !== "") {
+    return;
+  }
+
+  const user = userObj.username;
   const gameTitle = "coup";
   const gameID = crypto.randomBytes(6).toString("hex");
   const pStat = { coins: 2, roles: ["", ""] };
@@ -70,7 +79,7 @@ export const createGame = async (user, privacy) => {
 };
 
 const sendGames = () => {
-  console.log(`Num games: ${games.size}`);
+  // console.log(`Num games: ${games.size}`);
   io.emit("coup games", Array.from(games));
 };
 
@@ -88,7 +97,8 @@ export const socketInit = (socket) => {
   });
 
   socket.on("coup createGame", async (privacy) => {
-    await createGame(socket.request.user.username, privacy);
+    await createGame(socket.request.user, privacy);
+    socket.request.user = await utils.getUserObj(socket.request.user.username); // Update the socket user object
     sendGames();
   });
 

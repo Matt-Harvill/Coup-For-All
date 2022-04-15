@@ -4,8 +4,18 @@ import passportLocalMongoose from "passport-local-mongoose";
 const userSchema = new mongoose.Schema({
   username: String,
   password: String,
-  gameTitle: String,
-  gameID: String,
+  gameTitle: {
+    type: String,
+    default: "",
+  },
+  gameID: {
+    type: String,
+    default: "",
+  },
+  gameStatus: {
+    type: String,
+    default: "",
+  },
   pStat: {},
 });
 
