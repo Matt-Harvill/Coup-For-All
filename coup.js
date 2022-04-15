@@ -37,6 +37,7 @@ export const createGame = async (userObj, privacy) => {
   const currGameStatus = userObj.gameStatus;
   // console.log(currGameStatus);
   if (currGameStatus !== "completed" && currGameStatus !== "") {
+    // Only create a new game if user's currGame is complete or empty
     return;
   }
 
@@ -98,7 +99,7 @@ export const socketInit = (socket) => {
 
   socket.on("coup createGame", async (privacy) => {
     await createGame(socket.request.user, privacy);
-    socket.request.user = await utils.getUserObj(socket.request.user.username); // Update the socket user object
+    socket.request.user = await utils.getUserObj(socket.request.user.username); // Update the socket's user object
     sendGames();
   });
 

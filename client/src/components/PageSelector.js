@@ -1,11 +1,12 @@
 import { useContext } from "react";
+import { allowedPage } from "../pageNavigator";
 import AppContext from "./AppContext";
 
 export default function PageSelector() {
-  const { page, setNewPage } = useContext(AppContext);
+  const { page, setPage, auth } = useContext(AppContext);
 
   const selectPage = (e) => {
-    setNewPage(e.target.value);
+    setPage(allowedPage(auth, page, e.target.value));
   };
 
   return (

@@ -9,7 +9,6 @@ import { socketInit } from "./socket";
 export default function App() {
   const [auth, setAuth] = useState("no auth");
   const [page, setPage] = useState("login");
-  const [newPage, setNewPage] = useState("login");
   const [user, setUser] = useState("guest%");
 
   const state = {
@@ -17,8 +16,6 @@ export default function App() {
     setAuth,
     page,
     setPage,
-    newPage,
-    setNewPage,
     user,
     setUser,
   };

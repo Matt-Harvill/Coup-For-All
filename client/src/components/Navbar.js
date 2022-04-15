@@ -2,9 +2,10 @@ import { useContext } from "react";
 import AppContext from "./AppContext";
 import PageSelector from "./PageSelector";
 import "../styles/Navbar.css";
+import { allowedPage } from "../pageNavigator";
 
 export default function Navbar() {
-  const { setNewPage } = useContext(AppContext);
+  const { page, setPage, auth } = useContext(AppContext);
 
   const logout = async () => {
     const response = await fetch("/logout", {
@@ -19,38 +20,44 @@ export default function Navbar() {
 
   return (
     <div className="appNavbar">
-      <span
-        style={{ cursor: "pointer", flex: 1 }}
-        onClick={() => {
-          setNewPage("home");
-        }}
-      >
-        Home
-      </span>
+      {auth === "no auth" && <span>Game Website</span>}
 
-      <PageSelector />
+      {auth === "auth" && (
+        <span
+          style={{ cursor: "pointer", flex: 1 }}
+          onClick={() => {
+            setPage(allowedPage(auth, page, "home"));
+          }}
+        >
+          Home
+        </span>
+      )}
 
-      <span
-        style={{ cursor: "pointer" }}
-        onClick={() => {
-          setNewPage("coup");
-        }}
-      >
-        Coup
-      </span>
+      {/* <PageSelector /> */}
 
-      <span
-        style={{ cursor: "pointer" }}
-        onClick={() => {
-          setNewPage("splendor");
-        }}
-      >
-        Splendor
-      </span>
+      {auth === "auth" && (
+        <span
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            setPage(allowedPage(auth, page, "coup"));
+          }}
+        >
+          Coup
+        </span>
+      )}
 
-      <span style={{ cursor: "pointer" }} onClick={logout}>
-        Logout
-      </span>
+      {auth === "auth" && (
+        <span
+          style={{ cursor: "pointer" }}
+          onClick={() => {
+            setPage(allowedPage(auth, page, "splendor"));
+          }}
+        >
+          Splendor
+        </span>
+      )}
+
+      {auth === "auth" && <button onClick={logout}>Logout</button>}
     </div>
   );
 }

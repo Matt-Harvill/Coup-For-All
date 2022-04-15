@@ -1,8 +1,9 @@
 import React, { useContext, useState } from "react";
 import AppContext from "../components/AppContext";
+import { allowedPage } from "../pageNavigator";
 
 export default function Register() {
-  const { setNewPage } = useContext(AppContext);
+  const { page, setPage, auth } = useContext(AppContext);
   const [user, setUser] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
 
@@ -67,7 +68,7 @@ export default function Register() {
         <p
           style={{ textDecoration: "underline", cursor: "pointer" }}
           onClick={() => {
-            setNewPage("login");
+            setPage(allowedPage(auth, page, "login"));
           }}
         >
           Login

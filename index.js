@@ -121,7 +121,7 @@ app.post("/logout", async (req, res) => {
 
   userSocket.disconnect(); // Disconnect the associated socket
 
-  req.logout();
+  req.logout(); // Logout through passport
 
   return res.end();
 });

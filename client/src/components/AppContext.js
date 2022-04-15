@@ -6,8 +6,6 @@ const AppContext = createContext({
   setAuth: () => {},
   page: "",
   setPage: () => {},
-  newPage: "",
-  setNewPage: () => {},
   user: "",
   setUser: () => {},
 });
