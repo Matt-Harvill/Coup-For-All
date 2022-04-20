@@ -62,7 +62,7 @@ export default function CoupCreateGame() {
             onClick={changePrivacy}
             src={privacy}
             alt="privacy"
-            style={{ height: 32, width: 32 }}
+            style={{ height: 32, width: 32, cursor: "pointer" }}
           ></img>
         </div>
         <button onClick={createGame} style={{ width: "100%" }}>
