@@ -1,8 +1,8 @@
 import { useContext, useEffect } from "react";
 import AppContext from "./AppContext";
 
-export default function Authorizer() {
-  const { auth, page, setPage } = useContext(AppContext);
+export default function AuthPageSwitcher() {
+  const { auth, setPage } = useContext(AppContext);
 
   // When auth/page changes, update pages (if authed for them)
   useEffect(() => {
@@ -21,14 +21,10 @@ export default function Authorizer() {
   }, [auth]);
 
   const handleAuth = () => {
-    if (page === "login" || page === "register") {
-      setPage("home");
-    }
+    setPage("home");
   };
 
   const handleNoAuth = () => {
-    if (page !== "register") {
-      setPage("login");
-    }
+    setPage("login");
   };
 }

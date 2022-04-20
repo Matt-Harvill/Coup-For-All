@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import AppContext from "./AppContext";
-import PageSelector from "./PageSelector";
 import "../styles/Navbar.css";
 import { allowedPage } from "../pageNavigator";
 

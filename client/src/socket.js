@@ -19,10 +19,10 @@ export const socketInit = (appState) => {
       appState.setAuth("no auth");
     } else {
       alert("Socket Connection Issues");
+      setTimeout(() => {
+        socket.connect();
+      }, 1000);
     }
-    setTimeout(() => {
-      socket.connect();
-    }, 1000);
   });
 
   socket.on("connect", () => {

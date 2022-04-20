@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import AppContext from "../components/AppContext";
 import { allowedPage } from "../pageNavigator";
+import { socket } from "../socket";
 
 export default function Login() {
   const { page, setPage, auth } = useContext(AppContext);
@@ -22,9 +23,13 @@ export default function Login() {
     });
 
     if (response.status !== 200) {
+      // If login failed
       alert("Incorrect Username and/or Password");
       setUser((prevState) => ({ ...prevState, password: "" }));
       setLoading(false);
+    } else {
+      // If login succeeded
+      socket.connect(); // Attempt to connect to the socket
     }
   };
 

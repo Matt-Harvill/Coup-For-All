@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import AppContext from "../components/AppContext";
 import { allowedPage } from "../pageNavigator";
+import { socket } from "../socket";
 
 export default function Register() {
   const { page, setPage, auth } = useContext(AppContext);
@@ -22,9 +23,13 @@ export default function Register() {
     });
 
     if (response.status !== 200) {
+      // If register failed
       alert("Invalid Username and/or Password");
       setUser((prevState) => ({ ...prevState, password: "" }));
       setLoading(false);
+    } else {
+      // If register succeeded
+      socket.connect(); // Attempt to connect to the socket
     }
   };
 

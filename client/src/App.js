@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import AppContext from "./components/AppContext";
-import Authorizer from "./components/Authorizer";
+import AuthPageSwitcher from "./components/AuthPageSwitcher";
 import Navbar from "./components/Navbar";
 import PageDisplayer from "./components/PageDisplayer";
-import PageSelector from "./components/PageSelector";
 import { socketInit } from "./socket";
 
 export default function App() {
@@ -30,7 +29,7 @@ export default function App() {
       {/* <p>{`newPage: ${newPage}, page ${page}`}</p> */}
       <Navbar />
       <PageDisplayer />
-      <Authorizer />
+      <AuthPageSwitcher />
     </AppContext.Provider>
   );
 }

@@ -1,0 +1,21 @@
+Coup Game - has a number of players - initially set by the creator, can be modified during creation
+
+When it's created, host gets 2 coins and blank roles
+
+When players join they also get the same thing
+
+
+Once the game starts, the roles are assigned to everyone, and players are placed in a queue
+For each turn someone is popped off the queue and pushed onto the end of the queue
+
+When it is someone's turn, they have 1 minute to make a move. A timer - progress bar type display (or digital number first) - will
+show them how much time they have to make a move. If they don't make a move, a move will be made for them automatically
+If they are inactive for two round in a row, they will be kicked and their roles will be flipped to show to everyone
+
+All communication will go through the socket
+
+
+
+On the frontend - clear up the page changes with auth stuff - its doing weird stuff
+
+Also clean up the backend - clear up how the user object is stored in the socket session
