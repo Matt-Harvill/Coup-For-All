@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import CoupCreateGame from "../components/CoupCreateGame";
 import { socket } from "../socket";
 import "../styles/Coup.css";
 
@@ -124,6 +125,7 @@ export default function Coup() {
           </button>
         </div>
       </div>
+      <CoupCreateGame />
     </div>
   );
 }

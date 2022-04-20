@@ -36,3 +36,10 @@
   flex: 1;
   background-color: #f5f5f5;
 }
+
+.coupPopUp {
+  width: 240px;
+  background-color: #c4c4c4;
+  border: 2px solid;
+  padding: 20px;
+}

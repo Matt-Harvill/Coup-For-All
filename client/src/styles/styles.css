@@ -8,3 +8,12 @@ html, body, #root {
   flex: 1;
   width: 100%;
 }
+
+.popUp {
+  z-index: 10;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+}

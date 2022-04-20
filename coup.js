@@ -33,9 +33,7 @@ export const action = (user, action, target) => {
 
 export const createGame = async (userObj, privacy) => {
   // Prevent user from creating multiple games
-  // console.log("userObj: ", userObj);
   const currGameStatus = userObj.gameStatus;
-  // console.log(currGameStatus);
   if (currGameStatus !== "completed" && currGameStatus !== "") {
     // Only create a new game if user's currGame is complete or empty
     return;
@@ -114,6 +112,6 @@ export const socketInit = (socket) => {
   });
 
   socket.on("coup action", (action, target) => {
-    action(user, action, target);
+    action(socket.request.user.username, action, target);
   });
 };
