@@ -77,6 +77,26 @@ export const createGame = async (userObj, privacy) => {
   await utils.updateUserAndGame(user, game);
 };
 
+export const deleteGame = async (userObj) => {
+  try {
+    const game = await utils.getCoupGame(userObj.gameID);
+
+    // Delete game from database
+    utils.deleteCoupGame(userObj.gameID);
+    // Update user in database
+    await utils.updateUser(userObj.username, "", "", "", {});
+
+    // Delete game from memory
+    games.forEach((gameInSet) => {
+      if (gameInSet.gameID === game.gameID) {
+        games.delete(gameInSet);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const sendGames = () => {
   // console.log(`Num games: ${games.size}`);
   io.emit("coup games", Array.from(games));
@@ -97,6 +117,12 @@ export const socketInit = (socket) => {
 
   socket.on("coup createGame", async (privacy) => {
     await createGame(socket.request.user, privacy);
+    socket.request.user = await utils.getUserObj(socket.request.user.username); // Update the socket's user object
+    sendGames();
+  });
+
+  socket.on("coup deleteGame", async () => {
+    await deleteGame(socket.request.user);
     socket.request.user = await utils.getUserObj(socket.request.user.username); // Update the socket's user object
     sendGames();
   });

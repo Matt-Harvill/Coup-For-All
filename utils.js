@@ -1,6 +1,18 @@
-import { User } from "./schemas.js";
+import { CoupGame, User } from "./schemas.js";
 import { conn } from "./index.js";
 import { games } from "./coup.js";
+
+export const deleteCoupGame = (gameID) => {
+  CoupGame.deleteOne({ gameID: gameID }, (err) => {
+    if (err) {
+      throw err;
+    }
+  });
+};
+
+export const getCoupGame = async (gameID) => {
+  return await CoupGame.findOne({ gameID: gameID }).exec();
+};
 
 export const getUserObj = async (username) => {
   return await User.findOne({
@@ -9,23 +21,35 @@ export const getUserObj = async (username) => {
 };
 
 export const updateUser = async (
-  session,
   username,
   gameTitle,
   gameID,
   gameStatus,
-  pStat
+  pStat,
+  session = undefined // Undefined session by default
 ) => {
-  await User.updateOne(
-    { username: username },
-    {
-      gameID: gameID,
-      gameTitle: gameTitle,
-      gameStatus: gameStatus,
-      pStat: pStat,
-    },
-    { session }
-  );
+  if (session === undefined) {
+    await User.updateOne(
+      { username: username },
+      {
+        gameID: gameID,
+        gameTitle: gameTitle,
+        gameStatus: gameStatus,
+        pStat: pStat,
+      }
+    );
+  } else {
+    await User.updateOne(
+      { username: username },
+      {
+        gameID: gameID,
+        gameTitle: gameTitle,
+        gameStatus: gameStatus,
+        pStat: pStat,
+      },
+      { session }
+    );
+  }
 };
 
 export const updateUserAndGame = async (user, game) => {
@@ -37,12 +61,12 @@ export const updateUserAndGame = async (user, game) => {
   try {
     await game.save({ session });
     await updateUser(
-      session,
       user,
       game.gameTitle,
       game.gameID,
       game.status,
-      game.pStats.get(user)
+      game.pStats.get(user),
+      session
     );
   } catch (err) {
     console.log(err);

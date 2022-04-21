@@ -45,6 +45,10 @@ export default function CoupCreateGame() {
     socket.emit("coup createGame", privacyString);
   };
 
+  const deleteGame = () => {
+    socket.emit("coup deleteGame");
+  };
+
   // Check if user has created a game
   useEffect(() => {
     const userGame = games.find((game) => game.founder === user);
@@ -59,7 +63,7 @@ export default function CoupCreateGame() {
     if (hasGame) {
       return (
         <button
-          onClick={createGame}
+          onClick={deleteGame}
           style={{ width: "100%", backgroundColor: "#FF5A5A" }}
         >
           Delete Game
