@@ -23,7 +23,7 @@ const coupGameSchema = new mongoose.Schema({
   gameTitle: String,
   gameID: String,
   founder: String,
-  status: String, // 'forming', 'in progress', 'complete'
+  status: String, // 'forming', 'in progress', 'completed'
   privacy: String, // 'public', 'private'
   players: [String],
   pStats: Map,

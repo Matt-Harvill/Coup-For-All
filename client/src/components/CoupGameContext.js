@@ -1,13 +1,15 @@
 import { createContext } from "react";
 
 // set the defaults
-const CoupCreateGameContext = createContext({
+const CoupGameContext = createContext({
   games: "",
   setGames: () => {},
+  hasGame: false,
+  setHasGame: () => {},
   privacy: "",
   setPrivacy: () => {},
   numPlayers: "",
   setNumPlayers: () => {},
 });
 
-export default CoupCreateGameContext;
+export default CoupGameContext;

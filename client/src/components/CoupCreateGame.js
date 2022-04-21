@@ -1,17 +1,13 @@
 import "../styles/Coup.css";
 import unlock from "../images/unlock.png";
 import lock from "../images/lock.png";
-import { useContext, useEffect, useState } from "react";
-import CoupCreateGameContext from "./CoupCreateGameContext";
+import { useContext } from "react";
+import CoupGameContext from "./CoupGameContext";
 import { socket } from "../socket";
-import AppContext from "./AppContext";
 
 export default function CoupCreateGame() {
-  const { games, privacy, setPrivacy, numPlayers, setNumPlayers } = useContext(
-    CoupCreateGameContext
-  );
-  const { user } = useContext(AppContext);
-  const [hasGame, setHasGame] = useState(false);
+  const { hasGame, privacy, setPrivacy, numPlayers, setNumPlayers } =
+    useContext(CoupGameContext);
 
   const changePrivacy = () => {
     switch (privacy) {
@@ -48,16 +44,6 @@ export default function CoupCreateGame() {
   const deleteGame = () => {
     socket.emit("coup deleteGame");
   };
-
-  // Check if user has created a game
-  useEffect(() => {
-    const userGame = games.find((game) => game.founder === user);
-    if (userGame === undefined) {
-      setHasGame(false);
-    } else {
-      setHasGame(true);
-    }
-  }, [games, user]);
 
   const showCreateOrDelete = () => {
     if (hasGame) {
