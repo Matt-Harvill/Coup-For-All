@@ -1,14 +1,17 @@
 import "../styles/Coup.css";
 import unlock from "../images/unlock.png";
 import lock from "../images/lock.png";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import CoupCreateGameContext from "./CoupCreateGameContext";
 import { socket } from "../socket";
+import AppContext from "./AppContext";
 
 export default function CoupCreateGame() {
-  const { privacy, setPrivacy, numPlayers, setNumPlayers } = useContext(
+  const { games, privacy, setPrivacy, numPlayers, setNumPlayers } = useContext(
     CoupCreateGameContext
   );
+  const { user } = useContext(AppContext);
+  const [hasGame, setHasGame] = useState(false);
 
   const changePrivacy = () => {
     switch (privacy) {
@@ -42,6 +45,62 @@ export default function CoupCreateGame() {
     socket.emit("coup createGame", privacyString);
   };
 
+  // Check if user has created a game
+  useEffect(() => {
+    const userGame = games.find((game) => game.founder === user);
+    if (userGame === undefined) {
+      setHasGame(false);
+    } else {
+      setHasGame(true);
+    }
+  }, [games, user]);
+
+  const showCreateOrDelete = () => {
+    if (hasGame) {
+      return (
+        <button
+          onClick={createGame}
+          style={{ width: "100%", backgroundColor: "#FF5A5A" }}
+        >
+          Delete Game
+        </button>
+      );
+    } else {
+      return (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "4fr 32px",
+            gap: 10,
+            gridAutoRows: "auto",
+            paddingLeft: 20,
+            paddingRight: 20,
+          }}
+        >
+          <p readOnly={true}>Number of Players</p>
+          <select
+            onChange={selectPlayers}
+            value={numPlayers}
+            style={{ height: 32 }}
+          >
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+          <p readOnly={true}>{privacy === unlock ? "Public" : "Private"}</p>
+          <img
+            onClick={changePrivacy}
+            src={privacy}
+            alt="privacy"
+            style={{ height: 32, width: 32, cursor: "pointer" }}
+          ></img>
+        </div>
+      );
+    }
+  };
+
   return (
     // <div className="popUp coupPopUp">
     <div
@@ -53,36 +112,8 @@ export default function CoupCreateGame() {
         width: "100%",
       }}
     >
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "4fr 32px",
-          gap: 10,
-          gridAutoRows: "auto",
-          paddingLeft: 20,
-          paddingRight: 20,
-        }}
-      >
-        <p readOnly={true}>Number of Players</p>
-        <select
-          onChange={selectPlayers}
-          value={numPlayers}
-          style={{ height: 32 }}
-        >
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-        </select>
-        <p readOnly={true}>{privacy === unlock ? "Public" : "Private"}</p>
-        <img
-          onClick={changePrivacy}
-          src={privacy}
-          alt="privacy"
-          style={{ height: 32, width: 32, cursor: "pointer" }}
-        ></img>
-      </div>
+      {showCreateOrDelete()}
+
       <button onClick={createGame} style={{ width: "100%" }}>
         Create Game
       </button>

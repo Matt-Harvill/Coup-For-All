@@ -8,13 +8,15 @@ import CoupCreateGameContext from "../components/CoupCreateGameContext";
 export default function Coup() {
   const [newChat, setNewChat] = useState("");
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const [games, setGames] = useState([]);
   const [chats, setChats] = useState([]);
 
   // Create Game State Details
+  const [games, setGames] = useState([]);
   const [privacy, setPrivacy] = useState(unlock);
   const [numPlayers, setNumPlayers] = useState("2");
   const createGameState = {
+    games,
+    setGames,
     privacy,
     setPrivacy,
     numPlayers,
