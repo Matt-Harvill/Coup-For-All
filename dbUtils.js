@@ -27,48 +27,53 @@ const updateUser = async (
   );
 };
 
-export const updateUserAndGame = async (user, game, deleteGame = false) => {
+export const updateUserAndGame = async (user, game, update) => {
   const session = await conn.startSession();
   session.startTransaction();
 
-  let transactError = false;
+  let transactSuccess = true;
 
   try {
-    // If game is being deleted
-    if (deleteGame) {
-      gameCollection.deleteOne({ gameID: game.gameID });
-      // Update all the users after deleting the game
-      for (let i = 0; i < game.players.length; i++) {
-        const user = game.players[i];
+    switch (update) {
+      case "deleteGame":
+        gameCollection.deleteOne({ gameID: game.gameID });
+        // Update all the users after deleting the game
+        for (let i = 0; i < game.players.length; i++) {
+          const user = game.players[i];
+          await updateUser(user, "", "", "", {}, session);
+        }
+        break;
+      case "createGame":
+      case "joinGame":
+        await game.save({ session });
+        await updateUser(
+          user,
+          game.gameTitle,
+          game.gameID,
+          game.status,
+          game.pStats.get(user),
+          session
+        );
+        break;
+      case "leaveGame":
+        await game.save({ session });
         await updateUser(user, "", "", "", {}, session);
-      }
-    }
-    // If game is being updated
-    else {
-      await game.save({ session });
-      await updateUser(
-        user,
-        game.gameTitle,
-        game.gameID,
-        game.status,
-        game.pStats.get(user),
-        session
-      );
+        break;
+      default:
+        throw "No update style specified in updateUserAndGame";
+        break;
     }
   } catch (err) {
     console.log(err);
-    transactError = true;
+    transactSuccess = false;
   }
 
-  let commitStatus;
-  if (transactError) {
-    await session.abortTransaction();
-    commitStatus = false;
-  } else {
+  if (transactSuccess) {
     await session.commitTransaction();
-    commitStatus = true;
+  } else {
+    await session.abortTransaction();
   }
 
   session.endSession();
-  return commitStatus;
+  return transactSuccess;
 };

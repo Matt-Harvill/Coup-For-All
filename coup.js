@@ -1,4 +1,4 @@
-import { gameCollection, io } from "./index.js";
+import { io } from "./index.js";
 import { CoupGame } from "./schemas.js";
 import * as dbUtils from "./dbUtils.js";
 import crypto from "crypto";
@@ -19,19 +19,19 @@ const getFormingGames = async () => {
 
 getFormingGames();
 
-export const addPlayer = (user) => {
+const addPlayer = (user) => {
   players.add(user);
 };
 
-export const removePlayer = (user) => {
+const removePlayer = (user) => {
   players.delete(user);
 };
 
-export const action = (user, action, target) => {
+const action = (user, action, target) => {
   console.log(`${user} called ${action} on ${target}`);
 };
 
-export const createGame = async (userObj, privacy, maxPlayers) => {
+const createGame = async (userObj, privacy, maxPlayers) => {
   // Prevent user from creating multiple games
   const currGameStatus = userObj.gameStatus;
   if (currGameStatus !== "completed" && currGameStatus !== "") {
@@ -75,14 +75,14 @@ export const createGame = async (userObj, privacy, maxPlayers) => {
     ],
   });
 
-  const committed = await dbUtils.updateUserAndGame(user, game);
+  const committed = await dbUtils.updateUserAndGame(user, game, "createGame");
   if (committed) {
     // Add game to memory
     games.add(game);
   }
 };
 
-export const deleteGame = async (userObj) => {
+const deleteGame = async (userObj) => {
   // Get the game
   const game = await CoupGame.findOne({
     gameID: userObj.gameID,
@@ -91,7 +91,7 @@ export const deleteGame = async (userObj) => {
   const committed = await dbUtils.updateUserAndGame(
     userObj.username,
     game,
-    true
+    "deleteGame"
   );
   if (committed) {
     // Delete game from memory
@@ -103,11 +103,11 @@ export const deleteGame = async (userObj) => {
   }
 };
 
-export const joinGame = async (userObj, gameID) => {
+const joinGame = async (userObj, gameID) => {
   // Get the game
   const game = await CoupGame.findOne({
     gameID: gameID,
-  });
+  }).exec();
 
   // If space for a joining player
   if (game.maxPlayers > game.players.length) {
@@ -119,7 +119,7 @@ export const joinGame = async (userObj, gameID) => {
     // Update pStats
     game.pStats[user] = pStat;
 
-    const committed = await dbUtils.updateUserAndGame(user, game);
+    const committed = await dbUtils.updateUserAndGame(user, game, "joinGame");
     if (committed) {
       // Update game in memory
       let gameToDelete;
@@ -132,6 +132,36 @@ export const joinGame = async (userObj, gameID) => {
         games.delete(gameToDelete);
         games.add(game);
       }
+    }
+  }
+};
+
+const leaveGame = async (userObj) => {
+  // Get the game
+  const game = await CoupGame.findOne({
+    gameID: userObj.gameID,
+  }).exec();
+
+  const user = userObj.username;
+  const pStat = { coins: 2, roles: ["", ""] };
+
+  // Update players
+  game.players = game.players.filter((player) => player !== user);
+  // Update pStats
+  game.pStats.delete(user);
+
+  const committed = await dbUtils.updateUserAndGame(user, game, "leaveGame");
+  if (committed) {
+    // Update game in memory
+    let gameToDelete;
+    games.forEach((gameInSet) => {
+      if (gameInSet.gameID === game.gameID) {
+        gameToDelete = gameInSet;
+      }
+    });
+    if (gameToDelete) {
+      games.delete(gameToDelete);
+      games.add(game);
     }
   }
 };
@@ -172,6 +202,14 @@ export const socketInit = (socket) => {
 
   socket.on("coup joinGame", async (gameID) => {
     await joinGame(socket.request.user, gameID);
+    socket.request.user = await dbUtils.getUserObj(
+      socket.request.user.username
+    ); // Update the socket's user object
+    sendGames();
+  });
+
+  socket.on("coup leaveGame", async (gameID) => {
+    await leaveGame(socket.request.user);
     socket.request.user = await dbUtils.getUserObj(
       socket.request.user.username
     ); // Update the socket's user object

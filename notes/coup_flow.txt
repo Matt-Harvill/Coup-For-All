@@ -19,3 +19,6 @@ All communication will go through the socket
 On the frontend - clear up the page changes with auth stuff - its doing weird stuff
 
 Also clean up the backend - clear up how the user object is stored in the socket session
+
+
+- Add leave game capability

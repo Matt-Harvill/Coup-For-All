@@ -44,6 +44,10 @@ export default function CoupCreateGame() {
     socket.emit("coup deleteGame");
   };
 
+  const leaveGame = () => {
+    socket.emit("coup leaveGame");
+  };
+
   const showCreateOrDelete = () => {
     if (inGame) {
       if (ownsGame) {
@@ -55,38 +59,60 @@ export default function CoupCreateGame() {
             Delete Game
           </button>
         );
+      } else {
+        return (
+          <button
+            onClick={leaveGame}
+            style={{ width: "100%", backgroundColor: "#FF5A5A" }}
+          >
+            Leave Game
+          </button>
+        );
       }
     } else {
       return (
         <div
           style={{
-            display: "grid",
-            gridTemplateColumns: "4fr 32px",
-            gap: 10,
-            gridAutoRows: "auto",
-            paddingLeft: 20,
-            paddingRight: 20,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            gap: 20,
+            width: "100%",
           }}
         >
-          <p readOnly={true}>Number of Players</p>
-          <select
-            onChange={selectPlayers}
-            value={numPlayers}
-            style={{ height: 32 }}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "4fr 32px",
+              gap: 10,
+              gridAutoRows: "auto",
+              paddingLeft: 20,
+              paddingRight: 20,
+            }}
           >
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-          </select>
-          <p readOnly={true}>{privacy === unlock ? "Public" : "Private"}</p>
-          <img
-            onClick={changePrivacy}
-            src={privacy}
-            alt="privacy"
-            style={{ height: 32, width: 32, cursor: "pointer" }}
-          ></img>
+            <p readOnly={true}>Number of Players</p>
+            <select
+              onChange={selectPlayers}
+              value={numPlayers}
+              style={{ height: 32 }}
+            >
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+            </select>
+            <p readOnly={true}>{privacy === unlock ? "Public" : "Private"}</p>
+            <img
+              onClick={changePrivacy}
+              src={privacy}
+              alt="privacy"
+              style={{ height: 32, width: 32, cursor: "pointer" }}
+            ></img>
+          </div>
+          <button onClick={createGame} style={{ width: "100%" }}>
+            Create Game
+          </button>
         </div>
       );
     }
@@ -94,21 +120,6 @@ export default function CoupCreateGame() {
 
   return (
     // <div className="popUp coupPopUp">
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "flex-start",
-        gap: 20,
-        width: "100%",
-      }}
-    >
-      {showCreateOrDelete()}
-
-      <button onClick={createGame} style={{ width: "100%" }}>
-        Create Game
-      </button>
-    </div>
-    // </div>
+    showCreateOrDelete()
   );
 }
