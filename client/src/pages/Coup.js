@@ -18,25 +18,37 @@ export default function Coup() {
   const [games, setGames] = useState([]);
   const [privacy, setPrivacy] = useState(unlock);
   const [numPlayers, setNumPlayers] = useState("2");
-  const [hasGame, setHasGame] = useState(false);
+  const [inGame, setInGame] = useState(false);
+  const [ownsGame, setOwnsGame] = useState(false);
   const coupGameState = {
     games,
     setGames,
-    hasGame,
-    setHasGame,
+    inGame,
+    setInGame,
+    ownsGame,
+    setOwnsGame,
     privacy,
     setPrivacy,
     numPlayers,
     setNumPlayers,
   };
 
-  // Check if user has created a game
+  // Check if user has created a game or owns a game
   useEffect(() => {
-    const userGame = games.find((game) => game.founder === user);
+    const userGame = games.find((game) => game.players.includes(user));
+
     if (userGame === undefined) {
-      setHasGame(false);
+      setInGame(false);
     } else {
-      setHasGame(true);
+      setInGame(true);
+    }
+
+    const founderOfGame = games.find((game) => game.founder === user);
+
+    if (founderOfGame === undefined) {
+      setOwnsGame(false);
+    } else {
+      setOwnsGame(true);
     }
   }, [games, user]);
 

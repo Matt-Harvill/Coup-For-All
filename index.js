@@ -37,6 +37,7 @@ mongoose.connect(mongoURI, {
   serverApi: ServerApiVersion.v1,
 });
 export const conn = mongoose.connection;
+export const gameCollection = conn.collection("games");
 
 // Passport Setup
 passport.use(User.createStrategy());

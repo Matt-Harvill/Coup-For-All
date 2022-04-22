@@ -25,6 +25,7 @@ const coupGameSchema = new mongoose.Schema({
   founder: String,
   status: String, // 'forming', 'in progress', 'completed'
   privacy: String, // 'public', 'private'
+  maxPlayers: Number,
   players: [String],
   pStats: Map,
   availRoles: [],
@@ -33,6 +34,6 @@ const coupGameSchema = new mongoose.Schema({
 
 userSchema.plugin(passportLocalMongoose);
 const User = new mongoose.model("User", userSchema);
-const CoupGame = new mongoose.model("CoupGame", coupGameSchema);
+const CoupGame = new mongoose.model("CoupGame", coupGameSchema, "games");
 
 export { userSchema, coupGameSchema, User, CoupGame };

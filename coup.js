@@ -1,6 +1,6 @@
-import { io } from "./index.js";
-import { CoupGame, User } from "./schemas.js";
-import * as utils from "./utils.js";
+import { gameCollection, io } from "./index.js";
+import { CoupGame } from "./schemas.js";
+import * as dbUtils from "./dbUtils.js";
 import crypto from "crypto";
 // Set of coup players in lobby
 const players = new Set();
@@ -31,7 +31,7 @@ export const action = (user, action, target) => {
   console.log(`${user} called ${action} on ${target}`);
 };
 
-export const createGame = async (userObj, privacy) => {
+export const createGame = async (userObj, privacy, maxPlayers) => {
   // Prevent user from creating multiple games
   const currGameStatus = userObj.gameStatus;
   if (currGameStatus !== "completed" && currGameStatus !== "") {
@@ -53,6 +53,7 @@ export const createGame = async (userObj, privacy) => {
     founder: user,
     status: "forming", // 'forming', 'in progress', 'complete'
     privacy: privacy, // 'public', 'private'
+    maxPlayers: maxPlayers,
     players: [user],
     pStats: pStats,
     availRoles: [
@@ -74,26 +75,64 @@ export const createGame = async (userObj, privacy) => {
     ],
   });
 
-  await utils.updateUserAndGame(user, game);
+  const committed = await dbUtils.updateUserAndGame(user, game);
+  if (committed) {
+    // Add game to memory
+    games.add(game);
+  }
 };
 
 export const deleteGame = async (userObj) => {
-  try {
-    const game = await utils.getCoupGame(userObj.gameID);
+  // Get the game
+  const game = await CoupGame.findOne({
+    gameID: userObj.gameID,
+  }).exec();
 
-    // Delete game from database
-    utils.deleteCoupGame(userObj.gameID);
-    // Update user in database
-    await utils.updateUser(userObj.username, "", "", "", {});
-
+  const committed = await dbUtils.updateUserAndGame(
+    userObj.username,
+    game,
+    true
+  );
+  if (committed) {
     // Delete game from memory
     games.forEach((gameInSet) => {
       if (gameInSet.gameID === game.gameID) {
         games.delete(gameInSet);
       }
     });
-  } catch (error) {
-    console.log(error);
+  }
+};
+
+export const joinGame = async (userObj, gameID) => {
+  // Get the game
+  const game = await CoupGame.findOne({
+    gameID: gameID,
+  });
+
+  // If space for a joining player
+  if (game.maxPlayers > game.players.length) {
+    const user = userObj.username;
+    const pStat = { coins: 2, roles: ["", ""] };
+
+    // Update players
+    game.players.push(user);
+    // Update pStats
+    game.pStats[user] = pStat;
+
+    const committed = await dbUtils.updateUserAndGame(user, game);
+    if (committed) {
+      // Update game in memory
+      let gameToDelete;
+      games.forEach((gameInSet) => {
+        if (gameInSet.gameID === game.gameID) {
+          gameToDelete = gameInSet;
+        }
+      });
+      if (gameToDelete) {
+        games.delete(gameToDelete);
+        games.add(game);
+      }
+    }
   }
 };
 
@@ -115,15 +154,27 @@ export const socketInit = (socket) => {
     sendGames();
   });
 
-  socket.on("coup createGame", async (privacy) => {
-    await createGame(socket.request.user, privacy);
-    socket.request.user = await utils.getUserObj(socket.request.user.username); // Update the socket's user object
+  socket.on("coup createGame", async (privacy, maxPlayers) => {
+    await createGame(socket.request.user, privacy, maxPlayers);
+    socket.request.user = await dbUtils.getUserObj(
+      socket.request.user.username
+    ); // Update the socket's user object
     sendGames();
   });
 
   socket.on("coup deleteGame", async () => {
     await deleteGame(socket.request.user);
-    socket.request.user = await utils.getUserObj(socket.request.user.username); // Update the socket's user object
+    socket.request.user = await dbUtils.getUserObj(
+      socket.request.user.username
+    ); // Update the socket's user object
+    sendGames();
+  });
+
+  socket.on("coup joinGame", async (gameID) => {
+    await joinGame(socket.request.user, gameID);
+    socket.request.user = await dbUtils.getUserObj(
+      socket.request.user.username
+    ); // Update the socket's user object
     sendGames();
   });
 

@@ -4,8 +4,10 @@ import { createContext } from "react";
 const CoupGameContext = createContext({
   games: "",
   setGames: () => {},
-  hasGame: false,
-  setHasGame: () => {},
+  inGame: false,
+  setInGame: () => {},
+  ownsGame: false,
+  setOwnsGame: () => {},
   privacy: "",
   setPrivacy: () => {},
   numPlayers: "",

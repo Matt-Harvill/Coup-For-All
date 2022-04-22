@@ -6,7 +6,7 @@ import CoupGameContext from "./CoupGameContext";
 import { socket } from "../socket";
 
 export default function CoupCreateGame() {
-  const { hasGame, privacy, setPrivacy, numPlayers, setNumPlayers } =
+  const { inGame, ownsGame, privacy, setPrivacy, numPlayers, setNumPlayers } =
     useContext(CoupGameContext);
 
   const changePrivacy = () => {
@@ -37,8 +37,7 @@ export default function CoupCreateGame() {
       alert("error creating game");
       return;
     }
-
-    socket.emit("coup createGame", privacyString);
+    socket.emit("coup createGame", privacyString, numPlayers);
   };
 
   const deleteGame = () => {
@@ -46,15 +45,17 @@ export default function CoupCreateGame() {
   };
 
   const showCreateOrDelete = () => {
-    if (hasGame) {
-      return (
-        <button
-          onClick={deleteGame}
-          style={{ width: "100%", backgroundColor: "#FF5A5A" }}
-        >
-          Delete Game
-        </button>
-      );
+    if (inGame) {
+      if (ownsGame) {
+        return (
+          <button
+            onClick={deleteGame}
+            style={{ width: "100%", backgroundColor: "#FF5A5A" }}
+          >
+            Delete Game
+          </button>
+        );
+      }
     } else {
       return (
         <div

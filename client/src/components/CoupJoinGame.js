@@ -4,19 +4,71 @@ import dropdown from "../images/dropdown.png";
 import dropup from "../images/dropup.png";
 import { useContext, useState } from "react";
 import CoupGameContext from "./CoupGameContext";
+import AppContext from "./AppContext";
+import { socket } from "../socket";
 
 export default function CoupJoinGame(props) {
-  const { hasGame } = useContext(CoupGameContext);
+  const { inGame } = useContext(CoupGameContext);
+  const { user } = useContext(AppContext);
   const [extended, setExtended] = useState(false);
+  const [inputGameID, setInputGameID] = useState("");
   const game = props.game;
   const privacy = game.privacy;
+  const maxPlayers = game.maxPlayers;
+  const numPlayers = game.players.length;
+  const gameID = game.gameID;
+
+  const inThisGame = game.players.includes(user);
 
   const extendTextInput = (boolExtend) => {
     setExtended(boolExtend);
   };
 
+  const handleChange = (e) => {
+    setInputGameID(e.target.value);
+  };
+
+  const joinGame = () => {
+    if (privacy === "public") {
+      // Allow joining the game
+      socket.emit("coup joinGame", gameID);
+    } else if (privacy === "private") {
+      if (gameID === inputGameID) {
+        // Allow joining the game
+        socket.emit("coup joinGame", gameID);
+      }
+    } else {
+      alert("privacy error");
+    }
+
+    // Reset inputGameID
+    setInputGameID("");
+  };
+
+  const displayGameIDForJoin = () => {
+    if (inThisGame && privacy === "private") {
+      return (
+        <div
+          style={{
+            display: "flex",
+            backgroundColor: "#c4c4c4",
+            padding: 10,
+            gap: 10,
+            alignItems: "center",
+          }}
+        >
+          <strong>Game ID:</strong>
+          <div></div>
+          <div style={{ border: "1px solid", paddingLeft: 5, paddingRight: 5 }}>
+            <strong>{gameID}</strong>
+          </div>
+        </div>
+      );
+    }
+  };
+
   const displayExtension = () => {
-    if (extended && !hasGame) {
+    if (extended && !inGame) {
       return (
         <div
           style={{
@@ -28,20 +80,21 @@ export default function CoupJoinGame(props) {
             // borderRadius: 10,
           }}
         >
-          {/* Adding a gap of flex so button is on other side */}
           <input
             placeholder="Enter gameID..."
             style={{ flex: 1, minWidth: 0 }}
+            onChange={handleChange}
+            value={inputGameID}
           ></input>
           {/* If player doesn't have a game, show the join game button*/}
-          <button>Join Game</button>
+          <button onClick={joinGame}>Join Game</button>
         </div>
       );
     }
   };
 
   const displayArrow = () => {
-    if (privacy === "private" && !hasGame) {
+    if (privacy === "private" && !inGame) {
       let srcImg;
       let boolExtend;
       if (extended) {
@@ -80,9 +133,17 @@ export default function CoupJoinGame(props) {
   };
 
   const displayJoinGameButton = () => {
-    if (privacy === "public" && !hasGame) {
-      return <button>Join Game</button>;
+    if (privacy === "public" && !inGame) {
+      return <button onClick={joinGame}>Join Game</button>;
     }
+  };
+
+  const displayPlayerCount = () => {
+    return (
+      <div>
+        <strong>{`${numPlayers}/${maxPlayers}`}</strong>
+      </div>
+    );
   };
 
   return (
@@ -107,12 +168,14 @@ export default function CoupJoinGame(props) {
         </div>
 
         {displayPrivacy()}
+        {displayPlayerCount()}
         {/* Adding a gap of flex so button is on other side */}
         <div style={{ flex: 1 }}></div>
         {/* If private game, show dropdown*/}
         {displayArrow()}
         {displayJoinGameButton()}
       </div>
+      {displayGameIDForJoin()}
       {displayExtension()}
     </div>
   );
