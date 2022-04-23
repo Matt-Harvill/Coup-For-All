@@ -11,6 +11,7 @@ import path from "path";
 import { ServerApiVersion } from "mongodb";
 import { User } from "./schemas.js";
 import * as coupLobby from "./coupLobby.js";
+import * as dbUtils from "./dbUtils.js";
 
 // Dirname Setup
 const __filename = fileURLToPath(import.meta.url);
@@ -102,8 +103,9 @@ io.on("connection", (socket) => {
   socketIDMap[username] = socket.id;
 
   // Get User
-  socket.on("get user", (callback) => {
-    callback(username); // Pass the user's name
+  socket.on("get userObj", async (callback) => {
+    const userObj = await dbUtils.getUserObj(username);
+    callback(userObj); // Pass the user's name
   });
 
   // Coup

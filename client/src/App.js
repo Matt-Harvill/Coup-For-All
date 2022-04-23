@@ -9,6 +9,13 @@ export default function App() {
   const [auth, setAuth] = useState("no auth");
   const [page, setPage] = useState("login");
   const [user, setUser] = useState("guest%");
+  const [userObj, setUserObj] = useState({
+    username: "",
+    gameTitle: "",
+    gameID: "",
+    gameStatus: "",
+    pStat: {},
+  });
 
   const state = {
     auth,
@@ -17,6 +24,8 @@ export default function App() {
     setPage,
     user,
     setUser,
+    userObj,
+    setUserObj,
   };
 
   useEffect(() => {

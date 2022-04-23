@@ -9,7 +9,7 @@ import AppContext from "../components/AppContext";
 import { allowedPage } from "../pageNavigator";
 
 export default function Coup() {
-  const { user, auth, page, setPage } = useContext(AppContext);
+  const { userObj, auth, page, setPage } = useContext(AppContext);
 
   const [newChat, setNewChat] = useState("");
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -36,7 +36,9 @@ export default function Coup() {
 
   // Check if user has created a game or owns a game
   useEffect(() => {
-    const userGame = games.find((game) => game.players.includes(user));
+    const userGame = games.find((game) =>
+      game.players.includes(userObj.username)
+    );
 
     if (userGame === undefined) {
       setInGame(false);
@@ -44,14 +46,16 @@ export default function Coup() {
       setInGame(true);
     }
 
-    const founderOfGame = games.find((game) => game.founder === user);
+    const founderOfGame = games.find(
+      (game) => game.founder === userObj.username
+    );
 
     if (founderOfGame === undefined) {
       setOwnsGame(false);
     } else {
       setOwnsGame(true);
     }
-  }, [games, user]);
+  }, [games, userObj.username]);
 
   // Setup coup socket listeners
   useEffect(() => {

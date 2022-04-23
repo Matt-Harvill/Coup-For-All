@@ -9,7 +9,7 @@ import { socket } from "../socket";
 
 export default function CoupJoinGame(props) {
   const { inGame } = useContext(CoupGameContext);
-  const { user } = useContext(AppContext);
+  const { userObj } = useContext(AppContext);
   const [extended, setExtended] = useState(false);
   const [inputGameID, setInputGameID] = useState("");
   const game = props.game;
@@ -18,7 +18,7 @@ export default function CoupJoinGame(props) {
   const numPlayers = game.players.length;
   const gameID = game.gameID;
 
-  const inThisGame = game.players.includes(user);
+  const inThisGame = game.players.includes(userObj.username);
 
   const extendTextInput = (boolExtend) => {
     setExtended(boolExtend);

@@ -6,8 +6,14 @@ const AppContext = createContext({
   setAuth: () => {},
   page: "",
   setPage: () => {},
-  user: "",
-  setUser: () => {},
+  userObj: {
+    username: "",
+    gameTitle: "",
+    gameID: "",
+    gameStatus: "",
+    pStat: {},
+  },
+  setUserObj: () => {},
 });
 
 export default AppContext;

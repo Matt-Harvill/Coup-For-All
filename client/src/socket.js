@@ -27,8 +27,17 @@ export const socketInit = (appState) => {
 
   socket.on("connect", () => {
     appState.setAuth("auth");
-    socket.emit("get user", (callback) => {
-      appState.setUser(callback);
+    socket.emit("get userObj", (callback) => {
+      let fullUserObj = callback;
+      // Only take properties that are necessary
+      const userObj = {
+        username: fullUserObj.username,
+        gameTitle: fullUserObj.gameTitle,
+        gameID: fullUserObj.gameID,
+        gameStatus: fullUserObj.gameStatus,
+        pStat: fullUserObj.pStat,
+      };
+      appState.setUserObj(userObj);
     });
   });
 
