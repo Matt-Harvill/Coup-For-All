@@ -1,6 +1,6 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import AppContext from "./AppContext";
-import Coup from "../pages/Coup";
+import CoupLobby from "../pages/CoupLobby";
 import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
@@ -18,7 +18,7 @@ export default function PageDisplayer() {
       case "home":
         return <Home />;
       case "coup":
-        return <Coup />;
+        return <CoupLobby />;
       case "splendor":
         return <Splendor />;
       default:

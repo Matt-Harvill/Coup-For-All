@@ -143,7 +143,6 @@ const leaveGame = async (userObj) => {
   }).exec();
 
   const user = userObj.username;
-  const pStat = { coins: 2, roles: ["", ""] };
 
   // Update players
   game.players = game.players.filter((player) => player !== user);

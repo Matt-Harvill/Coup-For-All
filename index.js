@@ -10,7 +10,7 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { ServerApiVersion } from "mongodb";
 import { User } from "./schemas.js";
-import * as coup from "./coup.js";
+import * as coupLobby from "./coupLobby.js";
 
 // Dirname Setup
 const __filename = fileURLToPath(import.meta.url);
@@ -107,7 +107,7 @@ io.on("connection", (socket) => {
   });
 
   // Coup
-  coup.socketInit(socket);
+  coupLobby.socketInit(socket);
 
   // Disconnect
   socket.on("disconnect", () => {
