@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import AppContext from "./components/AppContext";
-import AuthPageSwitcher from "./components/AuthPageSwitcher";
+import PageSwitcher from "./components/PageSwitcher";
 import Navbar from "./components/Navbar";
 import PageDisplayer from "./components/PageDisplayer";
 import UserObjUpdater from "./components/UserObjUpdater";
@@ -40,7 +40,7 @@ export default function App() {
       {/* <p>{`newPage: ${newPage}, page ${page}`}</p> */}
       <Navbar />
       <PageDisplayer />
-      <AuthPageSwitcher />
+      <PageSwitcher />
       <UserObjUpdater />
     </AppContext.Provider>
   );

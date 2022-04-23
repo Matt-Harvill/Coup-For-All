@@ -4,7 +4,8 @@ import "../styles/Navbar.css";
 import { allowedPage } from "../pageNavigator";
 
 export default function Navbar() {
-  const { page, setPage, auth } = useContext(AppContext);
+  const { setPage, auth } = useContext(AppContext);
+  const appState = useContext(AppContext);
 
   const logout = async () => {
     const response = await fetch("/logout", {
@@ -25,7 +26,7 @@ export default function Navbar() {
         <span
           style={{ cursor: "pointer", flex: 1 }}
           onClick={() => {
-            setPage(allowedPage(auth, page, "home"));
+            setPage(allowedPage(appState, "home"));
           }}
         >
           Home
@@ -38,7 +39,7 @@ export default function Navbar() {
         <span
           style={{ cursor: "pointer" }}
           onClick={() => {
-            setPage(allowedPage(auth, page, "coupGame"));
+            setPage(allowedPage(appState, "coupGame"));
           }}
         >
           CoupGame (temp)
@@ -49,7 +50,7 @@ export default function Navbar() {
         <span
           style={{ cursor: "pointer" }}
           onClick={() => {
-            setPage(allowedPage(auth, page, "coup"));
+            setPage(allowedPage(appState, "coup"));
           }}
         >
           Coup
@@ -60,7 +61,7 @@ export default function Navbar() {
         <span
           style={{ cursor: "pointer" }}
           onClick={() => {
-            setPage(allowedPage(auth, page, "splendor"));
+            setPage(allowedPage(appState, "splendor"));
           }}
         >
           Splendor
