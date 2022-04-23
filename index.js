@@ -105,7 +105,8 @@ io.on("connection", (socket) => {
   // Get User
   socket.on("get userObj", async (callback) => {
     const userObj = await dbUtils.getUserObj(username);
-    callback(userObj); // Pass the user's name
+    socket.request.user = userObj; // Update the user's socket
+    callback(userObj); // Pass the userObj back to client
   });
 
   // Coup

@@ -43,6 +43,13 @@ export const socketInit = (appState) => {
 
   socket.on("disconnect", () => {
     appState.setAuth("no auth");
+    appState.setUserObj({
+      username: "",
+      gameTitle: "",
+      gameID: "",
+      gameStatus: "",
+      pStat: {},
+    });
     socket.connect();
   });
 };

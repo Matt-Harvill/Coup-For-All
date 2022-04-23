@@ -6,10 +6,9 @@ import "../styles/Coup.css";
 import CoupGameContext from "../components/CoupGameContext";
 import CoupJoinGame from "../components/CoupJoinGame";
 import AppContext from "../components/AppContext";
-import { allowedPage } from "../pageNavigator";
 
 export default function Coup() {
-  const { userObj, auth, page, setPage } = useContext(AppContext);
+  const { userObj } = useContext(AppContext);
 
   const [newChat, setNewChat] = useState("");
   const [onlineUsers, setOnlineUsers] = useState([]);
@@ -71,10 +70,6 @@ export default function Coup() {
       setChats((oldChats) => [...oldChats, [user, message]]);
     });
 
-    socket.on("coup startGame", () => {
-      setPage(allowedPage(auth, page, "coupGame"));
-    });
-
     socket.emit("coup addPlayer");
     socket.emit("coup games");
 
@@ -82,7 +77,6 @@ export default function Coup() {
       socket.off("coup online"); // remove coup online listener
       socket.off("coup chat"); // remove chat listener
       socket.off("coup games"); // remove games listener
-      socket.off("coup startGame"); // remove startGame listener
       socket.emit("coup removePlayer");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps

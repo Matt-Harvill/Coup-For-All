@@ -46,14 +46,18 @@ export const updateUserAndGame = async (user, game, update) => {
       case "createGame":
       case "joinGame":
         await game.save({ session });
-        await updateUser(
-          user,
-          game.gameTitle,
-          game.gameID,
-          game.status,
-          game.pStats.get(user),
-          session
-        );
+        // Update all the users after someone joins the game, or created (just that user anyways)
+        for (let i = 0; i < game.players.length; i++) {
+          const user = game.players[i];
+          await updateUser(
+            user,
+            game.gameTitle,
+            game.gameID,
+            game.status,
+            game.pStats.get(user),
+            session
+          );
+        }
         break;
       case "leaveGame":
         await game.save({ session });

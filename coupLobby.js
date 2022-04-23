@@ -3,6 +3,7 @@ import { CoupGame } from "./schemas.js";
 import * as dbUtils from "./dbUtils.js";
 import crypto from "crypto";
 import { socketIDMap } from "./index.js";
+import * as socketUtils from "./socketUtils.js";
 
 // Set of coup players in lobby
 const players = new Set();
@@ -116,10 +117,17 @@ const joinGame = async (userObj, gameID) => {
     const user = userObj.username;
     const pStat = { coins: 2, roles: ["", ""] };
 
+    let gameFull = false;
+    // If this fills the game, set its status to in progress
+    if (game.players.length + 1 === game.maxPlayers) {
+      gameFull = true;
+    }
     // Update players
     game.players.push(user);
     // Update pStats
-    game.pStats[user] = pStat;
+    game.pStats.set(user, pStat);
+    // Update status
+    game.status = gameFull ? "in progress" : game.status;
 
     const committed = await dbUtils.updateUserAndGame(user, game, "joinGame");
     if (committed) {
@@ -135,20 +143,13 @@ const joinGame = async (userObj, gameID) => {
         games.add(game);
       }
 
-      // If game is filled, start it
-      if (game.players.length === game.maxPlayers) {
-        const players = game.players;
-        for (let i = 0; i < players.length; i++) {
-          const userSocketID = socketIDMap[players[i]];
-          // If userSocketID is defined (will be undefined if user isn't currently connected)
-          if (userSocketID !== undefined) {
-            const userSocket = io.sockets.sockets.get(userSocketID);
-            userSocket.emit("coup startGame"); // Alert players that game is started
-          }
-        }
+      if (gameFull) {
+        return game;
       }
     }
   }
+
+  return undefined;
 };
 
 const leaveGame = async (userObj) => {
@@ -200,33 +201,40 @@ export const socketInit = (socket) => {
 
   socket.on("coup createGame", async (privacy, maxPlayers) => {
     await createGame(socket.request.user, privacy, maxPlayers);
-    socket.request.user = await dbUtils.getUserObj(
-      socket.request.user.username
-    ); // Update the socket's user object
+    await socketUtils.updateUserSocketAndClient(socket);
     sendGames();
   });
 
   socket.on("coup deleteGame", async () => {
     await deleteGame(socket.request.user);
-    socket.request.user = await dbUtils.getUserObj(
-      socket.request.user.username
-    ); // Update the socket's user object
+    await socketUtils.updateUserSocketAndClient(socket);
     sendGames();
   });
 
   socket.on("coup joinGame", async (gameID) => {
-    await joinGame(socket.request.user, gameID);
-    socket.request.user = await dbUtils.getUserObj(
-      socket.request.user.username
-    ); // Update the socket's user object
+    const game = await joinGame(socket.request.user, gameID); // joinGame returns game if it filled
+    if (game !== undefined) {
+      // Loop through sockets of players in this game if it filled to update them -> status changed to "in progress"
+      const players = game.players;
+      for (let i = 0; i < players.length; i++) {
+        const userSocketID = socketIDMap[players[i]];
+        // If userSocketID is defined (will be undefined if user isn't currently connected)
+        if (userSocketID !== undefined) {
+          const userSocket = io.sockets.sockets.get(userSocketID);
+          await socketUtils.updateUserSocketAndClient(userSocket); // Alert players of updates
+        }
+      }
+    } else {
+      // Just update the single player if it didn't fill the game
+      await socketUtils.updateUserSocketAndClient(socket);
+    }
+
     sendGames();
   });
 
-  socket.on("coup leaveGame", async (gameID) => {
+  socket.on("coup leaveGame", async () => {
     await leaveGame(socket.request.user);
-    socket.request.user = await dbUtils.getUserObj(
-      socket.request.user.username
-    ); // Update the socket's user object
+    await socketUtils.updateUserSocketAndClient(socket);
     sendGames();
   });
 
