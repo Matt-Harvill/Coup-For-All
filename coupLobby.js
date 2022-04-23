@@ -8,14 +8,14 @@ import * as socketUtils from "./socketUtils.js";
 // Set of coup players in lobby
 const players = new Set();
 // Set of coup games forming in lobby
-export const games = new Set();
+export const formingGames = new Set();
 
 const getFormingGames = async () => {
   const dbGames = await CoupGame.find({ status: "forming" }).exec();
 
   if (dbGames) {
     dbGames.forEach((game) => {
-      games.add(game);
+      formingGames.add(game);
     });
   }
 };
@@ -81,7 +81,7 @@ const createGame = async (userObj, privacy, maxPlayers) => {
   const committed = await dbUtils.updateUserAndGame(user, game, "createGame");
   if (committed) {
     // Add game to memory
-    games.add(game);
+    formingGames.add(game);
   }
 };
 
@@ -98,9 +98,9 @@ const deleteGame = async (userObj) => {
   );
   if (committed) {
     // Delete game from memory
-    games.forEach((gameInSet) => {
+    formingGames.forEach((gameInSet) => {
       if (gameInSet.gameID === game.gameID) {
-        games.delete(gameInSet);
+        formingGames.delete(gameInSet);
       }
     });
   }
@@ -133,14 +133,17 @@ const joinGame = async (userObj, gameID) => {
     if (committed) {
       // Update game in memory
       let gameToDelete;
-      games.forEach((gameInSet) => {
+      formingGames.forEach((gameInSet) => {
         if (gameInSet.gameID === game.gameID) {
           gameToDelete = gameInSet;
         }
       });
       if (gameToDelete) {
-        games.delete(gameToDelete);
-        games.add(game);
+        formingGames.delete(gameToDelete);
+        // Only add game back to list if game is still forming
+        if (game.status === "forming") {
+          formingGames.add(game);
+        }
       }
 
       if (gameFull) {
@@ -160,30 +163,45 @@ const leaveGame = async (userObj) => {
 
   const user = userObj.username;
 
-  // Update players
-  game.players = game.players.filter((player) => player !== user);
-  // Update pStats
-  game.pStats.delete(user);
+  // If game is empty now, delete the game
+  let gameDeleted;
+  let committed;
+  if (game.players.length === 0) {
+    committed = await dbUtils.updateUserAndGame(user, game, "deleteGame");
+    gameDeleted = true;
+  } else {
+    // Otherwise just indicate a player left the game
 
-  const committed = await dbUtils.updateUserAndGame(user, game, "leaveGame");
+    // Update players
+    game.players = game.players.filter((player) => player !== user);
+    // Update pStats
+    game.pStats.delete(user);
+
+    committed = await dbUtils.updateUserAndGame(user, game, "leaveGame");
+    gameDeleted = false;
+  }
+
   if (committed) {
     // Update game in memory
     let gameToDelete;
-    games.forEach((gameInSet) => {
+    formingGames.forEach((gameInSet) => {
       if (gameInSet.gameID === game.gameID) {
         gameToDelete = gameInSet;
       }
     });
     if (gameToDelete) {
-      games.delete(gameToDelete);
-      games.add(game);
+      formingGames.delete(gameToDelete);
+      // If game still exists, add the updated version
+      if (!gameDeleted) {
+        formingGames.add(game);
+      }
     }
   }
 };
 
-const sendGames = () => {
+const sendFormingGames = () => {
   // console.log(`Num games: ${games.size}`);
-  io.emit("coup games", Array.from(games));
+  io.emit("coup games", Array.from(formingGames));
 };
 
 const sendOnline = () => {
@@ -193,7 +211,7 @@ const sendOnline = () => {
 export const leaveGameHandler = async (socket) => {
   await leaveGame(socket.request.user);
   await socketUtils.updateUserSocketAndClient(socket);
-  sendGames();
+  sendFormingGames();
 };
 
 export const socketInit = (socket) => {
@@ -202,19 +220,19 @@ export const socketInit = (socket) => {
   });
 
   socket.on("coup games", () => {
-    sendGames();
+    sendFormingGames();
   });
 
   socket.on("coup createGame", async (privacy, maxPlayers) => {
     await createGame(socket.request.user, privacy, maxPlayers);
     await socketUtils.updateUserSocketAndClient(socket);
-    sendGames();
+    sendFormingGames();
   });
 
   socket.on("coup deleteGame", async () => {
     await deleteGame(socket.request.user);
     await socketUtils.updateUserSocketAndClient(socket);
-    sendGames();
+    sendFormingGames();
   });
 
   socket.on("coup joinGame", async (gameID) => {
@@ -235,7 +253,7 @@ export const socketInit = (socket) => {
       await socketUtils.updateUserSocketAndClient(socket);
     }
 
-    sendGames();
+    sendFormingGames();
   });
 
   socket.on("coup addPlayer", () => {
