@@ -8,10 +8,10 @@ export default function PageSwitcher() {
   useEffect(() => {
     switch (auth) {
       case "auth":
-        handleAuth();
+        setNewPage("home");
         break;
       case "no auth":
-        handleNoAuth();
+        setNewPage("login");
         break;
       default:
         alert("Error with auth states");
@@ -34,12 +34,4 @@ export default function PageSwitcher() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userObj.gameStatus]);
-
-  const handleAuth = () => {
-    setNewPage("home");
-  };
-
-  const handleNoAuth = () => {
-    setNewPage("login");
-  };
 }
