@@ -45,7 +45,7 @@ export default function CoupCreateGame() {
   };
 
   const leaveGame = () => {
-    socket.emit("coup leaveGame");
+    socket.emit("leaveGame", "coup");
   };
 
   const showCreateOrDelete = () => {

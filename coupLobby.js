@@ -190,6 +190,12 @@ const sendOnline = () => {
   io.emit("coup online", Array.from(players));
 };
 
+export const leaveGameHandler = async (socket) => {
+  await leaveGame(socket.request.user);
+  await socketUtils.updateUserSocketAndClient(socket);
+  sendGames();
+};
+
 export const socketInit = (socket) => {
   socket.on("coup chat", (message) => {
     io.emit("coup chat", socket.request.user.username, message);
@@ -229,12 +235,6 @@ export const socketInit = (socket) => {
       await socketUtils.updateUserSocketAndClient(socket);
     }
 
-    sendGames();
-  });
-
-  socket.on("coup leaveGame", async () => {
-    await leaveGame(socket.request.user);
-    await socketUtils.updateUserSocketAndClient(socket);
     sendGames();
   });
 

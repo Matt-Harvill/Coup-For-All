@@ -109,6 +109,18 @@ io.on("connection", (socket) => {
     callback(userObj); // Pass the userObj back to client
   });
 
+  // Leave Game
+  socket.on("leaveGame", async (gameTitle) => {
+    switch (gameTitle) {
+      case "coup":
+        coupLobby.leaveGameHandler(socket);
+        break;
+
+      default:
+        break;
+    }
+  });
+
   // Coup
   coupLobby.socketInit(socket);
 

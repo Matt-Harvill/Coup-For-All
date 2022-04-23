@@ -22,15 +22,22 @@ export default function PageSwitcher() {
 
   // Switch the page to current game when user enters a game
   useEffect(() => {
-    if (userObj.gameStatus === "in progress") {
-      switch (userObj.gameTitle) {
-        case "coup":
-          setNewPage("coupGame");
-          break;
+    switch (userObj.gameStatus) {
+      case "in progress":
+        switch (userObj.gameTitle) {
+          case "coup":
+            setNewPage("coupGame");
+            break;
 
-        default:
-          break;
-      }
+          default:
+            break;
+        }
+        break;
+      case "":
+        setNewPage("home");
+        break;
+      default:
+        break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userObj.gameStatus]);

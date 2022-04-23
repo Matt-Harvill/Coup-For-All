@@ -1,9 +1,10 @@
 import { useContext } from "react";
 import AppContext from "./AppContext";
 import "../styles/Navbar.css";
+import { socket } from "../socket";
 
 export default function Navbar() {
-  const { setNewPage, auth } = useContext(AppContext);
+  const { setNewPage, auth, userObj } = useContext(AppContext);
 
   const logout = async () => {
     const response = await fetch("/logout", {
@@ -14,6 +15,10 @@ export default function Navbar() {
     if (response.status !== 200) {
       alert("Failed to logout");
     }
+  };
+
+  const leaveGame = () => {
+    socket.emit("leaveGame", userObj.gameTitle);
   };
 
   return (
@@ -64,6 +69,12 @@ export default function Navbar() {
         >
           Splendor
         </span>
+      )}
+
+      {userObj.gameStatus === "in progress" && (
+        <button onClick={leaveGame} style={{ backgroundColor: "#FF5A5A" }}>
+          Leave Game
+        </button>
       )}
 
       {auth === "auth" && <button onClick={logout}>Logout</button>}
