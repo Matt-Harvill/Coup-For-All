@@ -93,7 +93,7 @@ io.use((socket, next) => {
   }
 });
 
-const socketIDMap = {}; // Keep track of socket ids so they can be deleted
+export const socketIDMap = {}; // Keep track of socket ids so they can be deleted
 
 io.on("connection", (socket) => {
   console.log("New client connected");

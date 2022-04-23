@@ -38,6 +38,17 @@ export default function Navbar() {
         <span
           style={{ cursor: "pointer" }}
           onClick={() => {
+            setPage(allowedPage(auth, page, "coupGame"));
+          }}
+        >
+          CoupGame (temp)
+        </span>
+      )}
+
+      {auth === "auth" && (
+        <span
+          style={{ cursor: "pointer" }}
+          onClick={() => {
             setPage(allowedPage(auth, page, "coup"));
           }}
         >

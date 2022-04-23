@@ -2,6 +2,8 @@ import { io } from "./index.js";
 import { CoupGame } from "./schemas.js";
 import * as dbUtils from "./dbUtils.js";
 import crypto from "crypto";
+import { socketIDMap } from "./index.js";
+
 // Set of coup players in lobby
 const players = new Set();
 // Set of coup games forming in lobby
@@ -131,6 +133,19 @@ const joinGame = async (userObj, gameID) => {
       if (gameToDelete) {
         games.delete(gameToDelete);
         games.add(game);
+      }
+
+      // If game is filled, start it
+      if (game.players.length === game.maxPlayers) {
+        const players = game.players;
+        for (let i = 0; i < players.length; i++) {
+          const userSocketID = socketIDMap[players[i]];
+          // If userSocketID is defined (will be undefined if user isn't currently connected)
+          if (userSocketID !== undefined) {
+            const userSocket = io.sockets.sockets.get(userSocketID);
+            userSocket.emit("coup startGame"); // Alert players that game is started
+          }
+        }
       }
     }
   }

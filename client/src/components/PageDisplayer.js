@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Splendor from "../pages/Splendor";
+import CoupGame from "../pages/CoupGame";
 
 export default function PageDisplayer() {
   const { page } = useContext(AppContext);
@@ -19,6 +20,8 @@ export default function PageDisplayer() {
         return <Home />;
       case "coup":
         return <CoupLobby />;
+      case "coupGame":
+        return <CoupGame />;
       case "splendor":
         return <Splendor />;
       default:
