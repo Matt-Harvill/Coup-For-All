@@ -1,10 +1,8 @@
 import { useContext, useEffect } from "react";
 import AppContext from "./AppContext";
-import { allowedPage } from "../pageNavigator";
 
 export default function PageSwitcher() {
-  const { auth, userObj, setPage } = useContext(AppContext);
-  const appState = useContext(AppContext);
+  const { auth, userObj, setNewPage } = useContext(AppContext);
 
   // When auth/page changes, update pages (if authed for them)
   useEffect(() => {
@@ -27,7 +25,7 @@ export default function PageSwitcher() {
     if (userObj.gameStatus === "in progress") {
       switch (userObj.gameTitle) {
         case "coup":
-          setPage(allowedPage(appState, "coupGame"));
+          setNewPage("coupGame");
           break;
 
         default:
@@ -38,10 +36,10 @@ export default function PageSwitcher() {
   }, [userObj.gameStatus]);
 
   const handleAuth = () => {
-    setPage("home");
+    setNewPage("home");
   };
 
   const handleNoAuth = () => {
-    setPage("login");
+    setNewPage("login");
   };
 }

@@ -5,7 +5,7 @@ const AppContext = createContext({
   auth: "",
   setAuth: () => {},
   page: "",
-  setPage: () => {},
+  setNewPage: () => {},
   userObj: {
     username: "",
     gameTitle: "",

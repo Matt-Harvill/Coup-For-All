@@ -5,6 +5,7 @@ import Navbar from "./components/Navbar";
 import PageDisplayer from "./components/PageDisplayer";
 import UserObjUpdater from "./components/UserObjUpdater";
 import { socketInit } from "./socket";
+import { allowedPage } from "./allowedPage";
 
 export default function App() {
   const [auth, setAuth] = useState("no auth");
@@ -17,12 +18,15 @@ export default function App() {
     gameStatus: "",
     pStat: {},
   });
+  const setNewPage = (desiredPage) => {
+    setPage(allowedPage(userObj, auth, page, desiredPage));
+  };
 
   const state = {
     auth,
     setAuth,
     page,
-    setPage,
+    setNewPage,
     user,
     setUser,
     userObj,
@@ -36,8 +40,7 @@ export default function App() {
 
   return (
     <AppContext.Provider value={state}>
-      {JSON.stringify(userObj)}
-      {/* <p>{`newPage: ${newPage}, page ${page}`}</p> */}
+      {/* {JSON.stringify(userObj)} */}
       <Navbar />
       <PageDisplayer />
       <PageSwitcher />

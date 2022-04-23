@@ -1,8 +1,4 @@
-export const allowedPage = (appState, desiredPage) => {
-  const userObj = appState.userObj;
-  const auth = appState.auth;
-  const currPage = appState.page;
-
+export const allowedPage = (userObj, auth, currPage, desiredPage) => {
   if (auth === "auth") {
     if (desiredPage !== "login" && desiredPage !== "register") {
       // If user is in a game, send them to that page
