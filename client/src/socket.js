@@ -27,7 +27,7 @@ export const socketInit = (appState) => {
 
   socket.on("connect", () => {
     appState.setAuth("auth");
-    socket.emit("get userObj", (callback) => {
+    socket.emit("getUserObj", (callback) => {
       let fullUserObj = callback;
       // Only take properties that are necessary
       const userObj = {

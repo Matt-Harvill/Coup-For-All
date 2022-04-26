@@ -37,7 +37,7 @@ export default function CoupCreateGame() {
       alert("error creating game");
       return;
     }
-    socket.emit("coup createGame", privacyString, numPlayers);
+    socket.emit("createGame", "coup", privacyString, numPlayers);
   };
 
   const deleteGame = () => {

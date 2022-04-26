@@ -8,7 +8,7 @@ import * as socketUtils from "./socketUtils.js";
 // Set of coup players in lobby
 const players = new Set();
 // Set of coup games forming in lobby
-export const formingGames = new Set();
+const formingGames = new Set();
 
 const getFormingGames = async () => {
   const dbGames = await CoupGame.find({ status: "forming" }).exec();
@@ -208,10 +208,28 @@ const sendOnline = () => {
   io.emit("coup online", Array.from(players));
 };
 
-export const leaveGameHandler = async (socket) => {
+const leaveGameHandler = async (socket) => {
   await leaveGame(socket.request.user);
   await socketUtils.updateUserSocketAndClient(socket);
   sendFormingGames();
+};
+
+const createGameHandler = async (socket, privacy, maxPlayers) => {
+  await createGame(socket.request.user, privacy, maxPlayers);
+  await socketUtils.updateUserSocketAndClient(socket);
+  sendFormingGames();
+};
+
+export const eventSwitch = async (event, socket, ...args) => {
+  switch (event) {
+    case "leaveGame":
+      leaveGameHandler(socket);
+      break;
+    case "createGame":
+      createGameHandler(socket, ...args);
+    default:
+      break;
+  }
 };
 
 export const socketInit = (socket) => {
@@ -223,12 +241,6 @@ export const socketInit = (socket) => {
     sendFormingGames();
   });
 
-  socket.on("coup createGame", async (privacy, maxPlayers) => {
-    await createGame(socket.request.user, privacy, maxPlayers);
-    await socketUtils.updateUserSocketAndClient(socket);
-    sendFormingGames();
-  });
-
   socket.on("coup deleteGame", async () => {
     await deleteGame(socket.request.user);
     await socketUtils.updateUserSocketAndClient(socket);
@@ -237,6 +249,7 @@ export const socketInit = (socket) => {
 
   socket.on("coup joinGame", async (gameID) => {
     const game = await joinGame(socket.request.user, gameID); // joinGame returns game if it filled
+    // If game is filled now:
     if (game !== undefined) {
       // Loop through sockets of players in this game if it filled to update them -> status changed to "in progress"
       const players = game.players;
@@ -252,7 +265,6 @@ export const socketInit = (socket) => {
       // Just update the single player if it didn't fill the game
       await socketUtils.updateUserSocketAndClient(socket);
     }
-
     sendFormingGames();
   });
 
