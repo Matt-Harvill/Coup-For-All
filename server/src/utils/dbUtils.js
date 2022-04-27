@@ -1,5 +1,5 @@
-import { User } from "./schemas.js";
-import { conn, gameCollection } from "./index.js";
+import { User } from "../schemas.js";
+import { conn, gameCollection } from "../index.js";
 
 export const getUserObj = async (username) => {
   return await User.findOne({

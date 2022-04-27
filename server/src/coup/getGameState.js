@@ -1,4 +1,4 @@
-import * as dbUtils from "../dbUtils.js";
+import * as dbUtils from "../utils/dbUtils.js";
 import { publicGameState } from "./publicGameState.js";
 
 export const getGameState = async (socket) => {

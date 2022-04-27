@@ -1,7 +1,7 @@
-import * as dbUtils from "../dbUtils.js";
+import * as dbUtils from "../utils/dbUtils.js";
 import { CoupGame } from "../schemas.js";
 import { coupFormingGames, sendFormingGames } from "./coup.js";
-import { updateUserSocketAndClient } from "../socketUtils.js";
+import { updateUserSocketAndClient } from "../utils/socketUtils.js";
 
 export const joinGame = async (socket, gameID) => {
   const userObj = socket.request.user;

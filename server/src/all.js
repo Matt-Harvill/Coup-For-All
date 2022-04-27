@@ -1,4 +1,4 @@
-import * as dbUtils from "./dbUtils.js";
+import * as dbUtils from "./utils/dbUtils.js";
 
 const getUserObjHandler = async (socket, callback) => {
   const userObj = await dbUtils.getUserObj(socket.request.user.username);

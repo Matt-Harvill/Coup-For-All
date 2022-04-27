@@ -1,4 +1,4 @@
-import * as dbUtils from "../dbUtils.js";
+import * as dbUtils from "../utils/dbUtils.js";
 
 export const assignRoles = async (game) => {
   const pStats = game.pStats;

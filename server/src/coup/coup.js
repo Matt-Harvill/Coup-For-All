@@ -1,6 +1,6 @@
 import { io } from "../index.js";
 import { CoupGame } from "../schemas.js";
-import { allOnlinePlayers } from "../allOnlinePlayers.js";
+import { allOnlinePlayers } from "../utils/socketUtils.js";
 // Coup Modules
 import { createGame } from "./createGame.js";
 import { deleteGame } from "./deleteGame.js";

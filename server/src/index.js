@@ -11,8 +11,8 @@ import path from "path";
 import { ServerApiVersion } from "mongodb";
 import { User } from "./schemas.js";
 import socketGroupSwitch from "./socketGroupSwitch.js";
-import { allOnlinePlayers } from "./allOnlinePlayers.js";
-import { socketIDMap } from "./socketUtils.js";
+import { socketIDMap } from "./utils/socketUtils.js";
+import { allOnlinePlayers } from "./utils/socketUtils.js";
 
 // Dirname Setup
 const __filename = fileURLToPath(import.meta.url);
