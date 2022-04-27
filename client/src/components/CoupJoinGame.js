@@ -146,6 +146,20 @@ export default function CoupJoinGame(props) {
     );
   };
 
+  const displayLoading = () => {
+    if (inThisGame) {
+      return (
+        <div
+          className="spinner-border"
+          role="status"
+          style={{ height: 32, width: 32 }}
+        >
+          <span className="sr-only"></span>
+        </div>
+      );
+    }
+  };
+
   return (
     <div>
       <div
@@ -174,6 +188,7 @@ export default function CoupJoinGame(props) {
         {/* If private game, show dropdown*/}
         {displayArrow()}
         {displayJoinGameButton()}
+        {displayLoading()}
       </div>
       {displayGameIDForJoin()}
       {displayExtension()}

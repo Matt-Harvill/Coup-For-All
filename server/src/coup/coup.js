@@ -1,6 +1,5 @@
 import { io } from "../index.js";
 import { CoupGame } from "../schemas.js";
-import * as dbUtils from "../dbUtils.js";
 import { allOnlinePlayers } from "../allOnlinePlayers.js";
 // Coup Modules
 import { createGame } from "./createGame.js";
