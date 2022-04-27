@@ -7,6 +7,10 @@ export const getUserObj = async (username) => {
   }).exec();
 };
 
+export const getGame = async (gameID) => {
+  return await gameCollection.findOne({ gameID: gameID });
+};
+
 const updateUser = async (
   username,
   gameTitle,
@@ -36,13 +40,18 @@ export const updateUserAndGame = async (user, game, update) => {
   try {
     switch (update) {
       case "deleteGame":
-        gameCollection.deleteOne({ gameID: game.gameID });
+        await gameCollection.deleteOne({ gameID: game.gameID });
         // Update all the users after deleting the game
         for (let i = 0; i < game.players.length; i++) {
           const user = game.players[i];
           await updateUser(user, "", "", "", {}, session);
         }
         break;
+      case "lastPlayerLeft":
+        await gameCollection.deleteOne({ gameID: game.gameID });
+        await updateUser(user, "", "", "", {}, session);
+        break;
+      case "assignRoles":
       case "createGame":
       case "joinGame":
         await game.save({ session });
@@ -65,7 +74,6 @@ export const updateUserAndGame = async (user, game, update) => {
         break;
       default:
         throw "No update style specified in updateUserAndGame";
-        break;
     }
   } catch (err) {
     console.log(err);

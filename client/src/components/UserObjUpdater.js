@@ -18,10 +18,6 @@ export default function UserObjUpdater() {
       };
       setUserObj(userObj);
     });
-
-    return () => {
-      socket.off("updateUserObj"); // Turn off listener
-    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 }

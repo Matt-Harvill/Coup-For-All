@@ -40,7 +40,7 @@ export default function App() {
 
   return (
     <AppContext.Provider value={state}>
-      {/* {JSON.stringify(userObj)} */}
+      {JSON.stringify(userObj)}
       <Navbar />
       <PageDisplayer />
       <PageSwitcher />
