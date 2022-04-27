@@ -10,8 +10,8 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { ServerApiVersion } from "mongodb";
 import { User } from "./schemas.js";
-import * as dbUtils from "./dbUtils.js";
 import socketGroupSwitch from "./socketGroupSwitch.js";
+import { allOnlinePlayers } from "./allOnlinePlayers.js";
 
 // Dirname Setup
 const __filename = fileURLToPath(import.meta.url);
@@ -116,6 +116,14 @@ io.on("connection", (socket) => {
   // Disconnect
   socket.on("disconnect", () => {
     console.log("Client disconnected");
+    for (const [group, playerSet] of allOnlinePlayers.entries()) {
+      const username = socket.request.user.username;
+      if (playerSet.has(username)) {
+        playerSet.delete(username);
+        io.emit(group, "online", Array.from(playerSet));
+        break;
+      }
+    }
   });
 });
 

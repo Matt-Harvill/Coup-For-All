@@ -4,11 +4,15 @@ import * as dbUtils from "./dbUtils.js";
 import crypto from "crypto";
 import { socketIDMap } from "./index.js";
 import * as socketUtils from "./socketUtils.js";
+import { allOnlinePlayers } from "./allOnlinePlayers.js";
 
 // Set of coup players in lobby
-const players = new Set();
+const coupOnlinePlayers = new Set();
 // Set of coup games forming in lobby
 const formingGames = new Set();
+
+// Add coupOnlinePlayers to allOnlinePlayers
+allOnlinePlayers.set("coup", coupOnlinePlayers);
 
 const getFormingGames = async () => {
   const dbGames = await CoupGame.find({ status: "forming" }).exec();
@@ -23,11 +27,11 @@ const getFormingGames = async () => {
 getFormingGames();
 
 const addPlayer = (user) => {
-  players.add(user);
+  coupOnlinePlayers.add(user);
 };
 
 const removePlayer = (user) => {
-  players.delete(user);
+  coupOnlinePlayers.delete(user);
 };
 
 const createGame = async (userObj, privacy, maxPlayers) => {
@@ -200,7 +204,7 @@ const sendFormingGames = () => {
 };
 
 const sendOnline = () => {
-  io.emit("coup", "online", Array.from(players));
+  io.emit("coup", "online", Array.from(coupOnlinePlayers));
 };
 
 const leaveGameHandler = async (socket) => {
