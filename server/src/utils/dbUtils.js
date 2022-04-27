@@ -40,7 +40,7 @@ export const updateUserAndGame = async (user, game, update) => {
   try {
     switch (update) {
       case "deleteGame":
-        await gameCollection.deleteOne({ gameID: game.gameID });
+        await gameCollection.deleteOne({ gameID: game.gameID }, { session });
         // Update all the users after deleting the game
         for (let i = 0; i < game.players.length; i++) {
           const user = game.players[i];
@@ -48,7 +48,7 @@ export const updateUserAndGame = async (user, game, update) => {
         }
         break;
       case "lastPlayerLeft":
-        await gameCollection.deleteOne({ gameID: game.gameID });
+        await gameCollection.deleteOne({ gameID: game.gameID }, { session });
         await updateUser(user, "", "", "", {}, session);
         break;
       case "assignRoles":
