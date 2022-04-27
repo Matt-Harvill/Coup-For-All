@@ -103,14 +103,14 @@ io.on("connection", (socket) => {
   socketIDMap[username] = socket.id;
 
   // Handle events with group and remaining args (args.length > 0)
-  socket.onAny(async (event, ...args) => {
-    console.log(event, args);
-    if (args.length > 0) {
-      const group = args[0];
-      const remainArgs = args.slice(1);
-      // Call the appropriate event handler for the specified group
-      socketGroupSwitch(group).eventSwitch(event, socket, ...remainArgs);
-    }
+  socket.onAny(async (group, event, ...args) => {
+    console.log(
+      `${socket.request.user.username}'s request { group: ${group}, event: ${event}, args:`,
+      ...args,
+      "}"
+    );
+    // Call the appropriate event handler for the specified group
+    socketGroupSwitch(group).eventSwitch(event, socket, ...args);
   });
 
   // Disconnect

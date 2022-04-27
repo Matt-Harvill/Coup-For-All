@@ -7,7 +7,7 @@ export default function UserObjUpdater() {
 
   // When auth/page changes, update pages (if authed for them)
   useEffect(() => {
-    socket.on("user update", (fullUserObj) => {
+    socket.on("updateUserObj", (fullUserObj) => {
       // Only take properties that are necessary
       const userObj = {
         username: fullUserObj.username,
@@ -20,7 +20,7 @@ export default function UserObjUpdater() {
     });
 
     return () => {
-      socket.off("user update"); // Turn off listener
+      socket.off("updateUserObj"); // Turn off listener
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

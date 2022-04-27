@@ -18,7 +18,7 @@ export default function Navbar() {
   };
 
   const leaveGame = () => {
-    socket.emit("leaveGame", userObj.gameTitle);
+    socket.emit(userObj.gameTitle, "leaveGame");
   };
 
   return (

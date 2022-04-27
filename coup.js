@@ -196,12 +196,11 @@ const leaveGame = async (userObj) => {
 };
 
 const sendFormingGames = () => {
-  io.emit("formingGames", "coup", Array.from(formingGames));
+  io.emit("coup", "formingGames", Array.from(formingGames));
 };
 
 const sendOnline = () => {
-  console.log(Array.from(players));
-  io.emit("online", "coup", Array.from(players));
+  io.emit("coup", "online", Array.from(players));
 };
 
 const leaveGameHandler = async (socket) => {
@@ -214,7 +213,6 @@ const createGameHandler = async (socket, privacy, maxPlayers) => {
   await createGame(socket.request.user, privacy, maxPlayers);
   await socketUtils.updateUserSocketAndClient(socket);
   sendFormingGames();
-  console.log("formingGames", formingGames);
 };
 
 const deleteGameHandler = async (socket) => {
@@ -245,7 +243,7 @@ const joinGameHandler = async (socket, gameID) => {
 };
 
 const chatHandler = (socket, message) => {
-  io.emit("chat", "coup", socket.request.user.username, message);
+  io.emit("coup", "chat", socket.request.user.username, message);
 };
 
 const playerOnlineHandler = (socket) => {
@@ -266,7 +264,6 @@ export const eventSwitch = async (event, socket, ...args) => {
     case "createGame":
       const privacy = args[0];
       const maxPlayers = args[1];
-      console.log(privacy, maxPlayers);
       createGameHandler(socket, privacy, maxPlayers);
       break;
     case "deleteGame":

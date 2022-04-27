@@ -56,38 +56,40 @@ export default function Coup() {
     }
   }, [games, userObj.username]);
 
-  // Setup coup socket listeners
+  // Setup coup socket listener
   useEffect(() => {
-    // Temporary fix!!! {
-
-    socket.on("online", (coup, users) => {
-      setOnlineUsers(users);
+    socket.on("coup", (event, ...args) => {
+      switch (event) {
+        case "online":
+          const users = args[0];
+          setOnlineUsers(users);
+          break;
+        case "formingGames":
+          const games = args[0];
+          setGames(games);
+          break;
+        case "chat":
+          const user = args[0];
+          const message = args[1];
+          setChats((oldChats) => [...oldChats, [user, message]]);
+          break;
+        default:
+          break;
+      }
     });
 
-    socket.on("formingGames", (coup, games) => {
-      setGames(games);
-    });
-
-    socket.on("chat", (coup, user, message) => {
-      setChats((oldChats) => [...oldChats, [user, message]]);
-    });
-
-    // End of temporary fix }
-
-    socket.emit("playerOnline", "coup");
-    socket.emit("formingGames", "coup");
+    socket.emit("coup", "playerOnline");
+    socket.emit("coup", "formingGames");
 
     return () => {
-      socket.off("online", "coup"); // remove coup online listener
-      socket.off("chat", "coup"); // remove chat listener
-      socket.off("formingGames", "coup"); // remove games listener
-      socket.emit("playerOffline", "coup");
+      socket.off("coup"); // remove coup online listener
+      socket.emit("coup", "playerOffline");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const sendChat = () => {
-    socket.emit("chat", "coup", newChat);
+    socket.emit("coup", "chat", newChat);
     setNewChat("");
   };
 
