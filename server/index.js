@@ -25,7 +25,7 @@ const sessionMiddleware = session({
   saveUninitialized: false,
 });
 app.use(express.json());
-app.use(express.static("client/build"));
+app.use(express.static("../client/build"));
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
@@ -47,7 +47,15 @@ passport.deserializeUser(User.deserializeUser());
 
 // React Route(s)
 app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  const pathname = path.resolve(
+    __dirname,
+    "..",
+    "client",
+    "build",
+    "index.html"
+  );
+  console.log(pathname);
+  res.sendFile(pathname);
 });
 
 // Login
