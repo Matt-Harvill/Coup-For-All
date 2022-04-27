@@ -2,7 +2,7 @@ import { useContext, useEffect } from "react";
 import AppContext from "./AppContext";
 
 export default function PageSwitcher() {
-  const { auth, userObj, setNewPage } = useContext(AppContext);
+  const { auth, page, userObj, setNewPage } = useContext(AppContext);
 
   // When auth/page changes, update pages (if authed for them)
   useEffect(() => {
@@ -34,7 +34,14 @@ export default function PageSwitcher() {
         }
         break;
       case "":
-        setNewPage("home");
+        switch (page) {
+          case "coup":
+          case "coupGame":
+            setNewPage("coup");
+            break;
+          default:
+            setNewPage("home");
+        }
         break;
       default:
         break;
