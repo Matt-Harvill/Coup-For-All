@@ -1,8 +1,10 @@
 import * as dbUtils from "../dbUtils.js";
 import { CoupGame } from "../schemas.js";
-import { coupFormingGames } from "./coup.js";
+import { coupFormingGames, sendFormingGames } from "./coup.js";
+import { updateUserSocketAndClient } from "../socketUtils.js";
 
-export const deleteGame = async (userObj) => {
+export const deleteGame = async (socket) => {
+  const userObj = socket.request.user;
   // Get the game
   const game = await CoupGame.findOne({
     gameID: userObj.gameID,
@@ -20,5 +22,9 @@ export const deleteGame = async (userObj) => {
         coupFormingGames.delete(gameInSet);
       }
     });
+
+    // Update the user's socket and client then update everyone with new forming games
+    await updateUserSocketAndClient(socket.request.user.username);
+    sendFormingGames();
   }
 };

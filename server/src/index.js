@@ -12,6 +12,7 @@ import { ServerApiVersion } from "mongodb";
 import { User } from "./schemas.js";
 import socketGroupSwitch from "./socketGroupSwitch.js";
 import { allOnlinePlayers } from "./allOnlinePlayers.js";
+import { socketIDMap } from "./socketUtils.js";
 
 // Dirname Setup
 const __filename = fileURLToPath(import.meta.url);
@@ -80,6 +81,18 @@ app.post("/register", (req, res) => {
   });
 });
 
+// Logout
+app.post("/logout", async (req, res) => {
+  const userSocket = io.sockets.sockets.get(socketIDMap[req.user.username]);
+  delete socketIDMap[req.user.username];
+
+  userSocket.disconnect(); // Disconnect the associated socket
+
+  req.logout(); // Logout through passport
+
+  return res.end();
+});
+
 // Socket.IO
 const server = http.createServer(app);
 export const io = new Server(server, { transports: ["websocket"] });
@@ -102,8 +115,6 @@ io.use((socket, next) => {
     next(new Error("unauthorized"));
   }
 });
-
-export const socketIDMap = {}; // Keep track of socket ids so they can be deleted
 
 io.on("connection", (socket) => {
   console.log("New client connected");
@@ -134,18 +145,6 @@ io.on("connection", (socket) => {
       }
     }
   });
-});
-
-// Logout
-app.post("/logout", async (req, res) => {
-  const userSocket = io.sockets.sockets.get(socketIDMap[req.user.username]);
-  delete socketIDMap[req.user.username];
-
-  userSocket.disconnect(); // Disconnect the associated socket
-
-  req.logout(); // Logout through passport
-
-  return res.end();
 });
 
 const port = process.env.PORT;

@@ -1,8 +1,11 @@
 import * as dbUtils from "../dbUtils.js";
 import { CoupGame } from "../schemas.js";
-import { coupFormingGames } from "./coup.js";
+import { coupFormingGames, sendFormingGames } from "./coup.js";
+import { updateUserSocketAndClient } from "../socketUtils.js";
 
-export const joinGame = async (userObj, gameID) => {
+export const joinGame = async (socket, gameID) => {
+  const userObj = socket.request.user;
+
   // Get the game
   const game = await CoupGame.findOne({
     gameID: gameID,
@@ -42,11 +45,15 @@ export const joinGame = async (userObj, gameID) => {
         }
       }
 
+      // If game filled, update all the players instead of just this one
+      let playersToUpdate;
       if (gameFull) {
-        return game;
+        playersToUpdate = game.players;
+      } else {
+        playersToUpdate = [socket.request.user.username];
       }
+      await updateUserSocketAndClient(...playersToUpdate);
+      sendFormingGames();
     }
   }
-
-  return undefined;
 };

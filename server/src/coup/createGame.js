@@ -1,9 +1,12 @@
 import crypto from "crypto";
 import * as dbUtils from "../dbUtils.js";
 import { CoupGame } from "../schemas.js";
-import { coupFormingGames } from "./coup.js";
+import { coupFormingGames, sendFormingGames } from "./coup.js";
+import { updateUserSocketAndClient } from "../socketUtils.js";
 
-export const createGame = async (userObj, privacy, maxPlayers) => {
+export const createGame = async (socket, privacy, maxPlayers) => {
+  const userObj = socket.request.user;
+
   // Prevent user from creating multiple games
   const currGameStatus = userObj.gameStatus;
   if (currGameStatus !== "completed" && currGameStatus !== "") {
@@ -51,5 +54,9 @@ export const createGame = async (userObj, privacy, maxPlayers) => {
   if (committed) {
     // Add game to memory
     coupFormingGames.add(game);
+
+    // Update the user's socket and client then update everyone with new forming games
+    await updateUserSocketAndClient(socket.request.user.username);
+    sendFormingGames();
   }
 };

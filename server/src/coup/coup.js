@@ -1,15 +1,13 @@
 import { io } from "../index.js";
 import { CoupGame } from "../schemas.js";
 import * as dbUtils from "../dbUtils.js";
-import { socketIDMap } from "../index.js";
-import * as socketUtils from "../socketUtils.js";
 import { allOnlinePlayers } from "../allOnlinePlayers.js";
 // Coup Modules
 import { createGame } from "./createGame.js";
 import { deleteGame } from "./deleteGame.js";
 import { joinGame } from "./joinGame.js";
 import { leaveGame } from "./leaveGame.js";
-import { publicGameState } from "./publicGameState.js";
+import { getGameState } from "./getGameState.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -21,7 +19,6 @@ allOnlinePlayers.set("coup", coupOnlinePlayers);
 
 const getFormingGames = async () => {
   const dbGames = await CoupGame.find({ status: "forming" }).exec();
-
   if (dbGames) {
     dbGames.forEach((game) => {
       coupFormingGames.add(game);
@@ -32,59 +29,22 @@ const getFormingGames = async () => {
 // Get forming games on server start
 getFormingGames();
 
-const addPlayer = (user) => {
-  coupOnlinePlayers.add(user);
-};
-
-const removePlayer = (user) => {
-  coupOnlinePlayers.delete(user);
-};
-
-const sendFormingGames = () => {
-  io.emit("coup", "formingGames", Array.from(coupFormingGames));
-};
-
 const sendOnline = () => {
   io.emit("coup", "online", Array.from(coupOnlinePlayers));
 };
 
-const leaveGameHandler = async (socket) => {
-  await leaveGame(socket.request.user);
-  await socketUtils.updateUserSocketAndClient(socket);
-  sendFormingGames();
+const addPlayer = (user) => {
+  coupOnlinePlayers.add(user);
+  sendOnline();
 };
 
-const createGameHandler = async (socket, privacy, maxPlayers) => {
-  await createGame(socket.request.user, privacy, maxPlayers);
-  await socketUtils.updateUserSocketAndClient(socket);
-  sendFormingGames();
+const removePlayer = (user) => {
+  coupOnlinePlayers.delete(user);
+  sendOnline();
 };
 
-const deleteGameHandler = async (socket) => {
-  await deleteGame(socket.request.user);
-  await socketUtils.updateUserSocketAndClient(socket);
-  sendFormingGames();
-};
-
-const joinGameHandler = async (socket, gameID) => {
-  const game = await joinGame(socket.request.user, gameID); // joinGame returns game if it filled
-  // If game is filled now:
-  if (game !== undefined) {
-    // Loop through sockets of players in this game if it filled to update them -> status changed to "in progress"
-    const players = game.players;
-    for (let i = 0; i < players.length; i++) {
-      const userSocketID = socketIDMap[players[i]];
-      // If userSocketID is defined (will be undefined if user isn't currently connected)
-      if (userSocketID !== undefined) {
-        const userSocket = io.sockets.sockets.get(userSocketID);
-        await socketUtils.updateUserSocketAndClient(userSocket); // Alert players of updates
-      }
-    }
-  } else {
-    // Just update the single player if it didn't fill the game
-    await socketUtils.updateUserSocketAndClient(socket);
-  }
-  sendFormingGames();
+export const sendFormingGames = () => {
+  io.emit("coup", "formingGames", Array.from(coupFormingGames));
 };
 
 const chatHandler = (socket, message) => {
@@ -101,30 +61,21 @@ const playerOfflineHandler = (socket) => {
   sendOnline();
 };
 
-const getGameStateHandler = async (socket) => {
-  const username = socket.request.user.username;
-  const gameID = socket.request.user.gameID;
-  const game = await dbUtils.getGame(gameID);
-  const publicGame = publicGameState(game, username);
-  socket.emit("coup", "gameState", gameID, publicGame);
-};
-
 export const eventSwitch = async (event, socket, ...args) => {
   switch (event) {
     case "leaveGame":
-      leaveGameHandler(socket);
+      await leaveGame(socket);
       break;
     case "createGame":
-      const privacy = args[0];
-      const maxPlayers = args[1];
-      createGameHandler(socket, privacy, maxPlayers);
+      const [privacy, maxPlayers] = args;
+      await createGame(socket, privacy, maxPlayers);
       break;
     case "deleteGame":
-      deleteGameHandler(socket);
+      await deleteGame(socket);
       break;
     case "joinGame":
       const gameID = args[0];
-      joinGameHandler(socket, gameID);
+      await joinGame(socket, gameID);
       break;
     case "chat":
       const message = args[0];
@@ -140,7 +91,7 @@ export const eventSwitch = async (event, socket, ...args) => {
       playerOfflineHandler(socket);
       break;
     case "getGameState":
-      getGameStateHandler(socket);
+      getGameState(socket);
       break;
     default:
       throw "Not a valid 'coup' event";
