@@ -36,4 +36,4 @@ userSchema.plugin(passportLocalMongoose);
 const User = new mongoose.model("User", userSchema);
 const CoupGame = new mongoose.model("CoupGame", coupGameSchema, "games");
 
-export { userSchema, coupGameSchema, User, CoupGame };
+export { User, CoupGame };

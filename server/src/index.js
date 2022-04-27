@@ -25,7 +25,8 @@ const sessionMiddleware = session({
   saveUninitialized: false,
 });
 app.use(express.json());
-app.use(express.static("../client/build"));
+const pathToBuild = path.resolve(__dirname, "..", "..", "client", "build");
+app.use(express.static(pathToBuild));
 app.use(sessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
@@ -47,15 +48,15 @@ passport.deserializeUser(User.deserializeUser());
 
 // React Route(s)
 app.get("*", (req, res) => {
-  const pathname = path.resolve(
+  const pathToIndexHTML = path.resolve(
     __dirname,
+    "..",
     "..",
     "client",
     "build",
     "index.html"
   );
-  console.log(pathname);
-  res.sendFile(pathname);
+  res.sendFile(pathToIndexHTML);
 });
 
 // Login

@@ -1,4 +1,4 @@
-import * as coup from "./coup.js";
+import * as coup from "./coup/coup.js";
 import * as all from "./all.js";
 
 export default function socketGroupSwitch(gameTitle) {
