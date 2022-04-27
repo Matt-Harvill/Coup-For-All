@@ -58,32 +58,36 @@ export default function Coup() {
 
   // Setup coup socket listeners
   useEffect(() => {
-    socket.on("coup online", (users) => {
+    // Temporary fix!!! {
+
+    socket.on("online", (coup, users) => {
       setOnlineUsers(users);
     });
 
-    socket.on("coup games", (games) => {
+    socket.on("formingGames", (coup, games) => {
       setGames(games);
     });
 
-    socket.on("coup chat", (user, message) => {
+    socket.on("chat", (coup, user, message) => {
       setChats((oldChats) => [...oldChats, [user, message]]);
     });
 
-    socket.emit("coup addPlayer");
-    socket.emit("coup games");
+    // End of temporary fix }
+
+    socket.emit("playerOnline", "coup");
+    socket.emit("formingGames", "coup");
 
     return () => {
-      socket.off("coup online"); // remove coup online listener
-      socket.off("coup chat"); // remove chat listener
-      socket.off("coup games"); // remove games listener
-      socket.emit("coup removePlayer");
+      socket.off("online", "coup"); // remove coup online listener
+      socket.off("chat", "coup"); // remove chat listener
+      socket.off("formingGames", "coup"); // remove games listener
+      socket.emit("playerOffline", "coup");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const sendChat = () => {
-    socket.emit("coup chat", newChat);
+    socket.emit("chat", "coup", newChat);
     setNewChat("");
   };
 

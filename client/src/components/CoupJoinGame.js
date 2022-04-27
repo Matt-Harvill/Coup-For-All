@@ -31,11 +31,11 @@ export default function CoupJoinGame(props) {
   const joinGame = () => {
     if (privacy === "public") {
       // Allow joining the game
-      socket.emit("coup joinGame", gameID);
+      socket.emit("joinGame", "coup", gameID);
     } else if (privacy === "private") {
       if (gameID === inputGameID) {
         // Allow joining the game
-        socket.emit("coup joinGame", gameID);
+        socket.emit("joinGame", "coup", gameID);
       }
     } else {
       alert("privacy error");

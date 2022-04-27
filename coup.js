@@ -30,10 +30,6 @@ const removePlayer = (user) => {
   players.delete(user);
 };
 
-const action = (user, action, target) => {
-  console.log(`${user} called ${action} on ${target}`);
-};
-
 const createGame = async (userObj, privacy, maxPlayers) => {
   // Prevent user from creating multiple games
   const currGameStatus = userObj.gameStatus;
@@ -200,12 +196,12 @@ const leaveGame = async (userObj) => {
 };
 
 const sendFormingGames = () => {
-  // console.log(`Num games: ${games.size}`);
-  io.emit("coup games", Array.from(formingGames));
+  io.emit("formingGames", "coup", Array.from(formingGames));
 };
 
 const sendOnline = () => {
-  io.emit("coup online", Array.from(players));
+  console.log(Array.from(players));
+  io.emit("online", "coup", Array.from(players));
 };
 
 const leaveGameHandler = async (socket) => {
@@ -218,6 +214,48 @@ const createGameHandler = async (socket, privacy, maxPlayers) => {
   await createGame(socket.request.user, privacy, maxPlayers);
   await socketUtils.updateUserSocketAndClient(socket);
   sendFormingGames();
+  console.log("formingGames", formingGames);
+};
+
+const deleteGameHandler = async (socket) => {
+  await deleteGame(socket.request.user);
+  await socketUtils.updateUserSocketAndClient(socket);
+  sendFormingGames();
+};
+
+const joinGameHandler = async (socket, gameID) => {
+  const game = await joinGame(socket.request.user, gameID); // joinGame returns game if it filled
+  // If game is filled now:
+  if (game !== undefined) {
+    // Loop through sockets of players in this game if it filled to update them -> status changed to "in progress"
+    const players = game.players;
+    for (let i = 0; i < players.length; i++) {
+      const userSocketID = socketIDMap[players[i]];
+      // If userSocketID is defined (will be undefined if user isn't currently connected)
+      if (userSocketID !== undefined) {
+        const userSocket = io.sockets.sockets.get(userSocketID);
+        await socketUtils.updateUserSocketAndClient(userSocket); // Alert players of updates
+      }
+    }
+  } else {
+    // Just update the single player if it didn't fill the game
+    await socketUtils.updateUserSocketAndClient(socket);
+  }
+  sendFormingGames();
+};
+
+const chatHandler = (socket, message) => {
+  io.emit("chat", "coup", socket.request.user.username, message);
+};
+
+const playerOnlineHandler = (socket) => {
+  addPlayer(socket.request.user.username);
+  sendOnline();
+};
+
+const playerOfflineHandler = (socket) => {
+  removePlayer(socket.request.user.username);
+  sendOnline();
 };
 
 export const eventSwitch = async (event, socket, ...args) => {
@@ -226,59 +264,32 @@ export const eventSwitch = async (event, socket, ...args) => {
       leaveGameHandler(socket);
       break;
     case "createGame":
-      createGameHandler(socket, ...args);
-    default:
+      const privacy = args[0];
+      const maxPlayers = args[1];
+      console.log(privacy, maxPlayers);
+      createGameHandler(socket, privacy, maxPlayers);
       break;
+    case "deleteGame":
+      deleteGameHandler(socket);
+      break;
+    case "joinGame":
+      const gameID = args[0];
+      joinGameHandler(socket, gameID);
+      break;
+    case "chat":
+      const message = args[0];
+      chatHandler(socket, message);
+      break;
+    case "formingGames":
+      sendFormingGames();
+      break;
+    case "playerOnline":
+      playerOnlineHandler(socket);
+      break;
+    case "playerOffline":
+      playerOfflineHandler(socket);
+      break;
+    default:
+      throw "Not a valid 'coup' event";
   }
-};
-
-export const socketInit = (socket) => {
-  socket.on("coup chat", (message) => {
-    io.emit("coup chat", socket.request.user.username, message);
-  });
-
-  socket.on("coup games", () => {
-    sendFormingGames();
-  });
-
-  socket.on("coup deleteGame", async () => {
-    await deleteGame(socket.request.user);
-    await socketUtils.updateUserSocketAndClient(socket);
-    sendFormingGames();
-  });
-
-  socket.on("coup joinGame", async (gameID) => {
-    const game = await joinGame(socket.request.user, gameID); // joinGame returns game if it filled
-    // If game is filled now:
-    if (game !== undefined) {
-      // Loop through sockets of players in this game if it filled to update them -> status changed to "in progress"
-      const players = game.players;
-      for (let i = 0; i < players.length; i++) {
-        const userSocketID = socketIDMap[players[i]];
-        // If userSocketID is defined (will be undefined if user isn't currently connected)
-        if (userSocketID !== undefined) {
-          const userSocket = io.sockets.sockets.get(userSocketID);
-          await socketUtils.updateUserSocketAndClient(userSocket); // Alert players of updates
-        }
-      }
-    } else {
-      // Just update the single player if it didn't fill the game
-      await socketUtils.updateUserSocketAndClient(socket);
-    }
-    sendFormingGames();
-  });
-
-  socket.on("coup addPlayer", () => {
-    addPlayer(socket.request.user.username);
-    sendOnline();
-  });
-
-  socket.on("coup removePlayer", () => {
-    removePlayer(socket.request.user.username);
-    sendOnline();
-  });
-
-  socket.on("coup action", (action, target) => {
-    action(socket.request.user.username, action, target);
-  });
 };

@@ -10,9 +10,8 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { ServerApiVersion } from "mongodb";
 import { User } from "./schemas.js";
-import * as coup from "./coup.js";
 import * as dbUtils from "./dbUtils.js";
-import socketGameSwitch from "./socketGameSwitch.js";
+import socketGroupSwitch from "./socketGroupSwitch.js";
 
 // Dirname Setup
 const __filename = fileURLToPath(import.meta.url);
@@ -103,27 +102,16 @@ io.on("connection", (socket) => {
   const username = socket.request.user.username;
   socketIDMap[username] = socket.id;
 
-  // Get User
-  socket.on("getUserObj", async (callback) => {
-    const userObj = await dbUtils.getUserObj(username);
-    socket.request.user = userObj; // Update the user's socket
-    callback(userObj); // Pass the userObj back to client
-  });
-
-  // Handle events with corresponding games (args.length > 0)
+  // Handle events with group and remaining args (args.length > 0)
   socket.onAny(async (event, ...args) => {
+    console.log(event, args);
     if (args.length > 0) {
-      const gameTitle = args[0];
-      args = args.slice(1);
-      if (event === "leaveGame" || event === "createGame") {
-        // Call the appropriate event handler for the specified game
-        socketGameSwitch(gameTitle).eventSwitch(event, socket, ...args);
-      }
+      const group = args[0];
+      const remainArgs = args.slice(1);
+      // Call the appropriate event handler for the specified group
+      socketGroupSwitch(group).eventSwitch(event, socket, ...remainArgs);
     }
   });
-
-  // Coup
-  coup.socketInit(socket);
 
   // Disconnect
   socket.on("disconnect", () => {
