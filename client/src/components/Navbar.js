@@ -1,10 +1,13 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import AppContext from "./AppContext";
 import "../styles/Navbar.css";
 import { socket } from "../socket";
 
 export default function Navbar() {
   const { setNewPage, auth, userObj } = useContext(AppContext);
+  const [homeLinkColor, setHomeLinkColor] = useState("black");
+  const [coupLinkColor, setCoupLinkColor] = useState("black");
+  const [splendorLinkColor, setSplendorLinkColor] = useState("black");
 
   const logout = async () => {
     const response = await fetch("/logout", {
@@ -27,34 +30,27 @@ export default function Navbar() {
 
       {auth === "auth" && (
         <span
-          style={{ cursor: "pointer", flex: 1 }}
+          style={{ cursor: "pointer", color: homeLinkColor }}
           onClick={() => {
             setNewPage("home");
           }}
+          onMouseEnter={() => setHomeLinkColor("white")}
+          onMouseLeave={() => setHomeLinkColor("black")}
         >
           Home
         </span>
       )}
 
-      {/* <PageSelector /> */}
+      <div style={{ flex: 1 }}></div>
 
       {auth === "auth" && (
         <span
-          style={{ cursor: "pointer" }}
-          onClick={() => {
-            setNewPage("coupGame");
-          }}
-        >
-          CoupGame (temp)
-        </span>
-      )}
-
-      {auth === "auth" && (
-        <span
-          style={{ cursor: "pointer" }}
+          style={{ cursor: "pointer", color: coupLinkColor }}
           onClick={() => {
             setNewPage("coup");
           }}
+          onMouseEnter={() => setCoupLinkColor("white")}
+          onMouseLeave={() => setCoupLinkColor("black")}
         >
           Coup
         </span>
@@ -62,10 +58,12 @@ export default function Navbar() {
 
       {auth === "auth" && (
         <span
-          style={{ cursor: "pointer" }}
+          style={{ cursor: "pointer", color: splendorLinkColor }}
           onClick={() => {
             setNewPage("splendor");
           }}
+          onMouseEnter={() => setSplendorLinkColor("white")}
+          onMouseLeave={() => setSplendorLinkColor("black")}
         >
           Splendor
         </span>
