@@ -1,29 +1,6 @@
 {
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^16.0.0",
-    "express": "^4.17.3",
-    "express-session": "^1.17.2",
-    "mongodb": "^4.4.1",
-    "mongoose": "^6.2.9",
-    "passport": "^0.5.2",
-    "passport-local-mongoose": "^7.0.0",
-    "socket.io": "^4.4.1"
-  },
-  "name": "websocket",
-  "version": "1.0.0",
-  "main": "index.js",
-  "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "watch": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "heroku-postbuild": "cd client && npm i && npm run build"
-  },
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "nodemonConfig": {
-    "ignore": ["client"]
+    "heroku-prebuild": "cd client && npm i && npm run build && cd ../server && npm i",
+    "start": "cd server && npm start"
   }
 }

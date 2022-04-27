@@ -16,6 +16,7 @@
 		{
 			"type": "npm",
 			"script": "watch",
+			"path": "server/",
 			"problemMatcher": [],
 			"label": "npm: watch - server",
 			"detail": "nodemon index.js",
