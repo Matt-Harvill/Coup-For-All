@@ -10,7 +10,7 @@ export default function CoupGame() {
     socket.on("coup", (event, gameID, ...args) => {
       if (gameID === userObj.gameID) {
         switch (event) {
-          case "gameState":
+          case "updateGame":
             const gameState = args[0];
             setGame(gameState);
             break;
@@ -27,10 +27,15 @@ export default function CoupGame() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const getGameState = () => {
+    socket.emit("coup", "getGameState");
+  };
+
   return (
     <div className="page">
       <h1 style={{ textAlign: "center" }}>CoupGame</h1>
       <span>{JSON.stringify(game)}</span>
+      <button onClick={getGameState}>Get Updated Game State</button>
     </div>
   );
 }

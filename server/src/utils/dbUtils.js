@@ -1,5 +1,8 @@
 import { User } from "../schemas.js";
-import { conn, gameCollection } from "../index.js";
+import { conn } from "../index.js";
+import { sendUpdatesSingle } from "./socketUtils.js";
+import gameSchemaSwitch from "../gameSchemaSwitch.js";
+import { assignRoles } from "../coup/assignRoles.js";
 
 export const getUserObj = async (username) => {
   return await User.findOne({
@@ -7,8 +10,8 @@ export const getUserObj = async (username) => {
   }).exec();
 };
 
-export const getGame = async (gameID) => {
-  return await gameCollection.findOne({ gameID: gameID });
+export const getGame = async (gameTitle, gameID) => {
+  return await gameSchemaSwitch(gameTitle).findOne({ gameID: gameID });
 };
 
 const updateUser = async (
@@ -36,25 +39,40 @@ export const updateUserAndGame = async (user, game, update) => {
   session.startTransaction();
 
   let transactSuccess = true;
+  let usersUpdated = [];
 
   try {
     switch (update) {
       case "deleteGame":
-        await gameCollection.deleteOne({ gameID: game.gameID }, { session });
+        await gameSchemaSwitch(game.gameTitle).deleteOne(
+          { gameID: game.gameID },
+          { session }
+        );
         // Update all the users after deleting the game
         for (let i = 0; i < game.players.length; i++) {
           const user = game.players[i];
           await updateUser(user, "", "", "", {}, session);
+          usersUpdated.push(user);
         }
         break;
       case "lastPlayerLeft":
-        await gameCollection.deleteOne({ gameID: game.gameID }, { session });
+        await gameSchemaSwitch(game.gameTitle).deleteOne(
+          { gameID: game.gameID },
+          { session }
+        );
         await updateUser(user, "", "", "", {}, session);
+        usersUpdated.push(user);
         break;
       case "assignRoles":
       case "createGame":
       case "joinGame":
-        await game.save({ session });
+        // Uses session by default
+        game.markModified("pStats.roles");
+        let savedGame = await game.save().then((savedGame) => {
+          console.log(savedGame.pStats);
+          console.log("savedGame = game", savedGame === game); // true
+        });
+        console.log("game in DB:", savedGame);
         // Update all the users after someone joins the game, or created (just that user anyways)
         for (let i = 0; i < game.players.length; i++) {
           const user = game.players[i];
@@ -66,11 +84,17 @@ export const updateUserAndGame = async (user, game, update) => {
             game.pStats.get(user),
             session
           );
+          usersUpdated.push(user);
         }
         break;
       case "leaveGame":
-        await game.save({ session });
+        // Uses session by default
+        await game.save().then((savedGame) => {
+          console.log(savedGame.pStats);
+          console.log("savedGame = game", savedGame === game); // true
+        });
         await updateUser(user, "", "", "", {}, session);
+        usersUpdated.push(user);
         break;
       default:
         throw "No update style specified in updateUserAndGame";
@@ -82,10 +106,24 @@ export const updateUserAndGame = async (user, game, update) => {
 
   if (transactSuccess) {
     await session.commitTransaction();
+    session.endSession();
+
+    if (usersUpdated.length > 0) {
+      for (let i = 0; i < usersUpdated.length; i++) {
+        let gameToUpdate;
+        // Only send a game update if assignRoles was the update (for now)
+        if (update === "assignRoles") {
+          gameToUpdate = await getGame(game.gameTitle, game.gameID);
+        }
+        sendUpdatesSingle(usersUpdated[i], gameToUpdate);
+      }
+    } else {
+      throw "error numUsersUpdated users";
+    }
   } else {
     await session.abortTransaction();
+    session.endSession();
   }
 
-  session.endSession();
   return transactSuccess;
 };

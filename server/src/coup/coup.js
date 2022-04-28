@@ -6,7 +6,7 @@ import { createGame } from "./createGame.js";
 import { deleteGame } from "./deleteGame.js";
 import { joinGame } from "./joinGame.js";
 import { leaveGame } from "./leaveGame.js";
-import { getGameState } from "./getGameState.js";
+import { getGameState, publicGameState } from "./getGameState.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -58,6 +58,10 @@ const playerOnlineHandler = (socket) => {
 const playerOfflineHandler = (socket) => {
   removePlayer(socket.request.user.username);
   sendOnline();
+};
+
+export const getPublicGame = (game, username) => {
+  return publicGameState(game, username);
 };
 
 export const eventSwitch = async (event, socket, ...args) => {

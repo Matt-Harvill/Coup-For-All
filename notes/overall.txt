@@ -1,0 +1,4 @@
+- Need to clean up the updates/gets for User and Game
+
+- gets will have callbacks (initiated from client)
+- updates will be initiated from server

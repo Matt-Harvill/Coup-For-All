@@ -1,7 +1,7 @@
 import * as dbUtils from "../utils/dbUtils.js";
 import { CoupGame } from "../schemas.js";
 import { coupFormingGames, sendFormingGames } from "./coup.js";
-import { updateUserSocketAndClient } from "../utils/socketUtils.js";
+import { assignRoles } from "./assignRoles.js";
 
 export const joinGame = async (socket, gameID) => {
   const userObj = socket.request.user;
@@ -16,19 +16,26 @@ export const joinGame = async (socket, gameID) => {
     const user = userObj.username;
     const pStat = { coins: 2, roles: ["", ""] };
 
-    let gameFull = false;
-    // If this fills the game, set its status to in progress
-    if (game.players.length + 1 === game.maxPlayers) {
-      gameFull = true;
-    }
     // Update players
     game.players.push(user);
     // Update pStats
     game.pStats.set(user, pStat);
+    // Update gameFull
+    let gameFull = false;
+    if (game.players.length === game.maxPlayers) {
+      gameFull = true;
+    }
     // Update status
     game.status = gameFull ? "in progress" : game.status;
+    let committed;
 
-    const committed = await dbUtils.updateUserAndGame(user, game, "joinGame");
+    // Update the User(s) and Game
+    if (gameFull) {
+      committed = await assignRoles(game);
+    } else {
+      committed = await dbUtils.updateUserAndGame(user, game, "joinGame");
+    }
+
     if (committed) {
       // Update game in memory
       let gameToDelete;
@@ -45,14 +52,7 @@ export const joinGame = async (socket, gameID) => {
         }
       }
 
-      // If game filled, update all the players instead of just this one
-      let playersToUpdate;
-      if (gameFull) {
-        playersToUpdate = game.players;
-      } else {
-        playersToUpdate = [socket.request.user.username];
-      }
-      await updateUserSocketAndClient(...playersToUpdate);
+      // Update everyone with forming games
       sendFormingGames();
     }
   }

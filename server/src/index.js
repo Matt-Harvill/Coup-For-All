@@ -10,7 +10,7 @@ import { fileURLToPath } from "url";
 import path from "path";
 import { ServerApiVersion } from "mongodb";
 import { User } from "./schemas.js";
-import socketGroupSwitch from "./socketGroupSwitch.js";
+import gameSwitch from "./gameSwitch.js";
 import { socketIDMap } from "./utils/socketUtils.js";
 import { allOnlinePlayers } from "./utils/socketUtils.js";
 
@@ -40,7 +40,6 @@ mongoose.connect(mongoURI, {
   serverApi: ServerApiVersion.v1,
 });
 export const conn = mongoose.connection;
-export const gameCollection = conn.collection("games");
 
 // Passport Setup
 passport.use(User.createStrategy());
@@ -130,7 +129,7 @@ io.on("connection", (socket) => {
       "}"
     );
     // Call the appropriate event handler for the specified group
-    socketGroupSwitch(group).eventSwitch(event, socket, ...args);
+    gameSwitch(group).eventSwitch(event, socket, ...args);
   });
 
   // Disconnect

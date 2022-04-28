@@ -1,7 +1,6 @@
 import * as dbUtils from "../utils/dbUtils.js";
 import { CoupGame } from "../schemas.js";
 import { coupFormingGames, sendFormingGames } from "./coup.js";
-import { updateUserSocketAndClient } from "../utils/socketUtils.js";
 
 export const deleteGame = async (socket) => {
   const userObj = socket.request.user;
@@ -23,8 +22,7 @@ export const deleteGame = async (socket) => {
       }
     });
 
-    // Update the user's socket and client then update everyone with new forming games
-    await updateUserSocketAndClient(socket.request.user.username);
+    // Update everyone with new forming games
     sendFormingGames();
   }
 };
