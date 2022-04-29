@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import AppContext from "../components/AppContext";
+import CoupPlayerCard from "../components/CoupPlayerCard";
 import { socket } from "../socket";
 
 export default function CoupGame() {
@@ -27,15 +28,15 @@ export default function CoupGame() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const getGameState = () => {
-    socket.emit("coup", "getGameState");
+  const displayPlayer = (pStat) => {
+    return <CoupPlayerCard pStat={pStat} />;
   };
 
   return (
     <div className="page">
       <h1 style={{ textAlign: "center" }}>CoupGame</h1>
-      <span>{JSON.stringify(game)}</span>
-      <button onClick={getGameState}>Get Updated Game State</button>
+      {/* <span>{JSON.stringify(game)}</span> */}
+      {game.pStats && game.pStats.map(displayPlayer)}
     </div>
   );
 }

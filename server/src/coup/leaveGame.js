@@ -11,11 +11,14 @@ export const leaveGame = async (socket) => {
 
   const user = userObj.username;
   // Update players
-  game.players = game.players.filter((player) => player !== user);
+  game.players = game.players.filter((player) => {
+    return player !== user;
+  });
   // Update pStats
   game.pStats = game.pStats.filter((pStat) => {
-    pStat.player !== user;
+    return pStat.player !== user;
   });
+  console.log(game.pStats);
 
   // If game is empty now, delete the game
   let gameDeleted;
