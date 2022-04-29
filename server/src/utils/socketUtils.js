@@ -5,6 +5,12 @@ import gameSwitch from "../gameSwitch.js";
 export const socketIDMap = {}; // Keep track of socket ids so they can be deleted
 export const allOnlinePlayers = new Map(); // Keep track of all online players
 
+export const getSocket = (username) => {
+  const socketID = socketIDMap[username];
+  const socket = io.sockets.sockets.get(socketID);
+  return socket;
+};
+
 // Sends updates to a single client
 export const sendUpdatesSingle = async (username, game = undefined) => {
   const socketID = socketIDMap[username];

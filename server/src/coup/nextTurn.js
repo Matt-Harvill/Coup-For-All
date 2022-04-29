@@ -1,29 +1,41 @@
-import { io } from "../index.js";
-import { socketIDMap } from "../utils/socketUtils.js";
+import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
+import { getSocket } from "../utils/socketUtils.js";
 
-export const nextTurn = async (game) => {
-  const activePlayer = game.players.shift(); // Remove first player -> set as active player
-  game.players.push(activePlayer); // Add player to end of players
+// Store the inProgress games' statuses (mapped by gameID)
+export const inProgressGameStatuses = {};
 
-  // Get all the sockets of players in the game
-  const sockets = [];
-  for (const player of game.players) {
-    const socketID = socketIDMap[player];
-    const socket = io.sockets.sockets.get(socketID);
-    sockets.push(socket);
+export const nextTurn = (game, gameID) => {
+  // Game no longer exists
+  if (!game) {
+    delete inProgressGameStatuses[gameID];
+    return;
   }
 
-  let turnTime = 10000; // 10 seconds for a turn
+  let turnTime, activePlayer;
   const updatePeriod = 100; // Update every 100ms
 
-  const updateTimeInTurn = setInterval(() => {
+  if (
+    !inProgressGameStatuses[gameID] ||
+    inProgressGameStatuses[gameID].turnTime === 0
+  ) {
+    turnTime = 10000; // 10 seconds for a turn
+    activePlayer = game.players[0]; //Set first player as active player
+  }
+  // If the turntime and activeplayer are already set, keep their values as long as their turn wasn't over
+  else {
+    turnTime = inProgressGameStatuses[gameID].turnTime; // Otherwise keep turnTime that already exists
+    activePlayer = inProgressGameStatuses[gameID].activePlayer; // Otherwise keep activePlayer that already exists
+  }
+
+  const updateTimeInTurn = setInterval(async () => {
     // Update them with time remaining in the turn
-    for (const socket of sockets) {
+    for (const player of game.players) {
+      const socket = getSocket(player); // Get all the sockets of players in the game
       if (socket) {
         socket.emit(
           "coup",
           "timeInTurn",
-          game.gameID,
+          gameID,
           activePlayer,
           turnTime / 1000 // Send the time remaining in seconds
         );
@@ -31,10 +43,26 @@ export const nextTurn = async (game) => {
     }
 
     turnTime -= updatePeriod;
+    inProgressGameStatuses[gameID].turnTime = turnTime;
 
     if (turnTime === 0) {
+      // Clear the interval
       clearInterval(updateTimeInTurn);
-      nextTurn(game);
+      inProgressGameStatuses[gameID].interval = null;
+
+      activePlayer = game.players.shift(); // Pop off the queue
+      game.players.push(activePlayer); // Push player to end of queue
+
+      await updateUserAndGame(activePlayer, game, "updateGame"); // Update the game (So turn order is saved)
+      const updatedGame = await getGame(game.gameTitle, gameID); // Get the updated game
+      nextTurn(updatedGame, gameID);
     }
   }, updatePeriod);
+
+  // Update initial game status
+  inProgressGameStatuses[gameID] = {
+    activePlayer: activePlayer,
+    turnTime: turnTime,
+    interval: updateTimeInTurn,
+  };
 };

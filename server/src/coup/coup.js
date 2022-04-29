@@ -7,6 +7,7 @@ import { deleteGame } from "./deleteGame.js";
 import { joinGame } from "./joinGame.js";
 import { leaveGame } from "./leaveGame.js";
 import { getGameState, publicGameState } from "./getGameState.js";
+import { inProgressGameHandler } from "./inProgressGameHandler.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -25,8 +26,19 @@ const getFormingGames = async () => {
   }
 };
 
+const resumeInProgressGames = async () => {
+  const dbGames = await CoupGame.find({ status: "in progress" }).exec();
+  if (dbGames) {
+    dbGames.forEach((game) => {
+      inProgressGameHandler(game, game.gameID);
+    });
+  }
+};
+
 // Get forming games on server start
 getFormingGames();
+// Resume in progress games on server start
+resumeInProgressGames();
 
 const sendOnline = () => {
   io.emit("coup", "online", Array.from(coupOnlinePlayers));

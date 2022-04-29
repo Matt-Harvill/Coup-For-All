@@ -2,6 +2,7 @@ import { User } from "../schemas.js";
 import { conn } from "../index.js";
 import { sendUpdatesSingle } from "./socketUtils.js";
 import gameSchemaSwitch from "../gameSchemaSwitch.js";
+import { inProgressGameHandler } from "../coup/inProgressGameHandler.js";
 
 export const getUserObj = async (username) => {
   return await User.findOne({
@@ -99,6 +100,11 @@ export const updateUserAndGame = async (user, game, update) => {
     // Update all the players in the game
     for (const user of usersUpdated) {
       sendUpdatesSingle(user, gameToUpdate);
+    }
+
+    // Resume game with new stats
+    if (game.status === "in progress") {
+      inProgressGameHandler(gameToUpdate, game.gameID);
     }
   } else {
     await session.abortTransaction();

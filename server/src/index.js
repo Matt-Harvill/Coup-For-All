@@ -11,7 +11,7 @@ import path from "path";
 import { ServerApiVersion } from "mongodb";
 import { User } from "./schemas.js";
 import gameSwitch from "./gameSwitch.js";
-import { socketIDMap } from "./utils/socketUtils.js";
+import { getSocket, socketIDMap } from "./utils/socketUtils.js";
 import { allOnlinePlayers } from "./utils/socketUtils.js";
 
 // Dirname Setup
@@ -82,7 +82,7 @@ app.post("/register", (req, res) => {
 
 // Logout
 app.post("/logout", async (req, res) => {
-  const userSocket = io.sockets.sockets.get(socketIDMap[req.user.username]);
+  const userSocket = getSocket(req.user.username);
   delete socketIDMap[req.user.username];
 
   userSocket.disconnect(); // Disconnect the associated socket
