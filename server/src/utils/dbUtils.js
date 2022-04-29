@@ -2,7 +2,6 @@ import { User } from "../schemas.js";
 import { conn } from "../index.js";
 import { sendUpdatesSingle } from "./socketUtils.js";
 import gameSchemaSwitch from "../gameSchemaSwitch.js";
-import { assignRoles } from "../coup/assignRoles.js";
 
 export const getUserObj = async (username) => {
   return await User.findOne({
@@ -67,21 +66,19 @@ export const updateUserAndGame = async (user, game, update) => {
       case "createGame":
       case "joinGame":
         // Uses session by default
-        game.markModified("pStats.roles");
-        let savedGame = await game.save().then((savedGame) => {
-          console.log(savedGame.pStats);
-          console.log("savedGame = game", savedGame === game); // true
-        });
-        console.log("game in DB:", savedGame);
+        await game.save();
         // Update all the users after someone joins the game, or created (just that user anyways)
         for (let i = 0; i < game.players.length; i++) {
           const user = game.players[i];
+          const [pStat] = game.pStats.filter((pStat) => {
+            return pStat.player === user;
+          });
           await updateUser(
             user,
             game.gameTitle,
             game.gameID,
             game.status,
-            game.pStats.get(user),
+            pStat,
             session
           );
           usersUpdated.push(user);
@@ -89,10 +86,7 @@ export const updateUserAndGame = async (user, game, update) => {
         break;
       case "leaveGame":
         // Uses session by default
-        await game.save().then((savedGame) => {
-          console.log(savedGame.pStats);
-          console.log("savedGame = game", savedGame === game); // true
-        });
+        await game.save();
         await updateUser(user, "", "", "", {}, session);
         usersUpdated.push(user);
         break;

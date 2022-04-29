@@ -16,10 +16,10 @@ export const createGame = async (socket, privacy, maxPlayers) => {
   const user = userObj.username;
   const gameTitle = "coup";
   const gameID = crypto.randomBytes(6).toString("hex");
-  const pStat = { coins: 2, roles: ["", ""] };
+  const pStat = { player: user, coins: 2, roles: ["", ""] };
 
-  const pStats = new Map();
-  pStats.set(user, pStat);
+  const pStats = [];
+  pStats.push(pStat);
 
   const game = new CoupGame({
     gameTitle: gameTitle,

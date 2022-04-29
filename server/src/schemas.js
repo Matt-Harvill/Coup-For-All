@@ -16,7 +16,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  pStat: {},
+  pStat: {
+    player: String,
+    coins: Number,
+    roles: [String],
+  },
 });
 
 const coupGameSchema = new mongoose.Schema({
@@ -27,7 +31,13 @@ const coupGameSchema = new mongoose.Schema({
   privacy: String, // 'public', 'private'
   maxPlayers: Number,
   players: [String],
-  pStats: Map,
+  pStats: [
+    {
+      player: String,
+      coins: Number,
+      roles: [String],
+    },
+  ], // { player: "", coins: 2, roles: ["",""] }
   availRoles: [],
   winner: String,
 });
