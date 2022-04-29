@@ -1,5 +1,5 @@
-import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
 import { getSocket } from "../utils/socketUtils.js";
+import { endTurn } from "./endTurn.js";
 
 // Store the inProgress games' statuses (mapped by gameID)
 export const inProgressGameStatuses = {};
@@ -53,17 +53,7 @@ export const nextTurn = (game, gameID) => {
     inProgressGameStatuses[gameID].turnTime = turnTime;
 
     if (turnTime === 0) {
-      // Clear the interval
-      clearInterval(updateTimeInTurn);
-      inProgressGameStatuses[gameID].interval = null;
-
-      activePlayer = game.players.shift(); // Pop off the queue
-      game.players.push(activePlayer); // Push player to end of queue
-
-      await updateUserAndGame(activePlayer, game, "updateGame"); // Update the game (So turn order is saved)
-      const updatedGame = await getGame(game.gameTitle, gameID); // Get the updated game
-
-      nextTurn(updatedGame, gameID);
+      endTurn(null, game);
     }
   }, updatePeriod);
 
