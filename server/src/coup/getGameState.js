@@ -2,12 +2,14 @@ import * as dbUtils from "../utils/dbUtils.js";
 
 export const publicGameState = (game, username) => {
   // Change other players' data -> Don't show their roles to other clients
-  for (const pStat of game.pStats) {
+  const publicGame = JSON.parse(JSON.stringify(game._doc));
+
+  for (const pStat of publicGame.pStats) {
     if (pStat.player !== username) {
       pStat.roles = ["default", "default"];
     }
   }
-  return game;
+  return publicGame;
 };
 
 export const getGameState = async (socket) => {
