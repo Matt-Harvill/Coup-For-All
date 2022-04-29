@@ -16,7 +16,7 @@ export const assignRoles = async (game) => {
   const committed = await dbUtils.updateUserAndGame(
     undefined,
     game,
-    "assignRoles"
+    "updateGame"
   );
 
   return committed;

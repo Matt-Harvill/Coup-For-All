@@ -49,7 +49,7 @@ export const createGame = async (socket, privacy, maxPlayers) => {
     ],
   });
 
-  const committed = await dbUtils.updateUserAndGame(user, game, "createGame");
+  const committed = await dbUtils.updateUserAndGame(user, game, "updateGame");
   if (committed) {
     // Add game to memory
     coupFormingGames.add(game);

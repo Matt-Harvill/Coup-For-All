@@ -33,7 +33,7 @@ export const joinGame = async (socket, gameID) => {
     if (gameFull) {
       committed = await assignRoles(game);
     } else {
-      committed = await dbUtils.updateUserAndGame(user, game, "joinGame");
+      committed = await dbUtils.updateUserAndGame(user, game, "updateGame");
     }
 
     if (committed) {

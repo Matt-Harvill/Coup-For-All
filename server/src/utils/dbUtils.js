@@ -48,31 +48,27 @@ export const updateUserAndGame = async (user, game, update) => {
           { session }
         );
         // Update all the users after deleting the game
-        for (let i = 0; i < game.players.length; i++) {
-          const user = game.players[i];
-          await updateUser(user, "", "", "", {}, session);
-          usersUpdated.push(user);
+        for (const player of game.players) {
+          await updateUser(player, "", "", "", {}, session);
+          usersUpdated.push(player);
         }
         break;
-      case "assignRoles":
-      case "createGame":
-      case "joinGame":
+      case "updateGame":
         await game.save(); // Uses session by default
         // Update all the users after someone joins the game, or created (just that user anyways)
-        for (let i = 0; i < game.players.length; i++) {
-          const user = game.players[i];
+        for (const player of game.players) {
           const [pStat] = game.pStats.filter((pStat) => {
-            return pStat.player === user;
+            return pStat.player === player;
           });
           await updateUser(
-            user,
+            player,
             game.gameTitle,
             game.gameID,
             game.status,
             pStat,
             session
           );
-          usersUpdated.push(user);
+          usersUpdated.push(player);
         }
         break;
       case "leaveGame": // Only called if game still has players
