@@ -4,29 +4,27 @@ import { coupFormingGames, sendFormingGames } from "./coup.js";
 
 export const leaveGame = async (socket) => {
   const userObj = socket.request.user;
+  const user = userObj.username;
   // Get the game
   const game = await CoupGame.findOne({
     gameID: userObj.gameID,
   }).exec();
 
-  const user = userObj.username;
-  // Update players
-  game.players = game.players.filter((player) => {
-    return player !== user;
-  });
-  // Update pStats
-  game.pStats = game.pStats.filter((pStat) => {
-    return pStat.player !== user;
-  });
-  console.log(game.pStats);
-
-  // If game is empty now, delete the game
-  let gameDeleted;
-  let committed;
-  if (game.players.length === 0) {
-    committed = await dbUtils.updateUserAndGame(user, game, "lastPlayerLeft");
+  let gameDeleted, committed;
+  // If game will be empty now, delete the game
+  if (game.players.length === 1) {
+    committed = await dbUtils.updateUserAndGame(user, game, "deleteGame");
     gameDeleted = true;
   } else {
+    // Update players
+    game.players = game.players.filter((player) => {
+      return player !== user;
+    });
+    // Update pStats
+    game.pStats = game.pStats.filter((pStat) => {
+      return pStat.player !== user;
+    });
+
     // Otherwise just indicate a player left the game
     committed = await dbUtils.updateUserAndGame(user, game, "leaveGame");
     gameDeleted = false;

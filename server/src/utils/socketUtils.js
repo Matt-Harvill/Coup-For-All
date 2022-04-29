@@ -15,7 +15,7 @@ export const sendUpdatesSingle = async (username, game = undefined) => {
     socket.request.user = userObj; // Update the socket's user object
     socket.emit("updateUserObj", userObj); // Inform client of update to their userObj
     // If the game to send is passed in, update client with game
-    if (game !== undefined) {
+    if (game !== undefined && game !== null) {
       const publicGame = await gameSwitch(game.gameTitle).getPublicGame(
         game,
         username

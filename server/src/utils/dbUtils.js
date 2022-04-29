@@ -42,7 +42,7 @@ export const updateUserAndGame = async (user, game, update) => {
 
   try {
     switch (update) {
-      case "deleteGame":
+      case "deleteGame": // Called only when last player or game still forming
         await gameSchemaSwitch(game.gameTitle).deleteOne(
           { gameID: game.gameID },
           { session }
@@ -54,19 +54,10 @@ export const updateUserAndGame = async (user, game, update) => {
           usersUpdated.push(user);
         }
         break;
-      case "lastPlayerLeft":
-        await gameSchemaSwitch(game.gameTitle).deleteOne(
-          { gameID: game.gameID },
-          { session }
-        );
-        await updateUser(user, "", "", "", {}, session);
-        usersUpdated.push(user);
-        break;
       case "assignRoles":
       case "createGame":
       case "joinGame":
-        // Uses session by default
-        await game.save();
+        await game.save(); // Uses session by default
         // Update all the users after someone joins the game, or created (just that user anyways)
         for (let i = 0; i < game.players.length; i++) {
           const user = game.players[i];
@@ -84,9 +75,8 @@ export const updateUserAndGame = async (user, game, update) => {
           usersUpdated.push(user);
         }
         break;
-      case "leaveGame":
-        // Uses session by default
-        await game.save();
+      case "leaveGame": // Only called if game still has players
+        await game.save(); // Uses session by default
         await updateUser(user, "", "", "", {}, session);
         usersUpdated.push(user);
         break;
@@ -102,17 +92,17 @@ export const updateUserAndGame = async (user, game, update) => {
     await session.commitTransaction();
     session.endSession();
 
-    if (usersUpdated.length > 0) {
-      for (let i = 0; i < usersUpdated.length; i++) {
-        let gameToUpdate;
-        // Only send a game update if assignRoles was the update (for now)
-        if (update === "assignRoles") {
-          gameToUpdate = await getGame(game.gameTitle, game.gameID);
-        }
-        sendUpdatesSingle(usersUpdated[i], gameToUpdate);
+    let gameToUpdate;
+    // Only send a game update if game is in progress, in which case, update all players
+    if (game.status === "in progress") {
+      gameToUpdate = await getGame(game.gameTitle, game.gameID);
+      if (update === "leaveGame") {
+        usersUpdated.push(...game.players);
       }
-    } else {
-      throw "error numUsersUpdated users";
+    }
+    // Update all the players in the game
+    for (const user of usersUpdated) {
+      sendUpdatesSingle(user, gameToUpdate);
     }
   } else {
     await session.abortTransaction();
