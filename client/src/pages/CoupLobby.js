@@ -3,7 +3,7 @@ import CoupCreateGame from "../components/CoupCreateGame";
 import { socket } from "../socket";
 import unlock from "../images/unlock.png";
 import "../styles/Coup.css";
-import CoupGameContext from "../components/CoupGameContext";
+import CoupLobbyGamesContext from "../components/CoupLobbyGamesContext";
 import CoupJoinGame from "../components/CoupJoinGame";
 import AppContext from "../components/AppContext";
 
@@ -155,7 +155,7 @@ export default function Coup() {
             {onlineUsers.map(displayPlayers)}
           </div>
         </div>
-        <CoupGameContext.Provider value={coupGameState}>
+        <CoupLobbyGamesContext.Provider value={coupGameState}>
           <div className="coupTile">
             <h3>Games</h3>
             <div
@@ -168,7 +168,7 @@ export default function Coup() {
 
             <CoupCreateGame />
           </div>
-        </CoupGameContext.Provider>
+        </CoupLobbyGamesContext.Provider>
       </div>
     </div>
   );

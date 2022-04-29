@@ -3,12 +3,12 @@ import lock from "../images/lock.png";
 import dropdown from "../images/dropdown.png";
 import dropup from "../images/dropup.png";
 import { useContext, useState } from "react";
-import CoupGameContext from "./CoupGameContext";
+import CoupLobbyGamesContext from "./CoupLobbyGamesContext";
 import AppContext from "./AppContext";
 import { socket } from "../socket";
 
 export default function CoupJoinGame(props) {
-  const { inGame } = useContext(CoupGameContext);
+  const { inGame } = useContext(CoupLobbyGamesContext);
   const { userObj } = useContext(AppContext);
   const [extended, setExtended] = useState(false);
   const [inputGameID, setInputGameID] = useState("");

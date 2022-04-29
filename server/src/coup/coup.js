@@ -7,7 +7,7 @@ import { deleteGame } from "./deleteGame.js";
 import { joinGame } from "./joinGame.js";
 import { leaveGame } from "./leaveGame.js";
 import { getGameState, publicGameState } from "./getGameState.js";
-import { inProgressGameHandler } from "./inProgressGameHandler.js";
+import { endTurn, inProgressGameHandler } from "./inProgressGameHandler.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -107,6 +107,9 @@ export const eventSwitch = async (event, socket, ...args) => {
       break;
     case "getGameState":
       getGameState(socket);
+      break;
+    case "endTurn":
+      endTurn(socket.request.user);
       break;
     default:
       throw "Not a valid 'coup' event";

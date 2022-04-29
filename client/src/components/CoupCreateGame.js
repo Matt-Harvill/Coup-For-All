@@ -2,12 +2,12 @@ import "../styles/Coup.css";
 import unlock from "../images/unlock.png";
 import lock from "../images/lock.png";
 import { useContext } from "react";
-import CoupGameContext from "./CoupGameContext";
+import CoupLobbyGamesContext from "./CoupLobbyGamesContext";
 import { socket } from "../socket";
 
 export default function CoupCreateGame() {
   const { inGame, ownsGame, privacy, setPrivacy, numPlayers, setNumPlayers } =
-    useContext(CoupGameContext);
+    useContext(CoupLobbyGamesContext);
 
   const changePrivacy = () => {
     switch (privacy) {

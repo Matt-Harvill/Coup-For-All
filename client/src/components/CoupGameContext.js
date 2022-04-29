@@ -2,16 +2,10 @@ import { createContext } from "react";
 
 // set the defaults
 const CoupGameContext = createContext({
-  games: "",
-  setGames: () => {},
-  inGame: false,
-  setInGame: () => {},
-  ownsGame: false,
-  setOwnsGame: () => {},
-  privacy: "",
-  setPrivacy: () => {},
-  numPlayers: "",
-  setNumPlayers: () => {},
+  game: {},
+  setGame: () => {},
+  turnInfo: {},
+  setTurnInfo: () => {},
 });
 
 export default CoupGameContext;

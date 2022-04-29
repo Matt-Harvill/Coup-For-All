@@ -1,9 +1,26 @@
+import { useContext } from "react";
+import { socket } from "../socket";
+import AppContext from "./AppContext";
+import CoupGameContext from "./CoupGameContext";
+
 export default function CoupPlayerCard(props) {
+  const { turnInfo } = useContext(CoupGameContext);
+  const { userObj } = useContext(AppContext);
   const pStat = props.pStat;
   const timeLeft = props.timeLeft;
   const width = props.width;
 
   const maxTimeLeft = 10;
+
+  const displayEndTurnButton = () => {
+    // If this is the user, this is their player card, and its their turn -> show end turn button
+    if (
+      turnInfo.activePlayer === pStat.player &&
+      pStat.player === userObj.username
+    ) {
+      return <button onClick={endTurn}>End Turn</button>;
+    }
+  };
 
   const displayTimeLeft = () => {
     if (timeLeft) {
@@ -19,9 +36,9 @@ export default function CoupPlayerCard(props) {
       return (
         <div>
           <p>Turn Time Remaining:</p>
-          <div class="progress">
+          <div className="progress">
             <div
-              class="progress-bar"
+              className="progress-bar"
               role="progressbar"
               aria-valuenow={timeLeft.toString()}
               aria-valuemin="0"
@@ -32,9 +49,15 @@ export default function CoupPlayerCard(props) {
               }}
             ></div>
           </div>
+          <div style={{ height: 10 }}></div>
+          {displayEndTurnButton()}
         </div>
       );
     }
+  };
+
+  const endTurn = () => {
+    socket.emit("coup", "endTurn");
   };
 
   return (

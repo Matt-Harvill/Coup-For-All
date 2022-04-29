@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import AppContext from "../components/AppContext";
+import CoupGameContext from "../components/CoupGameContext";
 import CoupPlayerCard from "../components/CoupPlayerCard";
 import { socket } from "../socket";
 
@@ -10,6 +11,13 @@ export default function CoupGame() {
     activePlayer: "",
     timeLeft: null,
   });
+
+  const gameContext = {
+    game: game,
+    setGame: setGame,
+    turnInfo: turnInfo,
+    setTurnInfo: setTurnInfo,
+  };
 
   const coupCardWidth = 200;
 
@@ -60,18 +68,20 @@ export default function CoupGame() {
 
   return (
     <div className="page">
-      <h1 style={{ textAlign: "center", margin: 20 }}>CoupGame</h1>
-      {/* <span>{JSON.stringify(game)}</span> */}
-      <div
-        style={{
-          display: "grid",
-          gap: 20,
-          gridTemplateColumns: `repeat(auto-fit, ${coupCardWidth}px)`,
-          justifyContent: "space-evenly",
-        }}
-      >
-        {game.pStats && game.pStats.map(displayPlayer)}
-      </div>
+      <CoupGameContext.Provider value={gameContext}>
+        <h1 style={{ textAlign: "center", margin: 20 }}>CoupGame</h1>
+        {/* <span>{JSON.stringify(game)}</span> */}
+        <div
+          style={{
+            display: "grid",
+            gap: 20,
+            gridTemplateColumns: `repeat(auto-fit, ${coupCardWidth}px)`,
+            justifyContent: "space-evenly",
+          }}
+        >
+          {game.pStats && game.pStats.map(displayPlayer)}
+        </div>
+      </CoupGameContext.Provider>
     </div>
   );
 }

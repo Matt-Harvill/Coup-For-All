@@ -27,6 +27,13 @@ export const nextTurn = (game, gameID) => {
     activePlayer = inProgressGameStatuses[gameID].activePlayer; // Otherwise keep activePlayer that already exists
   }
 
+  // Update initial game status
+  inProgressGameStatuses[gameID] = {
+    activePlayer: activePlayer,
+    turnTime: turnTime,
+    interval: null,
+  };
+
   const updateTimeInTurn = setInterval(async () => {
     // Update them with time remaining in the turn
     for (const player of game.players) {
@@ -55,14 +62,10 @@ export const nextTurn = (game, gameID) => {
 
       await updateUserAndGame(activePlayer, game, "updateGame"); // Update the game (So turn order is saved)
       const updatedGame = await getGame(game.gameTitle, gameID); // Get the updated game
+
       nextTurn(updatedGame, gameID);
     }
   }, updatePeriod);
 
-  // Update initial game status
-  inProgressGameStatuses[gameID] = {
-    activePlayer: activePlayer,
-    turnTime: turnTime,
-    interval: updateTimeInTurn,
-  };
+  inProgressGameStatuses[gameID].interval = updateTimeInTurn; // Sets interval after interval declared
 };
