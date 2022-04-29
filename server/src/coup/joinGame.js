@@ -2,6 +2,7 @@ import * as dbUtils from "../utils/dbUtils.js";
 import { CoupGame } from "../schemas.js";
 import { coupFormingGames, sendFormingGames } from "./coup.js";
 import { assignRoles } from "./assignRoles.js";
+import { nextTurn } from "./nextTurn.js";
 
 export const joinGame = async (socket, gameID) => {
   const userObj = socket.request.user;
@@ -54,6 +55,9 @@ export const joinGame = async (socket, gameID) => {
 
       // Update everyone with forming games
       sendFormingGames();
+
+      // Call Next turn since game is starting
+      nextTurn(game);
     }
   }
 };

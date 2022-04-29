@@ -6,6 +6,11 @@ import { socket } from "../socket";
 export default function CoupGame() {
   const { userObj } = useContext(AppContext);
   const [game, setGame] = useState({});
+  const [turnInfo, setTurnInfo] = useState({
+    activePlayer: "",
+    timeLeft: null,
+  });
+
   // Setup coup socket listener
   useEffect(() => {
     socket.on("coup", (event, gameID, ...args) => {
@@ -14,6 +19,13 @@ export default function CoupGame() {
           case "updateGame":
             const gameState = args[0];
             setGame(gameState);
+            break;
+          case "timeInTurn":
+            const [activePlayer, timeLeft] = args;
+            setTurnInfo({
+              activePlayer: activePlayer,
+              timeLeft: timeLeft,
+            });
             break;
           default:
             break;
@@ -29,14 +41,25 @@ export default function CoupGame() {
   }, []);
 
   const displayPlayer = (pStat) => {
-    return <CoupPlayerCard pStat={pStat} />;
+    if (pStat.player === turnInfo.activePlayer) {
+      return <CoupPlayerCard pStat={pStat} timeLeft={turnInfo.timeLeft} />;
+    } else {
+      return <CoupPlayerCard pStat={pStat} timeLeft={null} />;
+    }
   };
 
   return (
     <div className="page">
       <h1 style={{ textAlign: "center" }}>CoupGame</h1>
       {/* <span>{JSON.stringify(game)}</span> */}
-      {game.pStats && game.pStats.map(displayPlayer)}
+      <div
+        style={{
+          display: "grid",
+          gap: 20,
+        }}
+      >
+        {game.pStats && game.pStats.map(displayPlayer)}
+      </div>
     </div>
   );
 }
