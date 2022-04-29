@@ -1,6 +1,8 @@
 export default function CoupPlayerCard(props) {
   const pStat = props.pStat;
   const timeLeft = props.timeLeft;
+  const width = props.width;
+
   const maxTimeLeft = 10;
 
   const displayTimeLeft = () => {
@@ -39,8 +41,9 @@ export default function CoupPlayerCard(props) {
     <div
       style={{
         minHeight: 100,
-        width: 200,
+        width: width,
         backgroundColor: "#c4c4c4",
+        padding: 10,
       }}
     >
       <p>

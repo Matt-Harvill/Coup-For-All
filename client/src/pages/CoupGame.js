@@ -11,6 +11,8 @@ export default function CoupGame() {
     timeLeft: null,
   });
 
+  const coupCardWidth = 200;
+
   // Setup coup socket listener
   useEffect(() => {
     socket.on("coup", (event, gameID, ...args) => {
@@ -42,20 +44,30 @@ export default function CoupGame() {
 
   const displayPlayer = (pStat) => {
     if (pStat.player === turnInfo.activePlayer) {
-      return <CoupPlayerCard pStat={pStat} timeLeft={turnInfo.timeLeft} />;
+      return (
+        <CoupPlayerCard
+          width={coupCardWidth}
+          pStat={pStat}
+          timeLeft={turnInfo.timeLeft}
+        />
+      );
     } else {
-      return <CoupPlayerCard pStat={pStat} timeLeft={null} />;
+      return (
+        <CoupPlayerCard width={coupCardWidth} pStat={pStat} timeLeft={null} />
+      );
     }
   };
 
   return (
     <div className="page">
-      <h1 style={{ textAlign: "center" }}>CoupGame</h1>
+      <h1 style={{ textAlign: "center", margin: 20 }}>CoupGame</h1>
       {/* <span>{JSON.stringify(game)}</span> */}
       <div
         style={{
           display: "grid",
           gap: 20,
+          gridTemplateColumns: `repeat(auto-fit, ${coupCardWidth}px)`,
+          justifyContent: "space-evenly",
         }}
       >
         {game.pStats && game.pStats.map(displayPlayer)}
