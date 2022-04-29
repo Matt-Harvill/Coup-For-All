@@ -14,6 +14,7 @@ export const nextTurn = async (game) => {
   }
 
   let turnTime = 10000; // 10 seconds for a turn
+  const updatePeriod = 100; // Update every 100ms
 
   const updateTimeInTurn = setInterval(() => {
     // Update them with time remaining in the turn
@@ -24,16 +25,16 @@ export const nextTurn = async (game) => {
           "timeInTurn",
           game.gameID,
           activePlayer,
-          turnTime / 1000
+          turnTime / 1000 // Send the time remaining in seconds
         );
       }
     }
 
-    turnTime -= 1000;
+    turnTime -= updatePeriod;
 
     if (turnTime === 0) {
       clearInterval(updateTimeInTurn);
       nextTurn(game);
     }
-  }, 1000);
+  }, updatePeriod);
 };
