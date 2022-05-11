@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import AppContext from "../components/AppContext";
+import CoupActionbar from "../components/CoupActionbar";
 import CoupGameContext from "../components/CoupGameContext";
 import CoupPlayerCard from "../components/CoupPlayerCard";
 import { socket } from "../socket";
@@ -10,7 +11,10 @@ export default function CoupGame() {
   const [turnInfo, setTurnInfo] = useState({
     activePlayer: "",
     timeLeft: null,
+    inCalloutPeriod: false,
+    needToDecide: [],
   });
+  console.log(turnInfo);
 
   const gameContext = {
     game: game,
@@ -35,6 +39,17 @@ export default function CoupGame() {
             setTurnInfo({
               activePlayer: activePlayer,
               timeLeft: timeLeft,
+              inCalloutPeriod: false,
+              needToDecide: [],
+            });
+            break;
+          case "timeInCallout":
+            const [needToDecide, target, calloutTime] = args;
+            setTurnInfo({
+              activePlayer: target,
+              timeLeft: calloutTime,
+              inCalloutPeriod: true,
+              needToDecide: needToDecide,
             });
             break;
           default:
@@ -51,37 +66,33 @@ export default function CoupGame() {
   }, []);
 
   const displayPlayer = (pStat) => {
-    if (pStat.player === turnInfo.activePlayer) {
-      return (
-        <CoupPlayerCard
-          width={coupCardWidth}
-          pStat={pStat}
-          timeLeft={turnInfo.timeLeft}
-        />
-      );
-    } else {
-      return (
-        <CoupPlayerCard width={coupCardWidth} pStat={pStat} timeLeft={null} />
-      );
-    }
+    return <CoupPlayerCard width={coupCardWidth} pStat={pStat} />;
   };
 
   return (
     <div className="page">
-      <CoupGameContext.Provider value={gameContext}>
-        <h1 style={{ textAlign: "center", margin: 20 }}>CoupGame</h1>
-        {/* <span>{JSON.stringify(game)}</span> */}
-        <div
-          style={{
-            display: "grid",
-            gap: 20,
-            gridTemplateColumns: `repeat(auto-fit, ${coupCardWidth}px)`,
-            justifyContent: "space-evenly",
-          }}
-        >
-          {game.pStats && game.pStats.map(displayPlayer)}
-        </div>
-      </CoupGameContext.Provider>
+      <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        <CoupGameContext.Provider value={gameContext}>
+          <h1 style={{ textAlign: "center", margin: 20 }}>CoupGame</h1>
+          {/* <span>{JSON.stringify(game)}</span> */}
+          <div
+            style={{
+              display: "grid",
+              gap: 20,
+              gridTemplateColumns: `repeat(auto-fit, ${coupCardWidth}px)`,
+              justifyContent: "space-evenly",
+              padding: 20,
+            }}
+          >
+            {game.pStats && game.pStats.map(displayPlayer)}
+          </div>
+          {/* Add flex 1 object to move actionbar to the bottom */}
+          <div style={{ flex: 1 }}></div>
+          <div>
+            <CoupActionbar timeLeft={turnInfo.timeLeft} />
+          </div>
+        </CoupGameContext.Provider>
+      </div>
     </div>
   );
 }
