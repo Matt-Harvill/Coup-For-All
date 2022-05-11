@@ -10,8 +10,9 @@
 }
 
 .coupTile {
-  width: 320px;
-  height: 72vh;
+  min-width: 280px;
+  flex: 1;
+  height: 70vh;
   padding: 20px;
 
   display: flex;
@@ -23,11 +24,11 @@
   background-color: #c4c4c4;
 }
 
-@media screen and (min-width: 580px) {
+/* @media screen and (min-width: 580px) {
   .coupTile {
-    width: 480px;
+    width: auto;
   }
-}
+} */
 
 .coupText {
   overflow-y: scroll;
