@@ -22,6 +22,16 @@ export default function CoupPlayerCard(props) {
     }
   };
 
+  const displayActionButton = () => {
+    // If this is the user, this is their player card, and its their turn -> show action button
+    if (
+      turnInfo.activePlayer === pStat.player &&
+      pStat.player === userObj.username
+    ) {
+      return <button onClick={action}>Action</button>;
+    }
+  };
+
   const displayTimeLeft = () => {
     if (timeLeft) {
       let timeLeftColor;
@@ -51,6 +61,7 @@ export default function CoupPlayerCard(props) {
           </div>
           <div style={{ height: 10 }}></div>
           {displayEndTurnButton()}
+          {displayActionButton()}
         </div>
       );
     }
@@ -59,6 +70,10 @@ export default function CoupPlayerCard(props) {
   const endTurn = () => {
     socket.emit("coup", "endTurn");
   };
+
+  const action = () => {
+    socket.emit("coup","action","defaultAction","defaultTarget")
+  }
 
   return (
     <div

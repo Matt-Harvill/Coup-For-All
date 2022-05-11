@@ -1,4 +1,0 @@
-To start I want:
-
-Coup game that cycles through players' turns and shows the countDown each second in a progress bar on frontend.
-(No way of preempting the countDown, but it continues indefinitely)

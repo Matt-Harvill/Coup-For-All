@@ -20,7 +20,6 @@ export const endTurn = async (user, game) => {
 
     await updateUserAndGame(activePlayer, game, "updateGame"); // Update the game (So turn order is saved)
     const updatedGame = await getGame(game.gameTitle, gameID); // Get the updated game
-    console.log(updatedGame.players);
     nextTurn(updatedGame, gameID);
   }
 };

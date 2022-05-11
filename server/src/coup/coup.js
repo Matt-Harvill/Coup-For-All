@@ -9,6 +9,7 @@ import { leaveGame } from "./leaveGame.js";
 import { getGameState, publicGameState } from "./getGameState.js";
 import { inProgressGameHandler } from "./inProgressGameHandler.js";
 import { endTurn } from "./endTurn.js";
+import { startCalloutPeriod } from "./calloutPeriod.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -78,6 +79,7 @@ export const getPublicGame = (game, username) => {
 };
 
 export const eventSwitch = async (event, socket, ...args) => {
+  const user = socket.request.user
   switch (event) {
     case "leaveGame":
       await leaveGame(socket);
@@ -110,7 +112,12 @@ export const eventSwitch = async (event, socket, ...args) => {
       getGameState(socket);
       break;
     case "endTurn":
-      endTurn(socket.request.user, null);
+      endTurn(user, null);
+      break;
+    case "action":
+      const [action, target] = args;
+      console.log("starting callout period")
+      await startCalloutPeriod(user, null);
       break;
     default:
       throw "Not a valid 'coup' event";

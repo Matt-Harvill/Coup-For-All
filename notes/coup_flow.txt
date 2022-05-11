@@ -5,9 +5,13 @@ When it is someone's turn, they have 1 minute to make a move. A timer - progress
 show them how much time they have to make a move. If they don't make a move, a move will be made for them automatically
 If they are inactive for two round in a row, they will be kicked and their roles will be flipped to show to everyone
 
-
 Once in a game - socket messages specific to the game - don't have to worry about all the other listeners (except the game - people leaving)
 
+
+When someone does an action that can be contested - pauses their turn. Once it is resolved (with the action
+completing), they either get to continue or they have to end their turn. 
+
+Have the controls at the bottom on a toolbar instead of in the player's box
 
 socket for actual games:
 socket.on("coup action", action, target, () => {
