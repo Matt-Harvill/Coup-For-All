@@ -14,7 +14,6 @@ export default function CoupGame() {
     inCalloutPeriod: false,
     needToDecide: [],
   });
-  console.log(turnInfo);
 
   const gameContext = {
     game: game,

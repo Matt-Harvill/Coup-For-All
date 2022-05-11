@@ -79,7 +79,7 @@ export const getPublicGame = (game, username) => {
 };
 
 export const eventSwitch = async (event, socket, ...args) => {
-  const user = socket.request.user
+  const user = socket.request.user;
   switch (event) {
     case "leaveGame":
       await leaveGame(socket);
@@ -116,7 +116,6 @@ export const eventSwitch = async (event, socket, ...args) => {
       break;
     case "action":
       const [action, target] = args;
-      console.log("starting callout period")
       await startCalloutPeriod(user, null);
       break;
     default:

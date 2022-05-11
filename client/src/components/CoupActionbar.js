@@ -26,7 +26,7 @@ export default function CoupActionbar() {
               width: "50%",
               display: "grid",
               gridGap: 20,
-              gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
+              gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
             }}
           >
             <button>Pass</button>
@@ -44,7 +44,7 @@ export default function CoupActionbar() {
             width: "50%",
             display: "grid",
             gridGap: 20,
-            gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
           }}
         >
           <button onClick={endTurn}>End Turn</button>

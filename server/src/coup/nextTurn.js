@@ -12,7 +12,7 @@ export const nextTurn = (game, gameID) => {
   }
 
   let turnTime, activePlayer;
-  const updatePeriod = 1000; // Update every 100ms
+  const updatePeriod = 100; // Update every 100ms
 
   if (
     !inProgressGameStatuses[gameID] ||
