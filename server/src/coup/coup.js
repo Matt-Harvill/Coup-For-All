@@ -10,6 +10,7 @@ import { getGameState, publicGameState } from "./getGameState.js";
 import { inProgressGameHandler } from "./inProgressGameHandler.js";
 import { endTurn } from "./endTurn.js";
 import { startCalloutPeriod } from "./calloutPeriod.js";
+import { income } from "./income.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -117,6 +118,9 @@ export const eventSwitch = async (event, socket, ...args) => {
     case "action":
       const [action, target] = args;
       await startCalloutPeriod(user, null);
+      break;
+    case "income":
+      income(user);
       break;
     default:
       throw "Not a valid 'coup' event";

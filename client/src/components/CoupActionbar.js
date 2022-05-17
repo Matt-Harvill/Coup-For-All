@@ -46,7 +46,7 @@ export default function CoupActionbar() {
       {
         title: "Income~",
         selectionArgs: null,
-        onClick: null,
+        onClick: income,
         onClickArgs: null,
       },
       {
@@ -135,6 +135,10 @@ export default function CoupActionbar() {
         onClickArgs={buttonInfo.onClickArgs}
       />
     );
+  };
+
+  const income = () => {
+    socket.emit("coup", "income");
   };
 
   const endTurn = () => {
