@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from "react";
 import { socket } from "../socket";
 import AppContext from "./AppContext";
+import CoupActionButton from "./CoupActionButton";
 import CoupGameContext from "./CoupGameContext";
 import TimeLeft from "./TimeLeft";
 
 export default function CoupActionbar() {
-  const { turnInfo } = useContext(CoupGameContext);
+  const { turnInfo, game } = useContext(CoupGameContext);
   const { userObj } = useContext(AppContext);
   const [maxTimeLeft, setMaxTimeLeft] = useState(60);
   const timeLeft = turnInfo.timeLeft;
@@ -18,26 +19,78 @@ export default function CoupActionbar() {
     }
   }, [turnInfo]);
 
+  const getOtherPlayers = () => {
+    if (game.players) {
+      return game.players.filter((player) => {
+        return player !== userObj.username;
+      });
+    } else {
+      return null;
+    }
+  };
+
   const displayButtons = () => {
+    const otherPlayers = getOtherPlayers();
+
     const calloutButtonInfos = [
+      { title: "Pass~", selectionArgs: null, onClick: null, onClickArgs: null },
       {
-        action: "Pass",
-        function: null,
-      },
-      {
-        action: "Call Out",
-        function: null,
+        title: "Call Out~",
+        selectionArgs: null,
+        onClick: null,
+        onClickArgs: null,
       },
     ];
 
     const regularButtonInfos = [
       {
-        action: "End Turn",
-        function: endTurn,
+        title: "Income~",
+        selectionArgs: null,
+        onClick: null,
+        onClickArgs: null,
       },
       {
-        action: "Action",
-        function: action,
+        title: "Foreign Aid~",
+        selectionArgs: null,
+        onClick: null,
+        onClickArgs: null,
+      },
+      { title: "Tax~", selectionArgs: null, onClick: null, onClickArgs: null },
+      {
+        title: "Assassinate~",
+        selectionArgs: otherPlayers,
+        onClick: null,
+        onClickArgs: null,
+      },
+      {
+        title: "Exchange~",
+        selectionArgs: null,
+        onClick: null,
+        onClickArgs: null,
+      },
+      {
+        title: "Steal~",
+        selectionArgs: otherPlayers,
+        onClick: null,
+        onClickArgs: null,
+      },
+      {
+        title: "Coup~",
+        selectionArgs: otherPlayers,
+        onClick: null,
+        onClickArgs: null,
+      },
+      {
+        title: "Action~",
+        selectionArgs: null,
+        onClick: action,
+        onClickArgs: ["testArg0", "testArg1"],
+      },
+      {
+        title: "End Turn~",
+        selectionArgs: null,
+        onClick: endTurn,
+        onClickArgs: null,
       },
     ];
 
@@ -73,22 +126,23 @@ export default function CoupActionbar() {
     );
   };
 
-  const makeButton = (button) => {
-    const clickFunction = button.function;
-    const buttonText = button.action;
-
-    if (clickFunction) {
-      return <button onClick={clickFunction}>{buttonText}</button>;
-    } else {
-      return <button>{buttonText}</button>;
-    }
+  const makeButton = (buttonInfo) => {
+    return (
+      <CoupActionButton
+        title={buttonInfo.title}
+        selectionArgs={buttonInfo.selectionArgs}
+        onClick={buttonInfo.onClick}
+        onClickArgs={buttonInfo.onClickArgs}
+      />
+    );
   };
 
   const endTurn = () => {
     socket.emit("coup", "endTurn");
   };
 
-  const action = () => {
+  const action = (...args) => {
+    // console.log(args);
     socket.emit("coup", "action", "defaultAction", "defaultTarget");
   };
 
