@@ -19,6 +19,30 @@ export default function CoupActionbar() {
   }, [turnInfo]);
 
   const displayButtons = () => {
+    const calloutButtonInfos = [
+      {
+        action: "Pass",
+        function: null,
+      },
+      {
+        action: "Call Out",
+        function: null,
+      },
+    ];
+
+    const regularButtonInfos = [
+      {
+        action: "End Turn",
+        function: endTurn,
+      },
+      {
+        action: "Action",
+        function: action,
+      },
+    ];
+
+    let buttonInfos;
+
     if (turnInfo.inCalloutPeriod) {
       // Don't display callout buttons if user is the one being tested
       if (turnInfo.activePlayer === userObj.username) {
@@ -26,34 +50,37 @@ export default function CoupActionbar() {
       }
       // If user is not being called out, let them call out or pass
       else {
-        return (
-          <div
-            style={{
-              display: "grid",
-              gridGap: 20,
-              gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
-            }}
-          >
-            <button>Pass</button>
-            <button>Call Out</button>
-          </div>
-        );
+        buttonInfos = calloutButtonInfos;
       }
     }
     // If not callout period, check if active player is this user
     else if (turnInfo.activePlayer === userObj.username) {
-      return (
-        <div
-          style={{
-            display: "grid",
-            gridGap: 20,
-            gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
-          }}
-        >
-          <button onClick={endTurn}>End Turn</button>
-          <button onClick={action}>Action</button>
-        </div>
-      );
+      buttonInfos = regularButtonInfos;
+    } else {
+      return;
+    }
+
+    return (
+      <div
+        style={{
+          display: "grid",
+          gridGap: 20,
+          gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+        }}
+      >
+        {buttonInfos.map(makeButton)}
+      </div>
+    );
+  };
+
+  const makeButton = (button) => {
+    const clickFunction = button.function;
+    const buttonText = button.action;
+
+    if (clickFunction) {
+      return <button onClick={clickFunction}>{buttonText}</button>;
+    } else {
+      return <button>{buttonText}</button>;
     }
   };
 
