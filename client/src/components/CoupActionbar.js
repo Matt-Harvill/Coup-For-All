@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { socket } from "../socket";
 import AppContext from "./AppContext";
 import CoupGameContext from "./CoupGameContext";
@@ -7,23 +7,28 @@ import TimeLeft from "./TimeLeft";
 export default function CoupActionbar() {
   const { turnInfo } = useContext(CoupGameContext);
   const { userObj } = useContext(AppContext);
+  const [maxTimeLeft, setMaxTimeLeft] = useState(60);
   const timeLeft = turnInfo.timeLeft;
 
-  const maxTimeLeft = 60;
+  useEffect(() => {
+    if (turnInfo.inCalloutPeriod) {
+      setMaxTimeLeft(30);
+    } else {
+      setMaxTimeLeft(60);
+    }
+  }, [turnInfo]);
 
   const displayButtons = () => {
     if (turnInfo.inCalloutPeriod) {
       // Don't display callout buttons if user is the one being tested
       if (turnInfo.activePlayer === userObj.username) {
-        return <div></div>;
+        return;
       }
       // If user is not being called out, let them call out or pass
       else {
         return (
           <div
             style={{
-              margin: "auto",
-              width: "50%",
               display: "grid",
               gridGap: 20,
               gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
@@ -40,8 +45,6 @@ export default function CoupActionbar() {
       return (
         <div
           style={{
-            margin: "auto",
-            width: "50%",
             display: "grid",
             gridGap: 20,
             gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
@@ -62,6 +65,17 @@ export default function CoupActionbar() {
     socket.emit("coup", "action", "defaultAction", "defaultTarget");
   };
 
+  const displayTurnTitle = () => {
+    let nameToDisplay;
+    if (turnInfo.activePlayer === userObj.username) {
+      nameToDisplay = "Your";
+    } else {
+      nameToDisplay = `${turnInfo.activePlayer}'s`;
+    }
+
+    return <h4 style={{ textAlign: "center" }}>{`${nameToDisplay} turn`}</h4>;
+  };
+
   return (
     <div
       style={{
@@ -71,9 +85,12 @@ export default function CoupActionbar() {
         padding: 10,
       }}
     >
-      <TimeLeft timeLeft={timeLeft} maxTimeLeft={maxTimeLeft} />
-      <div style={{ height: 10 }}></div>
-      {displayButtons()}
+      <div style={{ margin: "auto", width: "50%" }}>
+        {displayTurnTitle()}
+        <TimeLeft timeLeft={timeLeft} maxTimeLeft={maxTimeLeft} />
+        <div style={{ height: 10 }}></div>
+        {displayButtons()}
+      </div>
     </div>
   );
 }
