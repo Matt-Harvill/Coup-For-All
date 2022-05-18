@@ -8,18 +8,28 @@ import { socket } from "../socket";
 export default function CoupGame() {
   const { userObj } = useContext(AppContext);
   const [game, setGame] = useState({});
-  const [turnInfo, setTurnInfo] = useState({
-    activePlayer: "",
-    timeLeft: null,
-    inCalloutPeriod: false,
-    needToDecide: [],
-  });
+
+  // Turn Info
+  const [activePlayer, setActivePlayer] = useState("");
+  const [timeLeft, setTimeLeft] = useState(null);
+  const [inCalloutPeriod, setInCalloutPeriod] = useState(false);
+  const [deciding, setDeciding] = useState([]);
+
+  const turnInfo = {
+    activePlayer: activePlayer,
+    setActivePlayer: setActivePlayer,
+    timeLeft: timeLeft,
+    setTimeLeft: setTimeLeft,
+    inCalloutPeriod: inCalloutPeriod,
+    setInCalloutPeriod: setInCalloutPeriod,
+    deciding: deciding,
+    setDeciding: setDeciding,
+  };
 
   const gameContext = {
     game: game,
     setGame: setGame,
     turnInfo: turnInfo,
-    setTurnInfo: setTurnInfo,
   };
 
   const coupCardWidth = 200;
@@ -35,21 +45,21 @@ export default function CoupGame() {
             break;
           case "timeInTurn":
             const [activePlayer, timeLeft] = args;
-            setTurnInfo({
-              activePlayer: activePlayer,
-              timeLeft: timeLeft,
-              inCalloutPeriod: false,
-              needToDecide: [],
-            });
+            setActivePlayer(activePlayer);
+            setTimeLeft(timeLeft);
+            setInCalloutPeriod(false);
+            setDeciding([]);
             break;
           case "timeInCallout":
             const [needToDecide, target, calloutTime] = args;
-            setTurnInfo({
-              activePlayer: target,
-              timeLeft: calloutTime,
-              inCalloutPeriod: true,
-              needToDecide: needToDecide,
-            });
+            setActivePlayer(target);
+            setTimeLeft(calloutTime);
+            setInCalloutPeriod(true);
+            setDeciding(needToDecide);
+            break;
+          case "calloutReceived":
+            const [needToDecide_] = args;
+            setDeciding(needToDecide_);
             break;
           default:
             break;

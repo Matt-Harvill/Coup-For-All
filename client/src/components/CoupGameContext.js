@@ -5,7 +5,6 @@ const CoupGameContext = createContext({
   game: {},
   setGame: () => {},
   turnInfo: {},
-  setTurnInfo: () => {},
 });
 
 export default CoupGameContext;

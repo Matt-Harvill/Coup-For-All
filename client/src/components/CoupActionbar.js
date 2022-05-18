@@ -33,7 +33,12 @@ export default function CoupActionbar() {
     const otherPlayers = getOtherPlayers();
 
     const calloutButtonInfos = [
-      { title: "Pass~", selectionArgs: null, onClick: null, onClickArgs: null },
+      {
+        title: "Pass",
+        selectionArgs: null,
+        onClick: noCallout,
+        onClickArgs: null,
+      },
       {
         title: "Call Out~",
         selectionArgs: null,
@@ -44,15 +49,15 @@ export default function CoupActionbar() {
 
     const regularButtonInfos = [
       {
-        title: "Income~",
+        title: "Income",
         selectionArgs: null,
         onClick: income,
         onClickArgs: null,
       },
       {
-        title: "Foreign Aid~",
+        title: "Foreign Aid",
         selectionArgs: null,
-        onClick: null,
+        onClick: foreignAid,
         onClickArgs: null,
       },
       { title: "Tax~", selectionArgs: null, onClick: null, onClickArgs: null },
@@ -87,7 +92,7 @@ export default function CoupActionbar() {
         onClickArgs: ["testArg0", "testArg1"],
       },
       {
-        title: "End Turn~",
+        title: "End Turn",
         selectionArgs: null,
         onClick: endTurn,
         onClickArgs: null,
@@ -97,8 +102,8 @@ export default function CoupActionbar() {
     let buttonInfos;
 
     if (turnInfo.inCalloutPeriod) {
-      // Don't display callout buttons if user is the one being tested
-      if (turnInfo.activePlayer === userObj.username) {
+      // Don't display callout buttons if user has decided (or is being accused)
+      if (!turnInfo.deciding.includes(userObj.username)) {
         return;
       }
       // If user is not being called out, let them call out or pass
@@ -139,6 +144,14 @@ export default function CoupActionbar() {
 
   const income = () => {
     socket.emit("coup", "income");
+  };
+
+  const foreignAid = () => {
+    socket.emit("coup", "foreignAid");
+  };
+
+  const noCallout = () => {
+    socket.emit("coup", "noCallout");
   };
 
   const endTurn = () => {

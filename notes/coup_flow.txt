@@ -1,77 +1,8 @@
 Once the game starts, the roles are assigned to everyone, and players are placed in a queue
 For each turn someone is popped off the queue and pushed onto the end of the queue
 
-When it is someone's turn, they have 1 minute to make a move. A timer - progress bar type display (or digital number first) - will
-show them how much time they have to make a move. If they don't make a move, a move will be made for them automatically
+If they don't make a move, a move will be made for them automatically
 If they are inactive for two round in a row, they will be kicked and their roles will be flipped to show to everyone
-
-Once in a game - socket messages specific to the game - don't have to worry about all the other listeners (except the game - people leaving)
-
 
 When someone does an action that can be contested - pauses their turn. Once it is resolved (with the action
 completing), they either get to continue or they have to end their turn. 
-
-Have the controls at the bottom on a toolbar instead of in the player's box
-
-socket for actual games:
-socket.on("coup action", action, target, () => {
-  // Based on gameID, do stuff for specific game
-
-}
-
-socket.on("coup gameState", () => {
-  socket.emit(gameState) // Give the game state when socket first connects to the specific game
-})
-
-
-stateChange = (change) => {
-  const committed = updateDB(change) // Update the database with the change
-
-  if (!committed) {
-    // Alert that the change wasn't made
-  } else {
-    io.emit(change) // Let everyone know of the change
-  }
-
-}
-
-startTurn = () => {
-  activePlayer = remove player[0] // Pop next player off the queue
-  // Update everyone who's turn it is with socket emit
-}
-
-endTurn = () => {
-  players.push(activePlayer) // Push player back onto the queue
-}
-
-// Update players with how much time is left in each turn (each second)
-turnCountDown = () => {
-  let remainSeconds = 60
-  const interval = setInterval(() => {
-    remainSeconds -= 1
-    io.emit("coup timeLeft", activePlayer, remainSeconds)
-    if (remainSeconds === 0) {
-      clearInterval(interval)
-    }
-  }, 1000)
-  return interval; // return the interval so it can be cleared externally
-}
-
-// Can be called on any game in the "in progress" state -> shouldn't be different from first turn to last turn
-playGame = () => {
-  while (!winner and players.length > 1) {
-
-    startTurn()
-
-    const interval = setInterval(endTurn, 60000) // Automatically endTurn in 60s 
-
-    socket.on("action", () => {
-      endTurn() // Possible consequence of action
-      clearInterval(interval)
-    })
-
-  }
-}
-
-// Whenever someone changes the state of the game, announce it
-// Whenever someone disconnects from the game - when they reconnect - send the state to that player (with other player's roles hidden)

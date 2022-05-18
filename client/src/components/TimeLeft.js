@@ -7,7 +7,7 @@ export default function TimeLeft(props) {
       if (timeLeft <= maxTimeLeft * 0.2) {
         timeLeftColor = "red";
       } else if (timeLeft <= maxTimeLeft * 0.4) {
-        timeLeftColor = "orange";
+        timeLeftColor = "yellow";
       } else if (timeLeft <= maxTimeLeft) {
         timeLeftColor = "green";
       }
