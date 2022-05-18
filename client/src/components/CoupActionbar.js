@@ -57,8 +57,8 @@ export default function CoupActionbar() {
       {
         title: "Pass",
         selectionArgs: null,
-        onClick: noCallout,
-        onClickArgs: null,
+        onClick: action,
+        onClickArgs: "noCallout",
       },
       {
         title: "Call Out~",
@@ -72,16 +72,21 @@ export default function CoupActionbar() {
       {
         title: "Income",
         selectionArgs: null,
-        onClick: income,
-        onClickArgs: null,
+        onClick: action,
+        onClickArgs: "income",
       },
       {
         title: "Foreign Aid",
         selectionArgs: null,
-        onClick: foreignAid,
-        onClickArgs: null,
+        onClick: action,
+        onClickArgs: "foreignAid",
       },
-      { title: "Tax", selectionArgs: null, onClick: tax, onClickArgs: null },
+      {
+        title: "Tax",
+        selectionArgs: null,
+        onClick: action,
+        onClickArgs: "tax",
+      },
       {
         title: "Assassinate~",
         selectionArgs: otherPlayers,
@@ -151,24 +156,8 @@ export default function CoupActionbar() {
     );
   };
 
-  // const action = (action) => {
-  //   socket.emit("coup", action);
-  // };
-
-  const income = () => {
-    socket.emit("coup", "income");
-  };
-
-  const foreignAid = () => {
-    socket.emit("coup", "foreignAid");
-  };
-
-  const tax = () => {
-    socket.emit("coup", "tax");
-  };
-
-  const noCallout = () => {
-    socket.emit("coup", "noCallout");
+  const action = (action) => {
+    socket.emit("coup", action);
   };
 
   const displayTurnTitle = () => {
