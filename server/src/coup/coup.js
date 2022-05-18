@@ -9,6 +9,7 @@ import { leaveGame } from "./leaveGame.js";
 import { getGameState, publicGameState } from "./getGameState.js";
 import { newIncome } from "./newIncome.js";
 import { newForeignAid } from "./newForeignAid.js";
+import { noCallout } from "./noCallout.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -115,7 +116,7 @@ export const eventSwitch = async (event, socket, ...args) => {
       newForeignAid(user);
       break;
     case "noCallout":
-      // noCallout(user);
+      noCallout(user);
       break;
     default:
       throw "Not a valid 'coup' event";

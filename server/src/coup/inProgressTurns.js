@@ -208,11 +208,15 @@ export const endTurn = async (game) => {
 
 // Delete the turn (by gameID)
 export const deleteTurn = (gameID) => {
-  const interval = turns[gameID].interval;
-  if (interval) {
-    clearInterval(interval);
+  const turn = turns[gameID];
+
+  if (turn) {
+    const interval = turn.interval;
+    if (interval) {
+      clearInterval(interval);
+    }
+    delete turns[gameID];
   }
-  delete turns[gameID];
 };
 
 // Create the turn (by game)
