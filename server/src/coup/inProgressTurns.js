@@ -109,7 +109,7 @@ const startNewStage = (game) => {
 
     // Wait till a second has passed (from last possible user update period)
     // to end the stage so that outside updates aren't duplicated
-    if (timeRem() === -1000) {
+    if (timeRem() === -500) {
       // No need to clear the interval
       endStage(game);
     }

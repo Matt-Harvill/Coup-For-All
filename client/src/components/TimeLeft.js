@@ -2,13 +2,20 @@ export default function TimeLeft(props) {
   const { timeLeft, maxTimeLeft } = props;
 
   const displayTimeLeft = () => {
-    if (timeLeft) {
+    if (timeLeft !== undefined && timeLeft !== null) {
+      let modTimeLeft;
+      if (timeLeft <= 0) {
+        modTimeLeft = 0;
+      } else {
+        modTimeLeft = timeLeft;
+      }
+
       let timeLeftColor;
-      if (timeLeft <= maxTimeLeft * 0.2) {
+      if (modTimeLeft <= maxTimeLeft * 0.2) {
         timeLeftColor = "red";
-      } else if (timeLeft <= maxTimeLeft * 0.4) {
+      } else if (modTimeLeft <= maxTimeLeft * 0.4) {
         timeLeftColor = "yellow";
-      } else if (timeLeft <= maxTimeLeft) {
+      } else if (modTimeLeft <= maxTimeLeft) {
         timeLeftColor = "green";
       }
 
@@ -17,11 +24,11 @@ export default function TimeLeft(props) {
           <div
             className="progress-bar"
             role="progressbar"
-            aria-valuenow={timeLeft.toString()}
+            aria-valuenow={modTimeLeft.toString()}
             aria-valuemin="0"
             aria-valuemax={maxTimeLeft.toString()}
             style={{
-              width: `${(1 - timeLeft / maxTimeLeft) * 100}%`,
+              width: `${(1 - modTimeLeft / maxTimeLeft) * 100}%`,
               backgroundColor: timeLeftColor,
             }}
           ></div>
