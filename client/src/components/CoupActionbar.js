@@ -60,12 +60,12 @@ export default function CoupActionbar() {
         onClick: action,
         onClickArgs: "noCallout",
       },
-      {
-        title: "Call Out~",
-        selectionArgs: null,
-        onClick: null,
-        onClickArgs: null,
-      },
+      // {
+      //   title: "Call Out~",
+      //   selectionArgs: null,
+      //   onClick: null,
+      //   onClickArgs: null,
+      // },
     ];
 
     const regularButtonInfos = [
@@ -87,30 +87,30 @@ export default function CoupActionbar() {
         onClick: action,
         onClickArgs: "tax",
       },
-      {
-        title: "Assassinate~",
-        selectionArgs: otherPlayers,
-        onClick: null,
-        onClickArgs: null,
-      },
-      {
-        title: "Exchange~",
-        selectionArgs: null,
-        onClick: null,
-        onClickArgs: null,
-      },
-      {
-        title: "Steal~",
-        selectionArgs: otherPlayers,
-        onClick: null,
-        onClickArgs: null,
-      },
-      {
-        title: "Coup~",
-        selectionArgs: otherPlayers,
-        onClick: null,
-        onClickArgs: null,
-      },
+      // {
+      //   title: "Assassinate~",
+      //   selectionArgs: otherPlayers,
+      //   onClick: null,
+      //   onClickArgs: null,
+      // },
+      // {
+      //   title: "Exchange~",
+      //   selectionArgs: null,
+      //   onClick: null,
+      //   onClickArgs: null,
+      // },
+      // {
+      //   title: "Steal~",
+      //   selectionArgs: otherPlayers,
+      //   onClick: null,
+      //   onClickArgs: null,
+      // },
+      // {
+      //   title: "Coup~",
+      //   selectionArgs: otherPlayers,
+      //   onClick: null,
+      //   onClickArgs: null,
+      // },
     ];
 
     let buttonInfos;
