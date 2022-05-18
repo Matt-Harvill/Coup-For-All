@@ -10,6 +10,7 @@ import { getGameState, publicGameState } from "./getGameState.js";
 import { income } from "./income.js";
 import { preCalloutForeignAid } from "./foreignAid.js";
 import { noCallout } from "./noCallout.js";
+import { preCalloutTax } from "./tax.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -105,6 +106,9 @@ export const eventSwitch = async (event, socket, ...args) => {
       break;
     case "foreignAid":
       preCalloutForeignAid(user);
+      break;
+    case "tax":
+      preCalloutTax(user);
       break;
     case "noCallout":
       noCallout(user);

@@ -17,6 +17,7 @@
 import { getSocket } from "../utils/socketUtils.js";
 import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
 import { postCalloutForeignAid } from "./foreignAid.js";
+import { postCalloutTax } from "./tax.js";
 
 // Store the inProgress games' turn stages (mapped by gameID)
 const turns = {};
@@ -160,6 +161,8 @@ const calloutOver = (game) => {
       postCalloutForeignAid(game);
       break;
     case "tax":
+      postCalloutTax(game);
+      break;
     case "assassinate":
     case "steal":
     case "coup":

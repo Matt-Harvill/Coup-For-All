@@ -81,7 +81,7 @@ export default function CoupActionbar() {
         onClick: foreignAid,
         onClickArgs: null,
       },
-      { title: "Tax~", selectionArgs: null, onClick: null, onClickArgs: null },
+      { title: "Tax", selectionArgs: null, onClick: tax, onClickArgs: null },
       {
         title: "Assassinate~",
         selectionArgs: otherPlayers,
@@ -151,12 +151,20 @@ export default function CoupActionbar() {
     );
   };
 
+  // const action = (action) => {
+  //   socket.emit("coup", action);
+  // };
+
   const income = () => {
     socket.emit("coup", "income");
   };
 
   const foreignAid = () => {
     socket.emit("coup", "foreignAid");
+  };
+
+  const tax = () => {
+    socket.emit("coup", "tax");
   };
 
   const noCallout = () => {
