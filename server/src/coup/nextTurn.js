@@ -53,7 +53,7 @@ export const nextTurn = (game, gameID) => {
     inProgressGameStatuses[gameID].turnTime = turnTime;
 
     if (turnTime === 0) {
-      endTurn(null, game);
+      await endTurn(null, game);
     }
   }, updatePeriod);
 

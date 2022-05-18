@@ -114,7 +114,7 @@ export const eventSwitch = async (event, socket, ...args) => {
       getGameState(socket);
       break;
     case "endTurn":
-      endTurn(user, null);
+      await endTurn(user, null);
       break;
     case "action":
       const [action, target] = args;

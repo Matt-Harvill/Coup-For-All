@@ -1,11 +1,12 @@
 import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
 import { getSocket } from "../utils/socketUtils.js";
 import { inProgressGameStatuses, nextTurn } from "./nextTurn.js";
+import { postCalloutHandler } from "./postCalloutHandler.js";
 
 // Store the inProgress games' statuses (mapped by gameID)
 export const calloutStatuses = {};
 
-const endCallout = async (game) => {
+const endCallout = async (game, target) => {
   const gameID = game.gameID;
   // Clear the interval
   clearInterval(calloutStatuses[gameID].interval);
@@ -14,9 +15,24 @@ const endCallout = async (game) => {
   calloutStatuses[gameID].calloutTime = 0;
   calloutStatuses[gameID].needToDecide = [];
 
-  game.calloutTargets = [];
+  // Determine what player was trying to act
+  let player = game.players[0];
+  if (target) {
+    player = target;
+  }
+
+  // Determine their intended action
+  const calloutTarget = game.calloutTargets.find(
+    (calloutTarget) => calloutTarget.target === player
+  );
+  const action = calloutTarget.action;
+
   // Update game to remove calloutTargets
+  game.calloutTargets = [];
   await updateUserAndGame(null, game, "updateGame");
+
+  // Handle the action
+  await postCalloutHandler(player, action);
 
   // Continue the activePlayer's turn (reset turnTime to 60000 to give some time to complete turn)
   inProgressGameStatuses[gameID].turnTime = 60000;

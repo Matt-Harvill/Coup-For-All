@@ -18,6 +18,7 @@ export const endTurn = async (user, game) => {
     const activePlayer = game.players.shift(); // Pop off the queue
     game.players.push(activePlayer); // Push player to end of queue
 
+    console.log(game.players, "in endTurn");
     await updateUserAndGame(activePlayer, game, "updateGame"); // Update the game (So turn order is saved)
     const updatedGame = await getGame(game.gameTitle, gameID); // Get the updated game
     nextTurn(updatedGame, gameID);

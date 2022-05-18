@@ -21,7 +21,7 @@ export const income = async (user) => {
     if (!committed) {
       console.log("Error committing income for", user.username);
     } else {
-      endTurn(null, game);
+      await endTurn(null, game);
     }
   }
 };
