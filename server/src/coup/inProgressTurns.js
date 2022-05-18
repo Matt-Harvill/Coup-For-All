@@ -16,6 +16,7 @@
 
 import { getSocket } from "../utils/socketUtils.js";
 import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
+import { postCalloutForeignAid } from "./newForeignAid.js";
 
 // Store the inProgress games' turn stages (mapped by gameID)
 const turns = {};
@@ -109,7 +110,7 @@ const startNewStage = (game) => {
 
     // Wait till a second has passed (from last possible user update period)
     // to end the stage so that outside updates aren't duplicated
-    if (timeRem() === -1000) {
+    if (timeRem() === 0) {
       // No need to clear the interval
       endStage(game);
     }
@@ -152,16 +153,19 @@ const calloutOver = (game) => {
   console.log("turn entering calloutOver:\n", turnToString(game.gameID), "\n");
   const action = getTurnProp(game.gameID, "action");
 
+  setTurn(game, { stage: "postCallout" });
+
   switch (action) {
     case "foreignAid":
+      postCalloutForeignAid(game);
+      break;
     case "tax":
     case "assassinate":
     case "steal":
     case "coup":
-      endTurn(game);
+      endStage(game);
       break;
     case "exchange":
-      setTurn(game, { stage: "postCallout" });
       startNewStage(game);
       break;
     default:

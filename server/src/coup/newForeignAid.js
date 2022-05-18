@@ -1,5 +1,30 @@
-import { getGame } from "../utils/dbUtils.js";
-import { endStage, setTurn } from "./inProgressTurns.js";
+import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
+import { getGame, updateUserAndGame, getUserObj } from "../utils/dbUtils.js";
+
+export const postCalloutForeignAid = async (game) => {
+  const player = getTurnProp(game.gameID, "player");
+  const user = await getUserObj(player);
+
+  const pStat = game.pStats.find((pStat) => {
+    if (pStat.player === user.username) {
+      pStat.coins += 2;
+      return pStat;
+    }
+  });
+
+  if (!pStat) {
+    console.log("Error updating foreignAid for", user.username);
+  }
+
+  const committed = await updateUserAndGame(user, game, "updateGame");
+
+  if (!committed) {
+    console.log("Error committing foreignAid for", user.username);
+  } else {
+    // End the postCallout stage
+    endStage(game);
+  }
+};
 
 export const newForeignAid = async (user) => {
   const game = await getGame(user.gameTitle, user.gameID);
