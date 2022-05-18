@@ -12,6 +12,7 @@ import { endTurn } from "./endTurn.js";
 import { noCallout, startCalloutPeriod } from "./calloutPeriod.js";
 import { income } from "./income.js";
 import { foreignAid } from "./foreignAid.js";
+import { getGame } from "../utils/dbUtils.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -67,7 +68,10 @@ const chatHandler = (socket, message) => {
 };
 
 const playerOnlineHandler = (socket) => {
-  addPlayer(socket.request.user.username);
+  const user = socket.request.user;
+  // Check if game has already started
+
+  addPlayer(user.username);
   sendOnline();
 };
 

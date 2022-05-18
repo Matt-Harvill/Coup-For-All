@@ -44,6 +44,17 @@ const coupGameSchema = new mongoose.Schema({
       action: String,
     },
   ],
+  turn: {
+    player: String,
+    action: String,
+    status: String, // Turn can be preCallout, callout, postCallout
+    targets: [
+      {
+        target: String,
+        action: String,
+      },
+    ],
+  },
   availRoles: [],
   winner: String,
 });
