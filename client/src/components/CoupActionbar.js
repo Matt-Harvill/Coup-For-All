@@ -193,7 +193,7 @@ export default function CoupActionbar() {
         if (turn.player === userObj.username) {
           textToDisplay = "Make Your Move";
         } else {
-          textToDisplay = `${turn.player}'s Making their Move`;
+          textToDisplay = `${turn.player} is Making their Move...`;
         }
         break;
       case "callout":
