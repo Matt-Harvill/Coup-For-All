@@ -18,7 +18,7 @@ export const nextTurn = (game, gameID) => {
     !inProgressGameStatuses[gameID] ||
     inProgressGameStatuses[gameID].turnTime === 0
   ) {
-    turnTime = 60000; // 60 seconds for a turn
+    turnTime = 10000; // 60 seconds for a turn
     activePlayer = game.players[0]; //Set first player as active player
   }
   // If the turntime and activeplayer are already set, keep their values as long as their turn wasn't over

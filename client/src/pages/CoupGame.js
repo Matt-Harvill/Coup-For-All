@@ -8,28 +8,13 @@ import { socket } from "../socket";
 export default function CoupGame() {
   const { userObj } = useContext(AppContext);
   const [game, setGame] = useState({});
-
-  // Turn Info
-  const [activePlayer, setActivePlayer] = useState("");
-  const [timeLeft, setTimeLeft] = useState(null);
-  const [inCalloutPeriod, setInCalloutPeriod] = useState(false);
-  const [deciding, setDeciding] = useState([]);
-
-  const turnInfo = {
-    activePlayer: activePlayer,
-    setActivePlayer: setActivePlayer,
-    timeLeft: timeLeft,
-    setTimeLeft: setTimeLeft,
-    inCalloutPeriod: inCalloutPeriod,
-    setInCalloutPeriod: setInCalloutPeriod,
-    deciding: deciding,
-    setDeciding: setDeciding,
-  };
+  const [turn, setTurn] = useState({});
 
   const gameContext = {
     game: game,
     setGame: setGame,
-    turnInfo: turnInfo,
+    turn: turn,
+    setTurn: setTurn,
   };
 
   const coupCardWidth = 200;
@@ -43,23 +28,9 @@ export default function CoupGame() {
             const gameState = args[0];
             setGame(gameState);
             break;
-          case "timeInTurn":
-            const [activePlayer, timeLeft] = args;
-            setActivePlayer(activePlayer);
-            setTimeLeft(timeLeft);
-            setInCalloutPeriod(false);
-            setDeciding([]);
-            break;
-          case "timeInCallout":
-            const [needToDecide, target, calloutTime] = args;
-            setActivePlayer(target);
-            setTimeLeft(calloutTime);
-            setInCalloutPeriod(true);
-            setDeciding(needToDecide);
-            break;
-          case "calloutReceived":
-            const [needToDecide_] = args;
-            setDeciding(needToDecide_);
+          case "updateTurn":
+            const turnState = JSON.parse(JSON.stringify(args[0]));
+            setTurn(turnState);
             break;
           default:
             break;
@@ -83,7 +54,10 @@ export default function CoupGame() {
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <CoupGameContext.Provider value={gameContext}>
           <h1 style={{ textAlign: "center", margin: 20 }}>CoupGame</h1>
-          {/* <span>{JSON.stringify(game)}</span> */}
+          <span>{JSON.stringify(game)}</span>
+          <span>{JSON.stringify(turn)}</span>
+          <span>{game.players}</span>
+          <span>{turn.stage}</span>
           <div
             style={{
               display: "grid",
@@ -98,7 +72,7 @@ export default function CoupGame() {
           {/* Add flex 1 object to move actionbar to the bottom */}
           <div style={{ flex: 1 }}></div>
           <div>
-            <CoupActionbar timeLeft={turnInfo.timeLeft} />
+            <CoupActionbar />
           </div>
         </CoupGameContext.Provider>
       </div>

@@ -4,7 +4,8 @@ import { createContext } from "react";
 const CoupGameContext = createContext({
   game: {},
   setGame: () => {},
-  turnInfo: {},
+  turn: {},
+  setTurn: () => {},
 });
 
 export default CoupGameContext;

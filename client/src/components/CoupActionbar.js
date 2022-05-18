@@ -6,18 +6,39 @@ import CoupGameContext from "./CoupGameContext";
 import TimeLeft from "./TimeLeft";
 
 export default function CoupActionbar() {
-  const { turnInfo, game } = useContext(CoupGameContext);
+  // turn: {
+  //   player: String,
+  //   action: String,
+  //   timeRemMS: String,
+  //   interval: (),
+  //   stage: String, // Turn can be preCallout, callout, postCallout
+  //   targets: [
+  //     {
+  //       target: String,
+  //       action: String,
+  //     },
+  //   ],
+  //   deciding: [],
+  // },
+
+  const { turn, game } = useContext(CoupGameContext);
   const { userObj } = useContext(AppContext);
-  const [maxTimeLeft, setMaxTimeLeft] = useState(60);
-  const timeLeft = turnInfo.timeLeft;
+  const [maxTimeRem, setMaxTimeRem] = useState(10000);
+  const timeRem = turn.timeRemMS;
 
   useEffect(() => {
-    if (turnInfo.inCalloutPeriod) {
-      setMaxTimeLeft(30);
-    } else {
-      setMaxTimeLeft(60);
+    switch (turn.stage) {
+      case "callout":
+        setMaxTimeRem(5000);
+        break;
+      case "preCallout":
+      case "postCallout":
+        setMaxTimeRem(10000);
+        break;
+      default:
+        break;
     }
-  }, [turnInfo]);
+  }, [turn.stage]);
 
   const getOtherPlayers = () => {
     if (game.players) {
@@ -101,9 +122,9 @@ export default function CoupActionbar() {
 
     let buttonInfos;
 
-    if (turnInfo.inCalloutPeriod) {
+    if (turn.stage === "callout") {
       // Don't display callout buttons if user has decided (or is being accused)
-      if (!turnInfo.deciding.includes(userObj.username)) {
+      if (!turn.deciding.includes(userObj.username)) {
         return;
       }
       // If user is not being called out, let them call out or pass
@@ -112,7 +133,7 @@ export default function CoupActionbar() {
       }
     }
     // If not callout period, check if active player is this user
-    else if (turnInfo.activePlayer === userObj.username) {
+    else if (turn.player === userObj.username) {
       buttonInfos = regularButtonInfos;
     } else {
       return;
@@ -164,14 +185,29 @@ export default function CoupActionbar() {
   };
 
   const displayTurnTitle = () => {
-    let nameToDisplay;
-    if (turnInfo.activePlayer === userObj.username) {
-      nameToDisplay = "Your";
-    } else {
-      nameToDisplay = `${turnInfo.activePlayer}'s`;
+    let textToDisplay;
+
+    switch (turn.stage) {
+      case "preCallout":
+      case "postCallout":
+        if (turn.player === userObj.username) {
+          textToDisplay = "Make Your Move";
+        } else {
+          textToDisplay = `${turn.player}'s Making their Move`;
+        }
+        break;
+      case "callout":
+        if (turn.deciding.includes(userObj.username)) {
+          textToDisplay = "Pass or Callout";
+        } else {
+          textToDisplay = "Waiting for Others to Callout...";
+        }
+        break;
+      default:
+        break;
     }
 
-    return <h4 style={{ textAlign: "center" }}>{`${nameToDisplay} turn`}</h4>;
+    return <h4 style={{ textAlign: "center" }}>{textToDisplay}</h4>;
   };
 
   return (
@@ -185,7 +221,9 @@ export default function CoupActionbar() {
     >
       <div style={{ margin: "auto", width: "50%" }}>
         {displayTurnTitle()}
-        <TimeLeft timeLeft={timeLeft} maxTimeLeft={maxTimeLeft} />
+        {turn !== {} && (
+          <TimeLeft timeLeft={timeRem} maxTimeLeft={maxTimeRem} />
+        )}
         <div style={{ height: 10 }}></div>
         {displayButtons()}
       </div>

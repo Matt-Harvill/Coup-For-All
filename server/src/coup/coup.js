@@ -13,6 +13,8 @@ import { noCallout, startCalloutPeriod } from "./calloutPeriod.js";
 import { income } from "./income.js";
 import { foreignAid } from "./foreignAid.js";
 import { getGame } from "../utils/dbUtils.js";
+import { newIncome } from "./newIncome.js";
+import { newForeignAid } from "./newForeignAid.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -43,7 +45,7 @@ const resumeInProgressGames = async () => {
 // Get forming games on server start
 getFormingGames();
 // Resume in progress games on server start
-resumeInProgressGames();
+// resumeInProgressGames();
 
 const sendOnline = () => {
   io.emit("coup", "online", Array.from(coupOnlinePlayers));
@@ -67,11 +69,8 @@ const chatHandler = (socket, message) => {
   io.emit("coup", "chat", socket.request.user.username, message);
 };
 
-const playerOnlineHandler = (socket) => {
-  const user = socket.request.user;
-  // Check if game has already started
-
-  addPlayer(user.username);
+const playerOnlineHandler = async (socket) => {
+  addPlayer(socket.request.user.username);
   sendOnline();
 };
 
@@ -109,7 +108,7 @@ export const eventSwitch = async (event, socket, ...args) => {
       sendFormingGames();
       break;
     case "playerOnline":
-      playerOnlineHandler(socket);
+      await playerOnlineHandler(socket);
       break;
     case "playerOffline":
       playerOfflineHandler(socket);
@@ -118,20 +117,22 @@ export const eventSwitch = async (event, socket, ...args) => {
       getGameState(socket);
       break;
     case "endTurn":
-      await endTurn(user, null);
+      // await endTurn(user, null);
       break;
     case "action":
-      const [action, target] = args;
-      await startCalloutPeriod(user, null);
+      // const [action, target] = args;
+      // await startCalloutPeriod(user, null);
       break;
     case "income":
-      income(user);
+      // income(user);
+      newIncome(user);
       break;
     case "foreignAid":
-      foreignAid(user);
+      // foreignAid(user);
+      newForeignAid(user);
       break;
     case "noCallout":
-      noCallout(user);
+      // noCallout(user);
       break;
     default:
       throw "Not a valid 'coup' event";

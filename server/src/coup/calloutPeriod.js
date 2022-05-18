@@ -34,8 +34,8 @@ const endCallout = async (game, target) => {
   // Handle the action
   await postCalloutHandler(player, action);
 
-  // Continue the activePlayer's turn (reset turnTime to 60000 to give some time to complete turn)
-  inProgressGameStatuses[gameID].turnTime = 60000;
+  // Continue the activePlayer's turn (reset turnTime to 10000 to give some time to complete turn)
+  inProgressGameStatuses[gameID].turnTime = 10000;
   nextTurn(game, gameID);
 };
 
@@ -62,7 +62,7 @@ const startCallout = (game) => {
 
   // Update callout status
   calloutStatuses[gameID] = {
-    calloutTime: 30000, // 30s for a callout
+    calloutTime: 5000, // 30s for a callout
     interval: null,
     needToDecide: deciding,
   };

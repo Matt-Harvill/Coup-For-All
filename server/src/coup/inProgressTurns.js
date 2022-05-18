@@ -11,13 +11,17 @@
 //       action: String,
 //     },
 //   ],
+//   deciding: [],
 // },
-import { inspect } from "util";
-// import { getSocket } from "../utils/socketUtils";
-// import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
 
-// Store the inProgress games' turn stagees (mapped by gameID)
+import { getSocket } from "../utils/socketUtils.js";
+import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
+
+// Store the inProgress games' turn stages (mapped by gameID)
 const turns = {};
+
+// Have an update period for all time updates
+const updatePeriod = 100; // 100ms
 
 // Return a specific prop from the turn
 export const getTurnProp = (gameID, prop) => {
@@ -29,17 +33,20 @@ export const getTurnProp = (gameID, prop) => {
 
 // Return the turn's toString (by gameID)
 export const turnToString = (gameID) => {
-  return inspect(turns[gameID]);
+  const turn = turns[gameID];
+  const turnWithoutInterval = { ...turn, interval: undefined };
+
+  return turnWithoutInterval;
 };
 
 // Send turn to all sockets in the game
 const sendTurnUpdates = (game) => {
   // Update players with updated turn
+  // console.log(turnToString(game.gameID));
   for (const player of game.players) {
-    let socket;
-    // const socket = getSocket(player); // Get all the sockets of players in the game
+    const socket = getSocket(player); // Get all the sockets of players in the game
     if (socket) {
-      socket.emit("coup", "turnState", game.gameID, turnToString());
+      socket.emit("coup", "updateTurn", game.gameID, turnToString(game.gameID));
     }
   }
 };
@@ -63,29 +70,48 @@ export const setTurn = (game, newStats) => {
   }
 };
 
-// Resume turn in preCallout stage
-const preCallout = (game) => {
+// Handle starting a new stage
+const startNewStage = (game) => {
+  console.log(
+    "turn entering startNewStage:\n",
+    turnToString(game.gameID),
+    "\n"
+  );
+  const stage = getTurnProp(game.gameID, "stage");
+
+  let timeRemMS;
+  switch (stage) {
+    case "preCallout":
+    case "postCallout":
+      timeRemMS = 10000;
+      break;
+    case "callout":
+      timeRemMS = 5000;
+      break;
+    default:
+      throw `Not valid turn stage for gameID ${game.gameID}`;
+  }
+
+  // Set timeRem
+  setTurn(game, { timeRemMS: timeRemMS });
+
+  // Return the turn's timeRem
   const timeRem = () => {
     return getTurnProp(game.gameID, "timeRemMS");
   };
-
-  // If the timeRemMS is null/undefined, set it to 60000 (60s)
-  if (!timeRem()) {
-    setTurn(game, { timeRemMS: 60000 });
-  }
-
-  const updatePeriod = 100; // Update every 100ms
 
   const interval = setInterval(async () => {
     // Update the timeRem
     setTurn(game, { timeRemMS: timeRem() - updatePeriod });
 
     // Print the timeRem
-    console.log("timeRem:", timeRem());
+    // console.log("timeRem:", timeRem());
 
-    // If no time left, just end player's turn (for now)
-    if (timeRem() === 0) {
-      endTurn(game);
+    // Wait till a second has passed (from last possible user update period)
+    // to end the stage so that outside updates aren't duplicated
+    if (timeRem() === -1000) {
+      // No need to clear the interval
+      endStage(game);
     }
   }, updatePeriod);
 
@@ -93,21 +119,75 @@ const preCallout = (game) => {
   setTurn(game, { interval: interval });
 };
 
-// Resume the turn (by game)
-export const resumeTurn = (game) => {
-  // Check what stage the turn is in (switch for stage)
-  switch (getTurnProp(game.gameID, "stage")) {
-    case "preCallout":
-      preCallout(game);
+// Handle preCallout stage ending
+const preCalloutOver = (game) => {
+  console.log(
+    "turn entering preCalloutOver:\n",
+    turnToString(game.gameID),
+    "\n"
+  );
+  const action = getTurnProp(game.gameID, "action");
+
+  switch (action) {
+    case "":
+    case "income":
+      endTurn(game);
       break;
-    case "callout":
-      // callout(game);
-      break;
-    case "postCallout":
-      // postCallout(game);
+    case "foreignAid":
+    case "tax":
+    case "assassinate":
+    case "exchange":
+    case "steal":
+    case "coup":
+      setTurn(game, { stage: "callout" });
+      startNewStage(game);
       break;
     default:
-      throw `resumeTurn error for gameID: ${game.gameID}`;
+      throw `Not valid action in preCalloutOver for gameID ${game.gameID}`;
+  }
+};
+
+// Handle callout stage ending
+const calloutOver = (game) => {
+  console.log("turn entering calloutOver:\n", turnToString(game.gameID), "\n");
+  const action = getTurnProp(game.gameID, "action");
+
+  switch (action) {
+    case "foreignAid":
+    case "tax":
+    case "assassinate":
+    case "steal":
+    case "coup":
+      endTurn(game);
+      break;
+    case "exchange":
+      setTurn(game, { stage: "postCallout" });
+      startNewStage(game);
+      break;
+    default:
+      throw `Not valid action in calloutOver for gameID ${game.gameID}`;
+  }
+};
+
+// End the current stage and start the next
+export const endStage = (game) => {
+  const stage = getTurnProp(game.gameID, "stage");
+
+  switch (stage) {
+    case "preCallout":
+      // Starts the new stage after updating it
+      preCalloutOver(game);
+      break;
+    case "callout":
+      // Starts the new stage after updating it
+      calloutOver(game);
+      break;
+    case "postCallout":
+      // Starts the new stage after updating it
+      endTurn(game);
+      break;
+    default:
+      throw `Not valid turn stage for gameID ${game.gameID}`;
   }
 };
 
@@ -149,7 +229,9 @@ export const createTurn = (game) => {
       stage: "preCallout",
       targets: [],
     };
-    // Resume the turn
-    resumeTurn(game);
+    // console.log("turn after creation:\n", turnToString(game.gameID), "\n");
+
+    // Start the turn (in preCallout)
+    startNewStage(game);
   }
 };
