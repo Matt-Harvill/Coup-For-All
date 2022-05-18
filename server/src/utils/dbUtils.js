@@ -2,7 +2,11 @@ import { User } from "../schemas.js";
 import { conn } from "../index.js";
 import { sendUpdatesSingle } from "./socketUtils.js";
 import gameSchemaSwitch from "../gameSchemaSwitch.js";
-import { createTurn, deleteTurn } from "../coup/inProgressTurns.js";
+import {
+  createTurn,
+  deleteTurn,
+  getTurnProp,
+} from "../coup/inProgressTurns.js";
 
 export const getUserObj = async (username) => {
   return await User.findOne({
@@ -106,9 +110,12 @@ export const updateUserAndGame = async (user, game, update) => {
     if (update === "deleteGame") {
       deleteTurn(game.gameID);
     } else if (update === "leaveGame") {
-      deleteTurn(game.gameID);
-      // Then create a new turn
-      createTurn(game);
+      const player = getTurnProp(game.gameID, "player");
+      if (player === user) {
+        deleteTurn(game.gameID);
+        // Then create a new turn
+        createTurn(game);
+      }
     }
   } else {
     await session.abortTransaction();
