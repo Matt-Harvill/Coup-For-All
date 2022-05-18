@@ -37,7 +37,9 @@ export const preCalloutForeignAid = async (user) => {
     // Update the action to foreignAid, add player as a target, update deciding to be other players
     setTurn(game, {
       action: "foreignAid",
-      targets: [{ target: user.username, action: "foreignAid" }],
+      targets: [
+        { target: user.username, action: "foreignAid", attacking: "all" },
+      ],
       deciding: otherPlayers,
     });
 

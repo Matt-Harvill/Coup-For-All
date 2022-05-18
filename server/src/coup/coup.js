@@ -11,6 +11,7 @@ import { income } from "./income.js";
 import { preCalloutForeignAid } from "./foreignAid.js";
 import { noCallout } from "./noCallout.js";
 import { preCalloutTax } from "./tax.js";
+import { callout } from "./callout.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -113,7 +114,13 @@ export const eventSwitch = async (event, socket, ...args) => {
     case "noCallout":
       noCallout(user);
       break;
+    case "callout":
+      const target = args[0];
+      callout(user, target);
+      break;
+    case "block":
+      break;
     default:
-      throw "Not a valid 'coup' event";
+      throw `${event} is not a valid 'coup' event`;
   }
 };

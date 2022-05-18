@@ -16,8 +16,10 @@ export default function CoupActionbar() {
   //     {
   //       target: String,
   //       action: String,
+  //       attacking: String
   //     },
   //   ],
+  //   losingRole: String,
   //   deciding: [],
   // },
 
@@ -50,6 +52,10 @@ export default function CoupActionbar() {
     }
   };
 
+  const action = (args) => {
+    socket.emit("coup", ...args);
+  };
+
   const displayButtons = () => {
     const otherPlayers = getOtherPlayers();
 
@@ -58,34 +64,58 @@ export default function CoupActionbar() {
         title: "Pass",
         selectionArgs: null,
         onClick: action,
-        onClickArgs: "noCallout",
+        onClickArgs: ["noCallout"],
       },
-      // {
-      //   title: "Call Out~",
-      //   selectionArgs: null,
-      //   onClick: null,
-      //   onClickArgs: null,
-      // },
     ];
+
+    if (turn.targets) {
+      // Loop through targets to make Call out buttons for each target (or block depending on action)
+      for (const turnTarget of turn.targets) {
+        let title, onClickArgs;
+
+        switch (turnTarget.action) {
+          case "foreignAid":
+            title = `Block ${turnTarget.target}'s Foreign Aid`;
+            onClickArgs = ["block"];
+            break;
+          case "tax":
+            title = `Call Out ${turnTarget.target}'s 'Duke'`;
+            onClickArgs = ["callout", turnTarget.target];
+            break;
+          default:
+            break;
+        }
+
+        const calloutButtonInfo = {
+          title: title,
+          selectionArgs: null,
+          onClick: action,
+          onClickArgs: onClickArgs,
+        };
+
+        // Add new buttonInfo to calloutButtonInfos
+        calloutButtonInfos.push(calloutButtonInfo);
+      }
+    }
 
     const regularButtonInfos = [
       {
         title: "Income",
         selectionArgs: null,
         onClick: action,
-        onClickArgs: "income",
+        onClickArgs: ["income"],
       },
       {
         title: "Foreign Aid",
         selectionArgs: null,
         onClick: action,
-        onClickArgs: "foreignAid",
+        onClickArgs: ["foreignAid"],
       },
       {
         title: "Tax",
         selectionArgs: null,
         onClick: action,
-        onClickArgs: "tax",
+        onClickArgs: ["tax"],
       },
       // {
       //   title: "Assassinate~",
@@ -154,10 +184,6 @@ export default function CoupActionbar() {
         onClickArgs={buttonInfo.onClickArgs}
       />
     );
-  };
-
-  const action = (action) => {
-    socket.emit("coup", action);
   };
 
   const displayTurnTitle = () => {
