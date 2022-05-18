@@ -26,7 +26,7 @@ export const postCalloutForeignAid = async (game) => {
   }
 };
 
-export const newForeignAid = async (user) => {
+export const preCalloutForeignAid = async (user) => {
   const game = await getGame(user.gameTitle, user.gameID);
 
   if (game) {

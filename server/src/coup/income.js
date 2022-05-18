@@ -1,7 +1,7 @@
 import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
 import { endStage, setTurn } from "./inProgressTurns.js";
 
-export const newIncome = async (user) => {
+export const income = async (user) => {
   const game = await getGame(user.gameTitle, user.gameID);
 
   if (game) {

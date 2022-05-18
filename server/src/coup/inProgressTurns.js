@@ -16,7 +16,7 @@
 
 import { getSocket } from "../utils/socketUtils.js";
 import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
-import { postCalloutForeignAid } from "./newForeignAid.js";
+import { postCalloutForeignAid } from "./foreignAid.js";
 
 // Store the inProgress games' turn stages (mapped by gameID)
 const turns = {};

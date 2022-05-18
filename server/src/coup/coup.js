@@ -7,8 +7,8 @@ import { deleteGame } from "./deleteGame.js";
 import { joinGame } from "./joinGame.js";
 import { leaveGame } from "./leaveGame.js";
 import { getGameState, publicGameState } from "./getGameState.js";
-import { newIncome } from "./newIncome.js";
-import { newForeignAid } from "./newForeignAid.js";
+import { income } from "./income.js";
+import { preCalloutForeignAid } from "./foreignAid.js";
 import { noCallout } from "./noCallout.js";
 
 // Set of coup players in lobby
@@ -100,20 +100,11 @@ export const eventSwitch = async (event, socket, ...args) => {
     case "getGameState":
       getGameState(socket);
       break;
-    case "endTurn":
-      // await endTurn(user, null);
-      break;
-    case "action":
-      // const [action, target] = args;
-      // await startCalloutPeriod(user, null);
-      break;
     case "income":
-      // income(user);
-      newIncome(user);
+      income(user);
       break;
     case "foreignAid":
-      // foreignAid(user);
-      newForeignAid(user);
+      preCalloutForeignAid(user);
       break;
     case "noCallout":
       noCallout(user);

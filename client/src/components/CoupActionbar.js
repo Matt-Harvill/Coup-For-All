@@ -106,18 +106,6 @@ export default function CoupActionbar() {
         onClick: null,
         onClickArgs: null,
       },
-      {
-        title: "Action~",
-        selectionArgs: null,
-        onClick: action,
-        onClickArgs: ["testArg0", "testArg1"],
-      },
-      {
-        title: "End Turn",
-        selectionArgs: null,
-        onClick: endTurn,
-        onClickArgs: null,
-      },
     ];
 
     let buttonInfos;
@@ -173,15 +161,6 @@ export default function CoupActionbar() {
 
   const noCallout = () => {
     socket.emit("coup", "noCallout");
-  };
-
-  const endTurn = () => {
-    socket.emit("coup", "endTurn");
-  };
-
-  const action = (...args) => {
-    // console.log(args);
-    socket.emit("coup", "action", "defaultAction", "defaultTarget");
   };
 
   const displayTurnTitle = () => {
