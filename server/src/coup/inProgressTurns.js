@@ -247,7 +247,6 @@ export const createTurn = (game) => {
       timeRemMS: null,
       interval: null,
       stage: "preCallout",
-      losingRole: null,
       targets: [],
       roleSwitch: {
         losing: null,
