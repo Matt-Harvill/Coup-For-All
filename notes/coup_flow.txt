@@ -19,5 +19,5 @@ The losingRole stage doesn't happen if no one calls out though
 Add a game history to the game DB object
 For the frontend -> only show like 6 recent actions
 
-Don't show the progress bar if the handler is "instantaneous"
-- This would be for things like switching a role, losing the only role, losing both roles, taking tax/foreignAid
+If both of the player's roles are the same, remove one automatically
+

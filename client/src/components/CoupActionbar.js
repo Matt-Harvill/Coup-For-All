@@ -85,7 +85,7 @@ export default function CoupActionbar() {
 
         switch (turnTarget.action) {
           case "foreignAid":
-            title = `Block ${turnTarget.target}'s Foreign Aid`;
+            title = `*Block ${turnTarget.target}'s Foreign Aid*`;
             onClickArgs = ["block"];
             break;
           case "tax":

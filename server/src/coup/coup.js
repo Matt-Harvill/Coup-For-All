@@ -121,7 +121,8 @@ export const eventSwitch = async (event, socket, ...args) => {
       break;
     case "loseRole":
       const role = args[0];
-      loseRole(user, role);
+      // Only need user and role for this loseRole call
+      loseRole(user, role, null, null, null);
       break;
     default:
       throw `${event} is not a valid 'coup' event`;

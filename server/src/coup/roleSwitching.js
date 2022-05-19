@@ -1,5 +1,6 @@
 import { updateUserAndGame } from "../utils/dbUtils.js";
 import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
+import { loseRole } from "./loseRoles.js";
 
 // Fisher-Yates (aka Knuth) Shuffle
 function shuffle(array) {
@@ -34,6 +35,10 @@ export const loseRoleAuto = async (
 
   // This function isn't for when the player has to decide which role to lose
   if (numRoles > numRolesLosing) {
+    if (numRoles === 2 && playerRoles[0] === playerRoles[1]) {
+      // This loseRole doesn't have user, but has all other items
+      loseRole(null, playerRoles[0], game, player, roleSwitchObj);
+    }
     return;
   }
 
