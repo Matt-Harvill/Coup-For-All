@@ -15,7 +15,14 @@ export const joinGame = async (socket, gameID) => {
   // If space for a joining player
   if (game.maxPlayers > game.players.length) {
     const user = userObj.username;
-    const pStat = { player: user, coins: 2, roles: ["", ""] };
+    const pStat = {
+      player: user,
+      coins: 2,
+      roles: [
+        { role: "", display: false },
+        { role: "", display: false },
+      ],
+    };
 
     // Update players
     game.players.push(user);

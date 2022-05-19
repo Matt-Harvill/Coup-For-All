@@ -44,7 +44,6 @@ export const turnToString = (gameID) => {
 // Send turn to all sockets in the game
 const sendTurnUpdates = (game) => {
   // Update players with updated turn
-  // console.log(turnToString(game.gameID));
   for (const player of game.players) {
     const socket = getSocket(player); // Get all the sockets of players in the game
     if (socket) {
@@ -106,11 +105,7 @@ const startNewStage = (game) => {
     // Update the timeRem
     setTurn(game, { timeRemMS: timeRem() - updatePeriod });
 
-    // Print the timeRem
-    // console.log("timeRem:", timeRem());
-
-    // Wait till a second has passed (from last possible user update period)
-    // to end the stage so that outside updates aren't duplicated
+    // Go to next stage when time runs out
     if (timeRem() === 0) {
       // No need to clear the interval
       endStage(game);
@@ -240,7 +235,6 @@ export const createTurn = (game) => {
       stage: "preCallout",
       targets: [],
     };
-    // console.log("turn after creation:\n", turnToString(game.gameID), "\n");
 
     // Start the turn (in preCallout)
     startNewStage(game);
