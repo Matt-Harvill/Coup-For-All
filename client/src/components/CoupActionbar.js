@@ -19,14 +19,10 @@ export default function CoupActionbar() {
   //       attacking: String
   //     },
   //   ],
-<<<<<<< HEAD
-  //   losingRole: String,
-=======
   //   roleSwitch: {
   //     losing: null,
   //     switching: null
   //   }
->>>>>>> noCallout
   //   deciding: [],
   // },
 
