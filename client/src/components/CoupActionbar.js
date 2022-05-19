@@ -191,10 +191,12 @@ export default function CoupActionbar() {
         // If the player has roles, check them to see if they need to chose a role to lose
         if (pStat && pStat.roles) {
           const roleSwitch = turn.roleSwitch;
+          const playerRoles = pStat.roles;
           if (
             roleSwitch.losing &&
             roleSwitch.losing.player === userObj.username &&
-            roleSwitch.losing.numRoles < pStat.roles.length
+            (roleSwitch.losing.numRoles < playerRoles.length ||
+              (playerRoles.length === 2 && playerRoles[0] === playerRoles[1]))
           ) {
             buttonInfos = losingRoleButtonInfos;
           }
@@ -259,14 +261,18 @@ export default function CoupActionbar() {
         break;
       case "roleSwitch":
         const roleSwitch = turn.roleSwitch;
-        if (roleSwitch) {
-          if (roleSwitch.losing === userObj.username) {
-            textToDisplay = "Losing a Role";
-          } else if (roleSwitch.switching === userObj.username) {
-            textToDisplay = "Switching a Role";
-          } else {
-            textToDisplay = "Waiting for Others to Lose/Switch Roles...";
-          }
+        if (
+          roleSwitch.losing &&
+          roleSwitch.losing.player === userObj.username
+        ) {
+          textToDisplay = "Losing a Role";
+        } else if (
+          roleSwitch.switching &&
+          roleSwitch.switching.player === userObj.username
+        ) {
+          textToDisplay = "Switching a Role";
+        } else {
+          textToDisplay = "Waiting for Others to Lose/Switch Roles...";
         }
         break;
       default:

@@ -21,3 +21,6 @@ For the frontend -> only show like 6 recent actions
 
 If both of the player's roles are the same, remove one automatically
 
+
+Error with losing role for game of three players -> appears to be a frontend issue
+
