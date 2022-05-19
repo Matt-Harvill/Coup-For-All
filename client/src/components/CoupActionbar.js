@@ -18,6 +18,10 @@ export default function CoupActionbar() {
   //       action: String,
   //     },
   //   ],
+  //   caller: {
+  //     caller:
+  //     target:
+  //   }
   //   deciding: [],
   // },
 
@@ -29,6 +33,7 @@ export default function CoupActionbar() {
   useEffect(() => {
     switch (turn.stage) {
       case "callout":
+      case "losingRoles":
         setMaxTimeRem(5000);
         break;
       case "preCallout":
@@ -50,6 +55,10 @@ export default function CoupActionbar() {
     }
   };
 
+  const action = (action) => {
+    socket.emit("coup", action);
+  };
+
   const displayButtons = () => {
     const otherPlayers = getOtherPlayers();
 
@@ -60,12 +69,6 @@ export default function CoupActionbar() {
         onClick: action,
         onClickArgs: "noCallout",
       },
-      // {
-      //   title: "Call Out~",
-      //   selectionArgs: null,
-      //   onClick: null,
-      //   onClickArgs: null,
-      // },
     ];
 
     const regularButtonInfos = [
@@ -154,10 +157,6 @@ export default function CoupActionbar() {
         onClickArgs={buttonInfo.onClickArgs}
       />
     );
-  };
-
-  const action = (action) => {
-    socket.emit("coup", action);
   };
 
   const displayTurnTitle = () => {

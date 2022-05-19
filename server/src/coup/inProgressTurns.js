@@ -11,6 +11,10 @@
 //       action: String,
 //     },
 //   ],
+//   caller: {
+//     caller:
+//     target:
+//   }
 //   deciding: [],
 // },
 
@@ -87,6 +91,7 @@ const startNewStage = (game) => {
       timeRemMS = 10000;
       break;
     case "callout":
+    case "losingRoles":
       timeRemMS = 5000;
       break;
     default:
@@ -149,7 +154,15 @@ const calloutOver = (game) => {
   console.log("turn entering calloutOver:\n", turnToString(game.gameID), "\n");
   const action = getTurnProp(game.gameID, "action");
 
-  setTurn(game, { stage: "postCallout" });
+  if (caller) {
+    // Do losingRole stuff
+    setTurn(game, { stage: "losingRole" });
+    startNewStage(game);
+    return;
+  } else {
+    // Do postCallout stuff
+    setTurn(game, { stage: "postCallout" });
+  }
 
   switch (action) {
     case "foreignAid":
@@ -171,6 +184,13 @@ const calloutOver = (game) => {
   }
 };
 
+// Handle callout stage ending
+const losingRolesOver = (game) => {
+  // For now just automatically go to postCallout
+  setTurn(game, { stage: "postCallout" });
+  startNewStage(game);
+};
+
 // End the current stage and start the next
 export const endStage = (game) => {
   const stage = getTurnProp(game.gameID, "stage");
@@ -183,6 +203,9 @@ export const endStage = (game) => {
     case "callout":
       // Starts the new stage after updating it
       calloutOver(game);
+      break;
+    case "losingRoles":
+      losingRolesOver(game);
       break;
     case "postCallout":
       // Starts the new stage after updating it
@@ -234,6 +257,7 @@ export const createTurn = (game) => {
       interval: null,
       stage: "preCallout",
       targets: [],
+      caller: null,
     };
 
     // Start the turn (in preCallout)
