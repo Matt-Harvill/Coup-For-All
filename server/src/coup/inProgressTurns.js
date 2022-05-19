@@ -77,22 +77,17 @@ export const setTurn = (game, newStats) => {
 
 // Handle starting a new stage
 const startNewStage = (game) => {
-  console.log(
-    "turn entering startNewStage:\n",
-    turnToString(game.gameID),
-    "\n"
-  );
   const stage = getTurnProp(game.gameID, "stage");
 
   let timeRemMS;
   switch (stage) {
     case "preCallout":
     case "postCallout":
-      timeRemMS = 15000;
+      timeRemMS = 30000;
       break;
     case "callout":
     case "roleSwitch":
-      timeRemMS = 10000;
+      timeRemMS = 15000;
       break;
     default:
       throw `Not valid turn stage for gameID ${game.gameID}`;
@@ -122,11 +117,6 @@ const startNewStage = (game) => {
 
 // Handle preCallout stage ending
 const preCalloutOver = (game) => {
-  console.log(
-    "turn entering preCalloutOver:\n",
-    turnToString(game.gameID),
-    "\n"
-  );
   const action = getTurnProp(game.gameID, "action");
 
   switch (action) {
@@ -150,7 +140,6 @@ const preCalloutOver = (game) => {
 
 // Handle callout stage ending
 const calloutOver = (game) => {
-  console.log("turn entering calloutOver:\n", turnToString(game.gameID), "\n");
   const action = getTurnProp(game.gameID, "action");
 
   const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
@@ -159,10 +148,6 @@ const calloutOver = (game) => {
     setTurn(game, { stage: "roleSwitch" });
     startNewStage(game);
     return;
-  } else {
-    // Do postCallout stuff
-    setTurn(game, { stage: "postCallout" });
-    startNewStage(game);
   }
 
   switch (action) {
@@ -178,7 +163,9 @@ const calloutOver = (game) => {
       endStage(game);
       break;
     case "exchange":
-      // startNewStage(game);
+      // Do postCallout stuff
+      setTurn(game, { stage: "postCallout" });
+      startNewStage(game);
       break;
     default:
       throw `Not valid action in calloutOver for gameID ${game.gameID}`;

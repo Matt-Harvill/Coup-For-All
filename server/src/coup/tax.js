@@ -1,4 +1,4 @@
-import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
+import { endStage, endTurn, getTurnProp, setTurn } from "./inProgressTurns.js";
 import { getGame, updateUserAndGame, getUserObj } from "../utils/dbUtils.js";
 
 export const postCalloutTax = async (game) => {
@@ -20,10 +20,10 @@ export const postCalloutTax = async (game) => {
 
   if (!committed) {
     console.log("Error committing tax for", user.username);
-  } else {
-    // End the postCallout stage
-    endStage(game);
   }
+
+  // End the turn
+  endTurn(game);
 };
 
 export const preCalloutTax = async (user) => {

@@ -2,7 +2,6 @@ import * as dbUtils from "../utils/dbUtils.js";
 import { CoupGame } from "../schemas.js";
 import { coupFormingGames, sendFormingGames } from "./coup.js";
 import { assignRoles } from "./assignRoles.js";
-import { createTurn } from "./inProgressTurns.js";
 
 export const joinGame = async (socket, gameID) => {
   const userObj = socket.request.user;
@@ -59,9 +58,6 @@ export const joinGame = async (socket, gameID) => {
 
       // Update everyone with forming games
       sendFormingGames();
-
-      // Create turn since game is now in progress
-      createTurn(game);
     }
   }
 };
