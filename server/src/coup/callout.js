@@ -24,7 +24,10 @@ const taxCallout = (game, targetRoles, accuserRoles, user, target) => {
   // SetTurn to show who must lose a role
   setTurn(game, {
     roleSwitch: {
-      losing: playerLosingRole,
+      losing: {
+        player: playerLosingRole,
+        numRoles: 2,
+      },
       switching: {
         player: playerSwitchingRole,
         role: roleSwitching,

@@ -54,8 +54,8 @@ export default function CoupGame() {
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <CoupGameContext.Provider value={gameContext}>
           <h1 style={{ textAlign: "center", margin: 20 }}>Coup</h1>
-          {/* <span>{JSON.stringify(game)}</span>
-          <span>{JSON.stringify(turn)}</span> */}
+          <span>{JSON.stringify(game)}</span>
+          <span>{JSON.stringify(turn)}</span>
           <div
             style={{
               display: "grid",

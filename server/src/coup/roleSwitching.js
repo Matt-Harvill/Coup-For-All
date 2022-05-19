@@ -1,8 +1,6 @@
 import { updateUserAndGame } from "../utils/dbUtils.js";
 import { setTurn } from "./inProgressTurns.js";
 
-export const loseRole = () => {};
-
 // Fisher-Yates (aka Knuth) Shuffle
 function shuffle(array) {
   let currentIndex = array.length,
@@ -24,8 +22,44 @@ function shuffle(array) {
   return array;
 }
 
+export const loseRoleAuto = async (
+  game,
+  player,
+  numRolesLosing,
+  roleSwitchObj
+) => {
+  const pStat = game.pStats.find((pStat) => pStat.player === player);
+  const playerRoles = pStat.roles;
+  const numRoles = playerRoles.length;
+
+  // This function isn't for when the player has to decide which role to lose
+  if (numRoles > numRolesLosing) {
+    return;
+  }
+
+  // Remove player from the game
+  for (const role of playerRoles) {
+    // Add roles to the unavailable roles
+    game.unavailRoles.push(role);
+  }
+  // Delete pStat and player from players
+  game.pStats = game.pStats.filter((pStat) => pStat.player !== player);
+  game.players = game.players.filter((gamePlayer) => gamePlayer !== player);
+
+  const committed = await updateUserAndGame(player, game, "updateGame");
+
+  if (!committed) {
+    console.log("Error committing loseRoleAuto for", player);
+  } else {
+    const newRoleSwitch = { ...roleSwitchObj, losing: null };
+    // Update the switching to null now that it has been switched
+    setTurn(game, { roleSwitch: newRoleSwitch });
+  }
+};
+
 export const switchRole = async (game, player, roleToSwitch, roleSwitchObj) => {
   const pStat = game.pStats.find((pStat) => pStat.player === player);
+  console.log(pStat);
 
   let newRoles = [];
   let roleFound = false;

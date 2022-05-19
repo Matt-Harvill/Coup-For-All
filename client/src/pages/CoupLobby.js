@@ -33,11 +33,13 @@ export default function Coup() {
     setNumPlayers,
   };
 
-  // Check if user has created a game or owns a game
+  // Check if user has created a game or owns a game (or is in a game (but lost))
   useEffect(() => {
-    const userGame = games.find((game) =>
-      game.players.includes(userObj.username)
-    );
+    const userGame = games.find((game) => {
+      return game.players.includes(userObj.username);
+      // ||
+      // game.outPlayers.includes(userObj.username)
+    });
 
     if (userGame === undefined) {
       setInGame(false);

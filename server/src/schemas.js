@@ -26,6 +26,7 @@ const coupGameSchema = new mongoose.Schema({
   privacy: String, // 'public', 'private'
   maxPlayers: Number,
   players: [String],
+  outPlayers: [String],
   pStats: [
     {
       player: String,

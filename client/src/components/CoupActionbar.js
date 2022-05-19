@@ -152,13 +152,15 @@ export default function CoupActionbar() {
       const pStat = game.pStats.find((pStat) => {
         return pStat.player === userObj.username;
       });
-      for (const role of pStat.roles) {
-        losingRoleButtonInfos.push({
-          title: `*Lose ${role}*`,
-          selectionArgs: null,
-          onClick: null,
-          onClickArgs: ["loseRole"],
-        });
+      if (pStat) {
+        for (const role of pStat.roles) {
+          losingRoleButtonInfos.push({
+            title: `*Lose ${role}*`,
+            selectionArgs: null,
+            onClick: null,
+            onClickArgs: ["loseRole"],
+          });
+        }
       }
     }
 
