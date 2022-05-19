@@ -37,7 +37,7 @@ export const loseRoleAuto = async (
   if (numRoles > numRolesLosing) {
     if (numRoles === 2 && playerRoles[0] === playerRoles[1]) {
       // This loseRole doesn't have user, but has all other items
-      loseRole(null, playerRoles[0], game, player, roleSwitchObj);
+      await loseRole(null, playerRoles[0], game, player, roleSwitchObj);
     }
     return;
   }
@@ -66,6 +66,8 @@ export const loseRoleAuto = async (
     const newRoleSwitchObj = getTurnProp(game.gameID, "roleSwitch");
     if (!newRoleSwitchObj.switching && !newRoleSwitchObj.losing) {
       endStage(game);
+      // Return true for stage ending
+      return true;
     }
   }
 };
@@ -106,6 +108,8 @@ export const switchRole = async (game, player, roleToSwitch, roleSwitchObj) => {
     const newRoleSwitchObj = getTurnProp(game.gameID, "roleSwitch");
     if (!newRoleSwitchObj.switching && !newRoleSwitchObj.losing) {
       endStage(game);
+      // Return true for stage ending
+      return true;
     }
   }
 };

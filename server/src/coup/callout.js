@@ -45,12 +45,6 @@ const calloutHandler = (game, user, target, targetRoles, targetAction) => {
     };
   }
 
-  console.log(
-    "actionSuccess in callout for",
-    targetAction,
-    "is",
-    actionSuccess
-  );
   // Update roleSwitch object
   setTurn(game, {
     roleSwitch: {

@@ -20,6 +20,9 @@ Add a game history to the game DB object
 For the frontend -> only show like 6 recent actions
 
 
-Have an actionSuccess object in the turn object
-Use this in the postCallout to determine whether or not to end the turn
+Seems to be an issue with larger games that sometimes the auto role loss results in callout/roleSwitch not ending
+
+Think its when an autoLose also involves a switchRole -> Now I don't think this is it
+
+I think that I need to break out of the startNewStage if the stage is ended by the roleSwitch or loseRoleAuto
 

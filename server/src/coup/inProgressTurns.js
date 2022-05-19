@@ -108,15 +108,32 @@ export const startNewStage = async (game) => {
       break;
     case "roleSwitch":
       const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
+      let stageEnding;
       // Handle switching role
       const switching = roleSwitch.switching;
       if (switching && switching.player) {
-        switchRole(game, switching.player, switching.role, roleSwitch);
+        stageEnding = await switchRole(
+          game,
+          switching.player,
+          switching.role,
+          roleSwitch
+        );
+        if (stageEnding) {
+          return;
+        }
       }
       // Handle losing role(s)
       const losing = roleSwitch.losing;
       if (losing && losing.player) {
-        loseRoleAuto(game, losing.player, losing.numRoles, roleSwitch);
+        stageEnding = await loseRoleAuto(
+          game,
+          losing.player,
+          losing.numRoles,
+          roleSwitch
+        );
+        if (stageEnding) {
+          return;
+        }
       }
       timeRemMS = 15000;
       break;
@@ -173,7 +190,6 @@ const preCalloutOver = (game) => {
 const calloutOver = (game) => {
   const action = getTurnProp(game.gameID, "action");
   let actionSuccess = getTurnProp(game.gameID, "actionSuccess");
-  console.log(actionSuccess);
 
   // If actionSuccess is null then action was allowed
   if (actionSuccess === null) {
@@ -218,13 +234,6 @@ const calloutOver = (game) => {
       throw `Not valid action in calloutOver for gameID ${game.gameID}`;
   }
 };
-
-// Handle callout stage ending
-// const roleSwitchOver = (game) => {
-//   // For now just automatically go to postCallout
-//   setTurn(game, { stage: "postCallout" });
-//   startNewStage(game);
-// };
 
 // End the current stage and start the next
 export const endStage = (game) => {
