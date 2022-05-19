@@ -30,15 +30,11 @@ const coupGameSchema = new mongoose.Schema({
     {
       player: String,
       coins: Number,
-      roles: [
-        {
-          role: String,
-          display: Boolean,
-        },
-      ],
+      roles: [String],
     },
   ],
-  availRoles: [],
+  availRoles: [String],
+  unavailRoles: [String],
   winner: String,
 });
 

@@ -9,7 +9,7 @@ export const assignRoles = async (game) => {
   for (const pStat of pStats) {
     for (let i = 0; i < rolesToAssign; i++) {
       let rand = Math.floor(Math.random() * availRoles.length);
-      [pStat.roles[i].role] = availRoles.splice(rand, 1);
+      [pStat.roles[i]] = availRoles.splice(rand, 1);
     }
   }
 

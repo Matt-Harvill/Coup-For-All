@@ -21,17 +21,13 @@ export default function CoupPlayerCard(props) {
     style.boxShadow = "0px 0px 20px green";
   }
 
-  const displayRole = (role) => {
-    return role.role;
-  };
-
   return (
     <div style={style}>
       <p>
         <strong>{pStat.player}</strong>
       </p>
       <p>Coins: {pStat.coins}</p>
-      <p>Roles: {pStat.roles.map(displayRole).join(", ")}</p>
+      <p>Roles: {pStat.roles.join(", ")}</p>
     </div>
   );
 }

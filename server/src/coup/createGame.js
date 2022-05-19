@@ -19,10 +19,7 @@ export const createGame = async (socket, privacy, maxPlayers) => {
   const pStat = {
     player: user,
     coins: 2,
-    roles: [
-      { role: "", display: false },
-      { role: "", display: false },
-    ],
+    roles: ["", ""],
   };
 
   const pStats = [];

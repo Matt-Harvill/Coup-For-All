@@ -6,13 +6,15 @@ export const publicGameState = (game, username) => {
   const publicGame = JSON.parse(JSON.stringify(game._doc));
 
   for (const pStat of publicGame.pStats) {
+    let newRoles = [];
     for (const role of pStat.roles) {
-      if (role.display === true || pStat.player === username) {
-        // Leave the role as it is (visible)
+      if (pStat.player !== username) {
+        newRoles.push("default");
       } else {
-        role.role = "default";
+        newRoles.push(role);
       }
     }
+    pStat.roles = newRoles;
   }
   return publicGame;
 };
