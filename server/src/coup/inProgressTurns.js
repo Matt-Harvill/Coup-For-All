@@ -13,7 +13,10 @@
 //     },
 //   ],
 //   roleSwitch: {
-//     losing: null,
+//     losing: {
+//        player: null,
+//        role: null
+//     },
 //     switching: {
 //        player: null,
 //        role: null

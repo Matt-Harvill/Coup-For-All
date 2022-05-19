@@ -20,8 +20,14 @@ export default function CoupActionbar() {
   //     },
   //   ],
   //   roleSwitch: {
-  //     losing: null,
-  //     switching: null
+  //     losing: {
+  //        player: null,
+  //        role: null
+  //     },
+  //     switching: {
+  //        player: null,
+  //        role: null
+  //     }
   //   }
   //   deciding: [],
   // },
@@ -155,23 +161,14 @@ export default function CoupActionbar() {
       if (pStat) {
         for (const role of pStat.roles) {
           losingRoleButtonInfos.push({
-            title: `*Lose ${role}*`,
+            title: `Lose ${role}`,
             selectionArgs: null,
-            onClick: null,
-            onClickArgs: ["loseRole"],
+            onClick: action,
+            onClickArgs: ["loseRole", role],
           });
         }
       }
     }
-
-    const switchingRoleButtonInfos = [
-      {
-        title: "*Switch Role*",
-        selectionArgs: null,
-        onClick: null,
-        onClickArgs: ["switchRole"],
-      },
-    ];
 
     let buttonInfos;
 
@@ -187,14 +184,22 @@ export default function CoupActionbar() {
         }
         break;
       case "roleSwitch":
-        const roleSwitch = turn.roleSwitch;
-        if (roleSwitch) {
-          if (roleSwitch.losing === userObj.username) {
+        // Get the player's pStat
+        const pStat = game.pStats.find(
+          (pStat) => pStat.player === userObj.username
+        );
+        // If the player has roles, check them to see if they need to chose a role to lose
+        if (pStat && pStat.roles) {
+          const roleSwitch = turn.roleSwitch;
+          if (
+            roleSwitch.losing &&
+            roleSwitch.losing.player === userObj.username &&
+            roleSwitch.losing.numRoles < pStat.roles.length
+          ) {
             buttonInfos = losingRoleButtonInfos;
-          } else if (roleSwitch.switching === userObj.username) {
-            buttonInfos = switchingRoleButtonInfos;
           }
         }
+
         break;
       case "preCallout":
       case "postCallout":

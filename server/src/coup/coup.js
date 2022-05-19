@@ -12,6 +12,7 @@ import { preCalloutForeignAid } from "./foreignAid.js";
 import { noCallout } from "./noCallout.js";
 import { preCalloutTax } from "./tax.js";
 import { callout } from "./callout.js";
+import { loseRole } from "./loseRoles.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -117,6 +118,10 @@ export const eventSwitch = async (event, socket, ...args) => {
     case "callout":
       const target = args[0];
       callout(user, target);
+      break;
+    case "loseRole":
+      const role = args[0];
+      loseRole(user, role);
       break;
     default:
       throw `${event} is not a valid 'coup' event`;

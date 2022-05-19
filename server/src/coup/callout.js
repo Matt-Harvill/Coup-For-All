@@ -2,51 +2,38 @@ import { getGame } from "../utils/dbUtils.js";
 import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
 
 // Handle a callout for tax action
-const taxCallout = (game, targetRoles, accuserRoles, user, target) => {
+const taxCallout = (game, targetRoles, user, target) => {
   const roleSwitching = "D";
   let playerLosingRole, playerSwitchingRole;
   // If the target has a duke, they don't lose a role, just switch it out
   if (targetRoles.includes("D")) {
-    if (targetRoles.length == 1) {
-      // Remove player from active play
-    } else {
-      playerLosingRole = user.username;
-    }
+    playerLosingRole = user.username;
     playerSwitchingRole = target;
   } else {
-    if (accuserRoles.length == 1) {
-      // Remove player from active play
-    } else {
-      playerLosingRole = target;
-    }
+    playerLosingRole = target;
   }
 
+  // Create losing object for use in roleSwitch obj
+  const losing = {
+    player: playerLosingRole,
+    numRoles: 1,
+  };
+  // Create switching object for use in roleSwitch obj
+  let switching = null;
   if (playerSwitchingRole) {
-    // SetTurn to show who must lose a role
-    setTurn(game, {
-      roleSwitch: {
-        losing: {
-          player: playerLosingRole,
-          numRoles: 2,
-        },
-        switching: {
-          player: playerSwitchingRole,
-          role: roleSwitching,
-        },
-      },
-    });
-  } else {
-    // SetTurn to show who must lose a role (switching is null because no one needed to switch roles)
-    setTurn(game, {
-      roleSwitch: {
-        losing: {
-          player: playerLosingRole,
-          numRoles: 2,
-        },
-        switching: null,
-      },
-    });
+    switching = {
+      player: playerSwitchingRole,
+      role: roleSwitching,
+    };
   }
+
+  // Update roleSwitch object
+  setTurn(game, {
+    roleSwitch: {
+      losing: losing,
+      switching: switching,
+    },
+  });
 
   // Go to next stage => will be roleSwitch
   endStage(game);
@@ -64,15 +51,10 @@ export const callout = async (user, target) => {
   // Get roles for target (to compare to action)
   const targetPStat = game.pStats.find((pStat) => pStat.player === target);
   const targetRoles = targetPStat.roles;
-  // Get roles for user (if user was wrong)
-  const accuserPStat = game.pStats.find(
-    (pStat) => pStat.player === user.username
-  );
-  const accuserRoles = accuserPStat.roles;
 
   switch (targetAction) {
     case "tax":
-      taxCallout(game, targetRoles, accuserRoles, user, target);
+      taxCallout(game, targetRoles, user, target);
       break;
     default:
       break;
