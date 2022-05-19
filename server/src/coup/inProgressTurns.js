@@ -11,9 +11,9 @@
 //       action: String,
 //     },
 //   ],
-//   caller: {
-//     caller:
-//     target:
+//   roleSwitch: {
+//     losing: null,
+//     switching: null
 //   }
 //   deciding: [],
 // },
@@ -88,11 +88,11 @@ const startNewStage = (game) => {
   switch (stage) {
     case "preCallout":
     case "postCallout":
-      timeRemMS = 10000;
+      timeRemMS = 15000;
       break;
     case "callout":
-    case "losingRoles":
-      timeRemMS = 5000;
+    case "roleSwitch":
+      timeRemMS = 10000;
       break;
     default:
       throw `Not valid turn stage for gameID ${game.gameID}`;
@@ -112,12 +112,11 @@ const startNewStage = (game) => {
 
     // Go to next stage when time runs out
     if (timeRem() === 0) {
-      // No need to clear the interval
       endStage(game);
     }
   }, updatePeriod);
 
-  // Set new interval (after interval declared)
+  // Set new interval (after interval declared) -> clears the old interval
   setTurn(game, { interval: interval });
 };
 
@@ -154,15 +153,16 @@ const calloutOver = (game) => {
   console.log("turn entering calloutOver:\n", turnToString(game.gameID), "\n");
   const action = getTurnProp(game.gameID, "action");
 
-  const caller = getTurnProp(game.gameID, "caller");
-  if (caller) {
-    // Do losingRoles stuff
-    setTurn(game, { stage: "losingRoles" });
+  const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
+  if (roleSwitch && (roleSwitch.losing || roleSwitch.switching)) {
+    // Do roleSwitch stuff
+    setTurn(game, { stage: "roleSwitch" });
     startNewStage(game);
     return;
   } else {
     // Do postCallout stuff
     setTurn(game, { stage: "postCallout" });
+    startNewStage(game);
   }
 
   switch (action) {
@@ -178,7 +178,7 @@ const calloutOver = (game) => {
       endStage(game);
       break;
     case "exchange":
-      startNewStage(game);
+      // startNewStage(game);
       break;
     default:
       throw `Not valid action in calloutOver for gameID ${game.gameID}`;
@@ -186,11 +186,11 @@ const calloutOver = (game) => {
 };
 
 // Handle callout stage ending
-const losingRolesOver = (game) => {
-  // For now just automatically go to postCallout
-  setTurn(game, { stage: "postCallout" });
-  startNewStage(game);
-};
+// const roleSwitchOver = (game) => {
+//   // For now just automatically go to postCallout
+//   setTurn(game, { stage: "postCallout" });
+//   startNewStage(game);
+// };
 
 // End the current stage and start the next
 export const endStage = (game) => {
@@ -205,8 +205,10 @@ export const endStage = (game) => {
       // Starts the new stage after updating it
       calloutOver(game);
       break;
-    case "losingRoles":
-      losingRolesOver(game);
+    case "roleSwitch":
+      // Indicate in calloutOver to go to postCallout (losing and switching has been handled)
+      setTurn(game, { roleSwitch: null });
+      calloutOver(game);
       break;
     case "postCallout":
       // Starts the new stage after updating it
@@ -258,7 +260,10 @@ export const createTurn = (game) => {
       interval: null,
       stage: "preCallout",
       targets: [],
-      caller: null,
+      roleSwitch: {
+        losing: null,
+        switching: null,
+      },
     };
 
     // Start the turn (in preCallout)

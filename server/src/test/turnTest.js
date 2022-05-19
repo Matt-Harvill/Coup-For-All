@@ -44,7 +44,7 @@ turnStuff.createTurn(game);
 console.log("Turn after created\n", turnStuff.turnToString(game.gameID), "\n");
 
 // Set some properties of the turn
-// turnStuff.setTurn(game.gameID, { interval: interval, timeRemMS: 5000 });
+// turnStuff.setTurn(game.gameID, { interval: interval, timeRemMS: 10000 });
 
 // Print the turn after it is edited
 // console.log("Turn after edited\n", turnStuff.turnToString(game.gameID), "\n");
