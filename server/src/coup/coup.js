@@ -118,8 +118,6 @@ export const eventSwitch = async (event, socket, ...args) => {
       const target = args[0];
       callout(user, target);
       break;
-    case "block":
-      break;
     default:
       throw `${event} is not a valid 'coup' event`;
   }

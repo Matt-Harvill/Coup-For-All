@@ -6,3 +6,18 @@ If they are inactive for two round in a row, they will be kicked and their roles
 
 When someone does an action that can be contested - pauses their turn. Once it is resolved (with the action
 completing), they either get to continue or they have to end their turn. 
+
+
+When someone is no longer in the game, remove them from players, but keep their userObj the same (so they can still watch the game)
+When someone loses a role, the roles gets moved to an inactiveRoles array
+
+If there was a callout -> someone lost a role for sure. Also, someone possibly has to get a new role from availRoles
+
+The losingRole stage doesn't happen if no one calls out though
+
+
+Add a game history to the game DB object
+For the frontend -> only show like 6 recent actions
+
+
+Make the actions instantaneous -> Don't just go to the next stage if unnecessary

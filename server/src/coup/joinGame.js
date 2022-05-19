@@ -2,7 +2,6 @@ import * as dbUtils from "../utils/dbUtils.js";
 import { CoupGame } from "../schemas.js";
 import { coupFormingGames, sendFormingGames } from "./coup.js";
 import { assignRoles } from "./assignRoles.js";
-import { createTurn } from "./inProgressTurns.js";
 
 export const joinGame = async (socket, gameID) => {
   const userObj = socket.request.user;
@@ -15,7 +14,11 @@ export const joinGame = async (socket, gameID) => {
   // If space for a joining player
   if (game.maxPlayers > game.players.length) {
     const user = userObj.username;
-    const pStat = { player: user, coins: 2, roles: ["", ""] };
+    const pStat = {
+      player: user,
+      coins: 2,
+      roles: ["", ""],
+    };
 
     // Update players
     game.players.push(user);
@@ -55,9 +58,6 @@ export const joinGame = async (socket, gameID) => {
 
       // Update everyone with forming games
       sendFormingGames();
-
-      // Create turn since game is now in progress
-      createTurn(game);
     }
   }
 };

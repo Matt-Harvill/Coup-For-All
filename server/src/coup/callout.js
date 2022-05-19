@@ -1,6 +1,36 @@
 import { getGame } from "../utils/dbUtils.js";
 import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
 
+// Handle a callout for tax action
+const taxCallout = (game, targetRoles, accuserRoles, user, target) => {
+  let losingRole, switchingRole;
+  // If the target has a duke, they don't lose a role, just switch it out
+  if (targetRoles.includes("D")) {
+    if (targetRoles.length == 1) {
+      // Remove player from active play
+    } else {
+      losingRole = user.username;
+    }
+    switchingRole = target;
+  } else {
+    if (accuserRoles.length == 1) {
+      // Remove player from active play
+    } else {
+      losingRole = target;
+    }
+  }
+
+  // SetTurn to show who must lose a role
+  setTurn(game, {
+    roleSwitch: {
+      losing: losingRole,
+      switching: switchingRole,
+    },
+  });
+  // Currently goes to postCallout (instead we want it to go to losingRole)
+  endStage(game);
+};
+
 export const callout = async (user, target) => {
   const game = await getGame(user.gameTitle, user.gameID);
   const gameID = game.gameID;
@@ -8,25 +38,20 @@ export const callout = async (user, target) => {
   // Get action (to compare to roles)
   const targets = getTurnProp(gameID, "targets");
   const targetInfo = targets.find((turnTarget) => turnTarget.target === target);
-  const action = targetInfo.action;
+  const targetAction = targetInfo.action;
 
-  // Get roles (to compare to action)
+  // Get roles for target (to compare to action)
   const targetPStat = game.pStats.find((pStat) => pStat.player === target);
-  const roles = targetPStat.roles;
+  const targetRoles = targetPStat.roles;
+  // Get roles for user (if user was wrong)
+  const accuserPStat = game.pStats.find(
+    (pStat) => pStat.player === user.username
+  );
+  const accuserRoles = accuserPStat.roles;
 
-  switch (action) {
+  switch (targetAction) {
     case "tax":
-      let losingRole;
-      // If the player has a duke
-      if (roles.includes("D")) {
-        losingRole = user.username;
-      } else {
-        losingRole = target;
-      }
-      // SetTurn to show who must lose a role
-      setTurn(game, { losingRole: losingRole });
-      // Currently goes to postCallout (instead we want it to go to losingRole)
-      endStage(game);
+      taxCallout(game, targetRoles, accuserRoles, user, target);
       break;
     default:
       break;

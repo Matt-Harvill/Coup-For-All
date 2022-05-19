@@ -19,23 +19,31 @@ export default function CoupActionbar() {
   //       attacking: String
   //     },
   //   ],
+<<<<<<< HEAD
   //   losingRole: String,
+=======
+  //   roleSwitch: {
+  //     losing: null,
+  //     switching: null
+  //   }
+>>>>>>> noCallout
   //   deciding: [],
   // },
 
   const { turn, game } = useContext(CoupGameContext);
   const { userObj } = useContext(AppContext);
-  const [maxTimeRem, setMaxTimeRem] = useState(10000);
+  const [maxTimeRem, setMaxTimeRem] = useState(30000);
   const timeRem = turn.timeRemMS;
 
   useEffect(() => {
     switch (turn.stage) {
       case "callout":
-        setMaxTimeRem(5000);
+      case "roleSwitch":
+        setMaxTimeRem(15000);
         break;
       case "preCallout":
       case "postCallout":
-        setMaxTimeRem(10000);
+        setMaxTimeRem(30000);
         break;
       default:
         break;
@@ -143,23 +151,64 @@ export default function CoupActionbar() {
       // },
     ];
 
-    let buttonInfos;
-
-    if (turn.stage === "callout") {
-      // Don't display callout buttons if user has decided (or is being accused)
-      if (!turn.deciding.includes(userObj.username)) {
-        return;
-      }
-      // If user is not being called out, let them call out or pass
-      else {
-        buttonInfos = calloutButtonInfos;
+    let losingRoleButtonInfos = [];
+    if (game.pStats) {
+      const pStat = game.pStats.find((pStat) => {
+        return pStat.player === userObj.username;
+      });
+      for (const role of pStat.roles) {
+        losingRoleButtonInfos.push({
+          title: `*Lose ${role}*`,
+          selectionArgs: null,
+          onClick: null,
+          onClickArgs: ["loseRole"],
+        });
       }
     }
-    // If not callout period, check if active player is this user
-    else if (turn.player === userObj.username) {
-      buttonInfos = regularButtonInfos;
-    } else {
-      return;
+
+    const switchingRoleButtonInfos = [
+      {
+        title: "*Switch Role*",
+        selectionArgs: null,
+        onClick: null,
+        onClickArgs: ["switchRole"],
+      },
+    ];
+
+    let buttonInfos;
+
+    switch (turn.stage) {
+      case "callout":
+        // Don't display callout buttons if user has decided (or is being accused)
+        if (!turn.deciding.includes(userObj.username)) {
+          return;
+        }
+        // If user is not being called out, let them call out or pass
+        else {
+          buttonInfos = calloutButtonInfos;
+        }
+        break;
+      case "roleSwitch":
+        const roleSwitch = turn.roleSwitch;
+        if (roleSwitch) {
+          if (roleSwitch.losing === userObj.username) {
+            buttonInfos = losingRoleButtonInfos;
+          } else if (roleSwitch.switching === userObj.username) {
+            buttonInfos = switchingRoleButtonInfos;
+          }
+        }
+        break;
+      case "preCallout":
+      case "postCallout":
+        // If not pre/postCallout period, check if active player is this user
+        if (turn.player === userObj.username) {
+          buttonInfos = regularButtonInfos;
+        } else {
+          return;
+        }
+        break;
+      default:
+        break;
     }
 
     return (
@@ -170,7 +219,7 @@ export default function CoupActionbar() {
           gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
         }}
       >
-        {buttonInfos.map(makeButton)}
+        {buttonInfos && buttonInfos.map(makeButton)}
       </div>
     );
   };
@@ -205,6 +254,18 @@ export default function CoupActionbar() {
           textToDisplay = "Waiting for Others to Callout...";
         }
         break;
+      case "roleSwitch":
+        const roleSwitch = turn.roleSwitch;
+        if (roleSwitch) {
+          if (roleSwitch.losing === userObj.username) {
+            textToDisplay = "Losing a Role";
+          } else if (roleSwitch.switching === userObj.username) {
+            textToDisplay = "Switching a Role";
+          } else {
+            textToDisplay = "Waiting for Others to Lose/Switch Roles...";
+          }
+        }
+        break;
       default:
         break;
     }
@@ -223,11 +284,12 @@ export default function CoupActionbar() {
     >
       <div style={{ margin: "auto", width: "50%" }}>
         {displayTurnTitle()}
+        <div style={{ height: 10 }}></div>
+        {displayButtons()}
+        <div style={{ height: 10 }}></div>
         {turn !== {} && (
           <TimeLeft timeLeft={timeRem} maxTimeLeft={maxTimeRem} />
         )}
-        <div style={{ height: 10 }}></div>
-        {displayButtons()}
       </div>
     </div>
   );

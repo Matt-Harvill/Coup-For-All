@@ -16,11 +16,6 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
-  pStat: {
-    player: String,
-    coins: Number,
-    roles: [String],
-  },
 });
 
 const coupGameSchema = new mongoose.Schema({
@@ -37,25 +32,9 @@ const coupGameSchema = new mongoose.Schema({
       coins: Number,
       roles: [String],
     },
-  ], // { player: "", coins: 2, roles: ["",""] }
-  // calloutTargets: [
-  //   {
-  //     target: String,
-  //     action: String,
-  //   },
-  // ],
-  // turn: {
-  //   player: String,
-  //   action: String,
-  //   status: String, // Turn can be preCallout, callout, postCallout
-  //   targets: [
-  //     {
-  //       target: String,
-  //       action: String,
-  //     },
-  //   ],
-  // },
-  availRoles: [],
+  ],
+  availRoles: [String],
+  unavailRoles: [String],
   winner: String,
 });
 
