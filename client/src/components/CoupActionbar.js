@@ -55,8 +55,8 @@ export default function CoupActionbar() {
     }
   };
 
-  const action = (action) => {
-    socket.emit("coup", action);
+  const action = (args) => {
+    socket.emit("coup", ...args);
   };
 
   const displayButtons = () => {
@@ -67,28 +67,58 @@ export default function CoupActionbar() {
         title: "Pass",
         selectionArgs: null,
         onClick: action,
-        onClickArgs: "noCallout",
+        onClickArgs: ["noCallout"],
       },
     ];
+
+    if (turn.targets) {
+      // Loop through targets to make Call out buttons for each target (or block depending on action)
+      for (const turnTarget of turn.targets) {
+        let title, onClickArgs;
+
+        switch (turnTarget.action) {
+          case "foreignAid":
+            title = `Block ${turnTarget.target}'s Foreign Aid`;
+            onClickArgs = ["block"];
+            break;
+          case "tax":
+            title = `Call Out ${turnTarget.target}'s 'Duke'`;
+            onClickArgs = ["callout", turnTarget.target];
+            break;
+          default:
+            break;
+        }
+
+        const calloutButtonInfo = {
+          title: title,
+          selectionArgs: null,
+          onClick: action,
+          onClickArgs: onClickArgs,
+        };
+
+        // Add new buttonInfo to calloutButtonInfos
+        calloutButtonInfos.push(calloutButtonInfo);
+      }
+    }
 
     const regularButtonInfos = [
       {
         title: "Income",
         selectionArgs: null,
         onClick: action,
-        onClickArgs: "income",
+        onClickArgs: ["income"],
       },
       {
         title: "Foreign Aid",
         selectionArgs: null,
         onClick: action,
-        onClickArgs: "foreignAid",
+        onClickArgs: ["foreignAid"],
       },
       {
         title: "Tax",
         selectionArgs: null,
         onClick: action,
-        onClickArgs: "tax",
+        onClickArgs: ["tax"],
       },
       // {
       //   title: "Assassinate~",
@@ -177,6 +207,12 @@ export default function CoupActionbar() {
         } else {
           textToDisplay = "Waiting for Others to Callout...";
         }
+        break;
+      case "losingRoles":
+        // If player is
+        // if (turn.targets.includes(userObj.username)) {
+        textToDisplay = "Losing Roles Stage";
+        // }
         break;
       default:
         break;

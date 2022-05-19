@@ -154,9 +154,10 @@ const calloutOver = (game) => {
   console.log("turn entering calloutOver:\n", turnToString(game.gameID), "\n");
   const action = getTurnProp(game.gameID, "action");
 
+  const caller = getTurnProp(game.gameID, "caller");
   if (caller) {
-    // Do losingRole stuff
-    setTurn(game, { stage: "losingRole" });
+    // Do losingRoles stuff
+    setTurn(game, { stage: "losingRoles" });
     startNewStage(game);
     return;
   } else {
