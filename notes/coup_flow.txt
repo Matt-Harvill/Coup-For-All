@@ -19,8 +19,7 @@ The losingRole stage doesn't happen if no one calls out though
 Add a game history to the game DB object
 For the frontend -> only show like 6 recent actions
 
-If both of the player's roles are the same, remove one automatically
 
-
-Error with losing role for game of three players -> appears to be a frontend issue
+Have an actionSuccess object in the turn object
+Use this in the postCallout to determine whether or not to end the turn
 

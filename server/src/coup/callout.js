@@ -2,15 +2,33 @@ import { getGame } from "../utils/dbUtils.js";
 import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
 
 // Handle a callout for tax action
-const taxCallout = (game, targetRoles, user, target) => {
-  const roleSwitching = "D";
-  let playerLosingRole, playerSwitchingRole;
-  // If the target has a duke, they don't lose a role, just switch it out
-  if (targetRoles.includes("D")) {
+const calloutHandler = (game, user, target, targetRoles, targetAction) => {
+  let roleToCheck;
+  let isTurnAction;
+  switch (targetAction) {
+    case "foreignAid":
+      roleToCheck = "D";
+      isTurnAction = false;
+      break;
+    case "tax":
+      roleToCheck = "D";
+      isTurnAction = true;
+      break;
+    default:
+      throw `${targetAction} is not a valid callout action`;
+  }
+
+  let playerLosingRole, playerSwitchingRole, actionSuccess;
+  // If the target has a "roleToCheck", they don't lose a role, just switch it out
+  if (targetRoles.includes(roleToCheck)) {
     playerLosingRole = user.username;
     playerSwitchingRole = target;
+    // Action success is same as isTurnAction
+    actionSuccess = isTurnAction;
   } else {
     playerLosingRole = target;
+    // Action success is opposite as isTurnAction
+    actionSuccess = !isTurnAction;
   }
 
   // Create losing object for use in roleSwitch obj
@@ -23,16 +41,23 @@ const taxCallout = (game, targetRoles, user, target) => {
   if (playerSwitchingRole) {
     switching = {
       player: playerSwitchingRole,
-      role: roleSwitching,
+      role: roleToCheck,
     };
   }
 
+  console.log(
+    "actionSuccess in callout for",
+    targetAction,
+    "is",
+    actionSuccess
+  );
   // Update roleSwitch object
   setTurn(game, {
     roleSwitch: {
       losing: losing,
       switching: switching,
     },
+    actionSuccess: actionSuccess,
   });
 
   // Go to next stage => will be roleSwitch
@@ -52,11 +77,5 @@ export const callout = async (user, target) => {
   const targetPStat = game.pStats.find((pStat) => pStat.player === target);
   const targetRoles = targetPStat.roles;
 
-  switch (targetAction) {
-    case "tax":
-      taxCallout(game, targetRoles, user, target);
-      break;
-    default:
-      break;
-  }
+  calloutHandler(game, user, target, targetRoles, targetAction);
 };

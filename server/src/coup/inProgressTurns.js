@@ -2,6 +2,7 @@
 // turn: {
 //   player: String,
 //   action: String,
+//   actionSuccess: null,
 //   timeRemMS: String,
 //   interval: (),
 //   stage: String, // Turn can be preCallout, callout, postCallout
@@ -85,7 +86,7 @@ export const setTurn = (game, newStats) => {
 };
 
 // Handle starting a new stage
-const startNewStage = async (game) => {
+export const startNewStage = async (game) => {
   const stage = getTurnProp(game.gameID, "stage");
 
   let timeRemMS;
@@ -171,13 +172,37 @@ const preCalloutOver = (game) => {
 // Handle callout stage ending
 const calloutOver = (game) => {
   const action = getTurnProp(game.gameID, "action");
+  let actionSuccess = getTurnProp(game.gameID, "actionSuccess");
+  console.log(actionSuccess);
+
+  // If actionSuccess is null then action was allowed
+  if (actionSuccess === null) {
+    switch (action) {
+      case "foreignAid":
+        actionSuccess = false;
+        break;
+      case "tax":
+        actionSuccess = true;
+        break;
+      default:
+        throw `${action} is not a valid action (in actionSuccess determination in calloutOver)`;
+    }
+  }
 
   switch (action) {
     case "foreignAid":
-      postCalloutForeignAid(game);
+      if (actionSuccess) {
+        postCalloutForeignAid(game);
+      } else {
+        endTurn(game);
+      }
       break;
     case "tax":
-      postCalloutTax(game);
+      if (actionSuccess) {
+        postCalloutTax(game);
+      } else {
+        endTurn(game);
+      }
       break;
     case "assassinate":
     case "steal":
@@ -271,6 +296,7 @@ export const createTurn = (game) => {
     turns[game.gameID] = {
       player: game.players[0],
       action: "",
+      actionSuccess: null,
       timeRemMS: null,
       interval: null,
       stage: "preCallout",

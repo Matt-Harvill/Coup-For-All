@@ -9,6 +9,7 @@ export default function CoupActionbar() {
   // turn: {
   //   player: String,
   //   action: String,
+  //   actionSuccess: null,
   //   timeRemMS: String,
   //   interval: (),
   //   stage: String, // Turn can be preCallout, callout, postCallout
@@ -78,19 +79,16 @@ export default function CoupActionbar() {
       },
     ];
 
-    if (turn.targets) {
+    // If there are targets, allow user to call them out
+    if (turn.targets && turn.targets.length > 0) {
       // Loop through targets to make Call out buttons for each target (or block depending on action)
       for (const turnTarget of turn.targets) {
-        let title, onClickArgs;
+        let title;
 
         switch (turnTarget.action) {
-          case "foreignAid":
-            title = `*Block ${turnTarget.target}'s Foreign Aid*`;
-            onClickArgs = ["block"];
-            break;
+          case "foreignAid": // Foreign Aid is blocked by Duke, so it is also calling out a Duke
           case "tax":
             title = `Call Out ${turnTarget.target}'s 'Duke'`;
-            onClickArgs = ["callout", turnTarget.target];
             break;
           default:
             break;
@@ -100,7 +98,20 @@ export default function CoupActionbar() {
           title: title,
           selectionArgs: null,
           onClick: action,
-          onClickArgs: onClickArgs,
+          onClickArgs: ["callout", turnTarget.target],
+        };
+
+        // Add new buttonInfo to calloutButtonInfos
+        calloutButtonInfos.push(calloutButtonInfo);
+      }
+    } else {
+      // If the action if foreignAid but no turnTargets, display block capability
+      if (turn.action === "foreignAid") {
+        const calloutButtonInfo = {
+          title: `Block ${turn.player}'s Foreign Aid`,
+          selectionArgs: null,
+          onClick: action,
+          onClickArgs: ["block", "foreignAid"],
         };
 
         // Add new buttonInfo to calloutButtonInfos

@@ -13,6 +13,7 @@ import { noCallout } from "./noCallout.js";
 import { preCalloutTax } from "./tax.js";
 import { callout } from "./callout.js";
 import { loseRole } from "./loseRoles.js";
+import { blockForeignAid } from "./blockForeignAid.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -123,6 +124,16 @@ export const eventSwitch = async (event, socket, ...args) => {
       const role = args[0];
       // Only need user and role for this loseRole call
       loseRole(user, role, null, null, null);
+      break;
+    case "block":
+      const action = args[0];
+      switch (action) {
+        case "foreignAid":
+          blockForeignAid(user);
+          break;
+        default:
+          break;
+      }
       break;
     default:
       throw `${event} is not a valid 'coup' event`;
