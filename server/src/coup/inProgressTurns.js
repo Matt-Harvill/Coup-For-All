@@ -14,7 +14,10 @@
 //   ],
 //   roleSwitch: {
 //     losing: null,
-//     switching: null
+//     switching: {
+//        player: null,
+//        role: null
+//     }
 //   }
 //   deciding: [],
 // },
@@ -23,6 +26,7 @@ import { getSocket } from "../utils/socketUtils.js";
 import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
 import { postCalloutForeignAid } from "./foreignAid.js";
 import { postCalloutTax } from "./tax.js";
+import { switchRole } from "./roleSwitching.js";
 
 // Store the inProgress games' turn stages (mapped by gameID)
 const turns = {};
@@ -77,7 +81,7 @@ export const setTurn = (game, newStats) => {
 };
 
 // Handle starting a new stage
-const startNewStage = (game) => {
+const startNewStage = async (game) => {
   const stage = getTurnProp(game.gameID, "stage");
 
   let timeRemMS;
@@ -87,7 +91,15 @@ const startNewStage = (game) => {
       timeRemMS = 30000;
       break;
     case "callout":
+      timeRemMS = 15000;
+      break;
     case "roleSwitch":
+      const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
+      const switching = roleSwitch.switching;
+
+      if (switching) {
+        switchRole(game, switching.player, switching.role, roleSwitch);
+      }
       timeRemMS = 15000;
       break;
     default:

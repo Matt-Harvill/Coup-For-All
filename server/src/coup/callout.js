@@ -3,28 +3,32 @@ import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
 
 // Handle a callout for tax action
 const taxCallout = (game, targetRoles, accuserRoles, user, target) => {
-  let losingRole, switchingRole;
+  const roleSwitching = "D";
+  let playerLosingRole, playerSwitchingRole;
   // If the target has a duke, they don't lose a role, just switch it out
   if (targetRoles.includes("D")) {
     if (targetRoles.length == 1) {
       // Remove player from active play
     } else {
-      losingRole = user.username;
+      playerLosingRole = user.username;
     }
-    switchingRole = target;
+    playerSwitchingRole = target;
   } else {
     if (accuserRoles.length == 1) {
       // Remove player from active play
     } else {
-      losingRole = target;
+      playerLosingRole = target;
     }
   }
 
   // SetTurn to show who must lose a role
   setTurn(game, {
     roleSwitch: {
-      losing: losingRole,
-      switching: switchingRole,
+      losing: playerLosingRole,
+      switching: {
+        player: playerSwitchingRole,
+        role: roleSwitching,
+      },
     },
   });
   // Currently goes to postCallout (instead we want it to go to losingRole)
