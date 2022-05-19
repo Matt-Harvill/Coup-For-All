@@ -160,8 +160,8 @@ const calloutOver = (game) => {
     case "assassinate":
     case "steal":
     case "coup":
-      endStage(game);
-      break;
+    // endStage(game);
+    // break;
     case "exchange":
       // Do postCallout stuff
       setTurn(game, { stage: "postCallout" });
