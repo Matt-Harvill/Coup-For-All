@@ -1,5 +1,5 @@
 import { updateUserAndGame } from "../utils/dbUtils.js";
-import { setTurn } from "./inProgressTurns.js";
+import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
 
 // Fisher-Yates (aka Knuth) Shuffle
 function shuffle(array) {
@@ -37,11 +37,13 @@ export const loseRoleAuto = async (
     return;
   }
 
-  // Remove player from the game
+  //--- Remove player from the game ---//
+  // Add roles to the unavailable roles
   for (const role of playerRoles) {
-    // Add roles to the unavailable roles
     game.unavailRoles.push(role);
   }
+  // Move player to outPlayers
+  game.outPlayers.push(player);
   // Delete pStat and player from players
   game.pStats = game.pStats.filter((pStat) => pStat.player !== player);
   game.players = game.players.filter((gamePlayer) => gamePlayer !== player);
@@ -52,14 +54,22 @@ export const loseRoleAuto = async (
     console.log("Error committing loseRoleAuto for", player);
   } else {
     const newRoleSwitch = { ...roleSwitchObj, losing: null };
+    console.log("newRoleSwitch", newRoleSwitch);
     // Update the switching to null now that it has been switched
     setTurn(game, { roleSwitch: newRoleSwitch });
+
+    // If losing and switching has been taken care of, end the stage
+    const newRoleSwitchObj = getTurnProp(game.gameID, "roleSwitch");
+    console.log("newRoleSwitchObj", newRoleSwitchObj);
+    if (!newRoleSwitchObj.switching && !newRoleSwitchObj.losing) {
+      endStage(game);
+    }
   }
 };
 
 export const switchRole = async (game, player, roleToSwitch, roleSwitchObj) => {
   const pStat = game.pStats.find((pStat) => pStat.player === player);
-  console.log(pStat);
+  console.log("switching.player", player, "pStat", pStat);
 
   let newRoles = [];
   let roleFound = false;
@@ -87,7 +97,15 @@ export const switchRole = async (game, player, roleToSwitch, roleSwitchObj) => {
     console.log("Error committing switchRole for", player);
   } else {
     const newRoleSwitch = { ...roleSwitchObj, switching: null };
+    console.log("newRoleSwitch", newRoleSwitch);
     // Update the switching to null now that it has been switched
     setTurn(game, { roleSwitch: newRoleSwitch });
+
+    // If losing and switching has been taken care of, end the stage
+    const newRoleSwitchObj = getTurnProp(game.gameID, "roleSwitch");
+    console.log("newRoleSwitchObj", newRoleSwitchObj);
+    if (!newRoleSwitchObj.switching && !newRoleSwitchObj.losing) {
+      endStage(game);
+    }
   }
 };

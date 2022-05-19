@@ -12,12 +12,16 @@ export const leaveGame = async (socket) => {
 
   let gameDeleted, committed;
   // If game will be empty now, delete the game
-  if (game.players.length === 1) {
+  if (game.players.length === 1 && game.players.includes(user)) {
     committed = await dbUtils.updateUserAndGame(user, game, "deleteGame");
     gameDeleted = true;
   } else {
     // Update players
     game.players = game.players.filter((player) => {
+      return player !== user;
+    });
+    // Update outPlayers
+    game.outPlayers = game.outPlayers.filter((player) => {
       return player !== user;
     });
     // Update pStats

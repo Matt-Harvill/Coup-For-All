@@ -53,7 +53,8 @@ export const turnToString = (gameID) => {
 // Send turn to all sockets in the game
 const sendTurnUpdates = (game) => {
   // Update players with updated turn
-  for (const player of game.players) {
+  const allPlayers = game.players.concat(game.outPlayers);
+  for (const player of allPlayers) {
     const socket = getSocket(player); // Get all the sockets of players in the game
     if (socket) {
       socket.emit("coup", "updateTurn", game.gameID, turnToString(game.gameID));
@@ -92,18 +93,26 @@ const startNewStage = async (game) => {
       break;
     case "callout":
       timeRemMS = 15000;
+      const deciding = getTurnProp(game.gameID, "deciding");
+      if (deciding.length === 0) {
+        // Go to next stage if no one to call out
+        // Set the timeRemMS (So time bar doesn't look weird)
+        setTurn(game, { timeRemMS: timeRemMS });
+        endStage(game);
+        return;
+      }
       break;
     case "roleSwitch":
       const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
       // Handle switching role
       const switching = roleSwitch.switching;
-      if (switching) {
-        await switchRole(game, switching.player, switching.role, roleSwitch);
+      if (switching && switching.player) {
+        switchRole(game, switching.player, switching.role, roleSwitch);
       }
       // Handle losing role(s)
       const losing = roleSwitch.losing;
-      if (losing) {
-        await loseRoleAuto(game, losing.player, losing.numRoles);
+      if (losing && losing.player) {
+        loseRoleAuto(game, losing.player, losing.numRoles, roleSwitch);
       }
       timeRemMS = 15000;
       break;
@@ -160,14 +169,6 @@ const preCalloutOver = (game) => {
 const calloutOver = (game) => {
   const action = getTurnProp(game.gameID, "action");
 
-  const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
-  if (roleSwitch && (roleSwitch.losing || roleSwitch.switching)) {
-    // Do roleSwitch stuff
-    setTurn(game, { stage: "roleSwitch" });
-    startNewStage(game);
-    return;
-  }
-
   switch (action) {
     case "foreignAid":
       postCalloutForeignAid(game);
@@ -207,12 +208,18 @@ export const endStage = (game) => {
       preCalloutOver(game);
       break;
     case "callout":
+      const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
+      if (roleSwitch.losing || roleSwitch.switching) {
+        // Do roleSwitch stuff
+        setTurn(game, { stage: "roleSwitch" });
+        startNewStage(game);
+        return;
+      }
       // Starts the new stage after updating it
       calloutOver(game);
       break;
     case "roleSwitch":
-      // Indicate in calloutOver to go to postCallout (losing and switching has been handled)
-      setTurn(game, { roleSwitch: null });
+      // Call calloutOver b/c losing and switching has been handled
       calloutOver(game);
       break;
     case "postCallout":

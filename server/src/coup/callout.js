@@ -21,20 +21,34 @@ const taxCallout = (game, targetRoles, accuserRoles, user, target) => {
     }
   }
 
-  // SetTurn to show who must lose a role
-  setTurn(game, {
-    roleSwitch: {
-      losing: {
-        player: playerLosingRole,
-        numRoles: 2,
+  if (playerSwitchingRole) {
+    // SetTurn to show who must lose a role
+    setTurn(game, {
+      roleSwitch: {
+        losing: {
+          player: playerLosingRole,
+          numRoles: 2,
+        },
+        switching: {
+          player: playerSwitchingRole,
+          role: roleSwitching,
+        },
       },
-      switching: {
-        player: playerSwitchingRole,
-        role: roleSwitching,
+    });
+  } else {
+    // SetTurn to show who must lose a role (switching is null because no one needed to switch roles)
+    setTurn(game, {
+      roleSwitch: {
+        losing: {
+          player: playerLosingRole,
+          numRoles: 2,
+        },
+        switching: null,
       },
-    },
-  });
-  // Currently goes to postCallout (instead we want it to go to losingRole)
+    });
+  }
+
+  // Go to next stage => will be roleSwitch
   endStage(game);
 };
 

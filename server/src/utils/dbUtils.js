@@ -45,6 +45,9 @@ export const updateUserAndGame = async (user, game, update) => {
   let transactSuccess = true;
   let usersUpdated = [];
 
+  // Update all players (both still in or out of the game)
+  const allPlayers = game.players.concat(game.outPlayers);
+
   try {
     switch (update) {
       case "deleteGame": // Called only when last player or game still forming
@@ -53,7 +56,7 @@ export const updateUserAndGame = async (user, game, update) => {
           { session }
         );
         // Update all the users after deleting the game
-        for (const player of game.players) {
+        for (const player of allPlayers) {
           await updateUser(player, "", "", "", {}, session);
           usersUpdated.push(player);
         }
@@ -61,7 +64,7 @@ export const updateUserAndGame = async (user, game, update) => {
       case "updateGame":
         await game.save(); // Uses session by default
         // Update all the users after someone joins the game, or created (just that user anyways)
-        for (const player of game.players) {
+        for (const player of allPlayers) {
           const [pStat] = game.pStats.filter((pStat) => {
             return pStat.player === player;
           });
@@ -98,7 +101,7 @@ export const updateUserAndGame = async (user, game, update) => {
     if (game.status === "in progress") {
       gameToUpdate = await getGame(game.gameTitle, game.gameID);
       if (update === "leaveGame") {
-        usersUpdated.push(...game.players);
+        usersUpdated.push(...allPlayers);
       }
     }
     // Update all the players in the game

@@ -33,6 +33,7 @@ export const createGame = async (socket, privacy, maxPlayers) => {
     privacy: privacy, // 'public', 'private'
     maxPlayers: maxPlayers,
     players: [user],
+    outPlayers: [],
     pStats: pStats,
     availRoles: [
       "AM",
