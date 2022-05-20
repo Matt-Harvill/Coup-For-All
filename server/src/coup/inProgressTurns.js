@@ -112,12 +112,7 @@ export const startNewStage = async (game) => {
       // Handle switching role
       const switching = roleSwitch.switching;
       if (switching && switching.player) {
-        stageEnding = await switchRole(
-          game,
-          switching.player,
-          switching.role,
-          roleSwitch
-        );
+        stageEnding = await switchRole(game, switching.player, switching.role);
         if (stageEnding) {
           return;
         }
@@ -125,12 +120,7 @@ export const startNewStage = async (game) => {
       // Handle losing role(s)
       const losing = roleSwitch.losing;
       if (losing && losing.player) {
-        stageEnding = await loseRoleAuto(
-          game,
-          losing.player,
-          losing.numRoles,
-          roleSwitch
-        );
+        stageEnding = await loseRoleAuto(game, losing.player, losing.numRoles);
         if (stageEnding) {
           return;
         }

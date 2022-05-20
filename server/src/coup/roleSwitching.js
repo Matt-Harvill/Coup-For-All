@@ -23,12 +23,8 @@ function shuffle(array) {
   return array;
 }
 
-export const loseRoleAuto = async (
-  game,
-  player,
-  numRolesLosing,
-  roleSwitchObj
-) => {
+export const loseRoleAuto = async (game, player, numRolesLosing) => {
+  const roleSwitchObj = getTurnProp(game.gameID, "roleSwitch");
   const pStat = game.pStats.find((pStat) => pStat.player === player);
   const playerRoles = pStat.roles;
   const numRoles = playerRoles.length;
@@ -72,7 +68,8 @@ export const loseRoleAuto = async (
   }
 };
 
-export const switchRole = async (game, player, roleToSwitch, roleSwitchObj) => {
+export const switchRole = async (game, player, roleToSwitch) => {
+  const roleSwitchObj = getTurnProp(game.gameID, "roleSwitch");
   const pStat = game.pStats.find((pStat) => pStat.player === player);
 
   let newRoles = [];
