@@ -16,7 +16,7 @@ export const publicGameState = (game, username) => {
     }
     pStat.roles = newRoles;
   }
-  return publicGame;
+  return { ...publicGame, availRoles: null };
 };
 
 export const getGameState = async (socket) => {
