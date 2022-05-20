@@ -251,6 +251,21 @@ export default function CoupActionbar() {
     );
   };
 
+  const displayUnavailRoles = () => {
+    const unavailRoles = game.unavailRoles;
+    if (unavailRoles && unavailRoles.length > 0) {
+      return (
+        <div style={{ backgroundColor: "white", padding: 10 }}>
+          <h5>Roles Out of Play</h5>
+          <p>{unavailRoles.join(", ")}</p>
+        </div>
+      );
+    } else {
+      // Return empty div to take the grid space
+      return <div></div>;
+    }
+  };
+
   const displayTurnTitle = () => {
     let textToDisplay;
 
@@ -300,9 +315,12 @@ export default function CoupActionbar() {
         width: "100%",
         backgroundColor: "#c4c4c4",
         padding: 10,
+        display: "grid",
+        gridTemplateColumns: "1fr 2fr 1fr",
       }}
     >
-      <div style={{ margin: "auto", width: "50%" }}>
+      {displayUnavailRoles()}
+      <div style={{ marginLeft: 20, marginRight: 20 }}>
         {displayTurnTitle()}
         <div style={{ height: 10 }}></div>
         {displayButtons()}
