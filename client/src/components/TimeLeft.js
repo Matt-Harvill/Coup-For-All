@@ -10,14 +10,14 @@ export default function TimeLeft(props) {
         modTimeLeft = timeLeft;
       }
 
-      let timeLeftColor;
-      if (modTimeLeft <= maxTimeLeft * 0.2) {
-        timeLeftColor = "red";
-      } else if (modTimeLeft <= maxTimeLeft * 0.4) {
-        timeLeftColor = "yellow";
-      } else if (modTimeLeft <= maxTimeLeft) {
-        timeLeftColor = "green";
-      }
+      let timeLeftColor = "#FF5A5A";
+      // if (modTimeLeft <= maxTimeLeft * 0.2) {
+      //   timeLeftColor = "red";
+      // } else if (modTimeLeft <= maxTimeLeft * 0.4) {
+      //   timeLeftColor = "yellow";
+      // } else if (modTimeLeft <= maxTimeLeft) {
+      //   timeLeftColor = "green";
+      // }
 
       return (
         <div className="progress">

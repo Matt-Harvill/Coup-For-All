@@ -18,7 +18,7 @@ export default function CoupPlayerCard(props) {
   };
 
   if (pStat.player === activePlayer) {
-    style.boxShadow = "0px 0px 20px green";
+    style.boxShadow = "0px 0px 20px #FF5A5A";
   }
 
   return (

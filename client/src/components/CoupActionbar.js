@@ -206,8 +206,9 @@ export default function CoupActionbar() {
           if (
             roleSwitch.losing &&
             roleSwitch.losing.player === userObj.username &&
-            (roleSwitch.losing.numRoles < playerRoles.length ||
-              (playerRoles.length === 2 && playerRoles[0] === playerRoles[1]))
+            roleSwitch.losing.numRoles < playerRoles.length &&
+            playerRoles.length === 2 &&
+            playerRoles[0] !== playerRoles[1]
           ) {
             buttonInfos = losingRoleButtonInfos;
           }

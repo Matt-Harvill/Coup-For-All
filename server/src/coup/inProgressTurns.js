@@ -31,6 +31,7 @@ import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
 import { postCalloutForeignAid } from "./foreignAid.js";
 import { postCalloutTax } from "./tax.js";
 import { loseRoleAuto, switchRole } from "./roleSwitching.js";
+import { moveTimeout } from "./moveTimeout.js";
 
 // Store the inProgress games' turn stages (mapped by gameID)
 const turns = {};
@@ -145,7 +146,12 @@ export const startNewStage = async (game) => {
 
     // Go to next stage when time runs out
     if (timeRem() === 0) {
-      endStage(game);
+      // If no move was made in precallout, call "moveTimeout"
+      if (stage === "preCallout") {
+        moveTimeout(game);
+      } else {
+        endStage(game);
+      }
     }
   }, updatePeriod);
 
@@ -185,7 +191,7 @@ const calloutOver = (game) => {
   if (actionSuccess === null) {
     switch (action) {
       case "foreignAid":
-        actionSuccess = false;
+        actionSuccess = true;
         break;
       case "tax":
         actionSuccess = true;
