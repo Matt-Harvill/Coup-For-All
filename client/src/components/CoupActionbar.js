@@ -309,27 +309,45 @@ export default function CoupActionbar() {
     return <h4 style={{ textAlign: "center" }}>{textToDisplay}</h4>;
   };
 
-  return (
-    <div
-      style={{
-        minHeight: 100,
-        width: "100%",
-        backgroundColor: "#c4c4c4",
-        padding: 10,
-        display: "grid",
-        gridTemplateColumns: "1fr 2fr 1fr",
-      }}
-    >
-      {displayUnavailRoles()}
-      <div style={{ marginLeft: 20, marginRight: 20 }}>
-        {displayTurnTitle()}
-        <div style={{ height: 10 }}></div>
-        {displayButtons()}
-        <div style={{ height: 10 }}></div>
-        {turn !== {} && (
-          <TimeLeft timeLeft={timeRem} maxTimeLeft={maxTimeRem} />
-        )}
+  if (game.winner) {
+    return (
+      <div
+        style={{
+          minHeight: 100,
+          width: "100%",
+          backgroundColor: "#c4c4c4",
+          padding: 10,
+          display: "grid",
+          gridTemplateColumns: "1fr 2fr 1fr",
+        }}
+      >
+        <div></div>
+        <h4 style={{ textAlign: "center" }}>{`${game.winner} Won!`}</h4>;
       </div>
-    </div>
-  );
+    );
+  } else {
+    return (
+      <div
+        style={{
+          minHeight: 100,
+          width: "100%",
+          backgroundColor: "#c4c4c4",
+          padding: 10,
+          display: "grid",
+          gridTemplateColumns: "1fr 2fr 1fr",
+        }}
+      >
+        {displayUnavailRoles()}
+        <div style={{ marginLeft: 20, marginRight: 20 }}>
+          {displayTurnTitle()}
+          <div style={{ height: 10 }}></div>
+          {displayButtons()}
+          <div style={{ height: 10 }}></div>
+          {turn !== {} && (
+            <TimeLeft timeLeft={timeRem} maxTimeLeft={maxTimeRem} />
+          )}
+        </div>
+      </div>
+    );
+  }
 }

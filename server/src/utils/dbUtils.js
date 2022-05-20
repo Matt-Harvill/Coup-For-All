@@ -7,6 +7,7 @@ import {
   deleteTurn,
   getTurnProp,
 } from "../coup/inProgressTurns.js";
+import { gameOver } from "../coup/gameOver.js";
 
 export const getUserObj = async (username) => {
   return await User.findOne({
@@ -109,16 +110,31 @@ export const updateUserAndGame = async (user, game, update) => {
       sendUpdatesSingle(user, gameToUpdate);
     }
 
-    // If game is deleted, delete the turn
-    if (update === "deleteGame") {
-      deleteTurn(game.gameID);
-    } else if (update === "leaveGame") {
-      const player = getTurnProp(game.gameID, "player");
-      if (player === user) {
+    switch (update) {
+      case "deleteGame":
+        // If game is deleted, delete the turn
         deleteTurn(game.gameID);
-        // Then create a new turn
-        createTurn(game);
-      }
+        break;
+      case "updateGame":
+        // If only one player is left, set game to "completed" with the winner as the last player
+        if (gameToUpdate && gameToUpdate.players.length === 1) {
+          await gameOver(gameToUpdate);
+        }
+        break;
+      case "leaveGame":
+        // If only one player is left, set game to "completed" with the winner as the last player
+        if (gameToUpdate && gameToUpdate.players.length === 1) {
+          await gameOver(gameToUpdate);
+        } else {
+          const player = getTurnProp(game.gameID, "player");
+          if (player === user) {
+            deleteTurn(game.gameID);
+            // Then create a new turn
+            createTurn(game);
+          }
+        }
+      default:
+        break;
     }
   } else {
     await session.abortTransaction();

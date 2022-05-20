@@ -52,6 +52,7 @@ export const createGame = async (socket, privacy, maxPlayers) => {
       "D",
       "D",
     ],
+    winner: null,
   });
 
   const committed = await dbUtils.updateUserAndGame(user, game, "updateGame");

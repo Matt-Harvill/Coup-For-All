@@ -39,6 +39,15 @@ const turns = {};
 // Have an update period for all time updates
 const updatePeriod = 100; // 100ms
 
+// See if turn exists
+export const turnExists = (gameID) => {
+  if (turns[gameID]) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
 // Return a specific prop from the turn
 export const getTurnProp = (gameID, prop) => {
   const turn = turns[gameID];
@@ -234,7 +243,7 @@ const calloutOver = (game) => {
       startNewStage(game);
       break;
     default:
-      throw `Not valid action in calloutOver for gameID ${game.gameID}`;
+      throw `${action} is not valid action in calloutOver for gameID ${game.gameID}`;
   }
 };
 

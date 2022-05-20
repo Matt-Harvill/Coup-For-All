@@ -1,5 +1,10 @@
 import { updateUserAndGame } from "../utils/dbUtils.js";
-import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
+import {
+  endStage,
+  getTurnProp,
+  setTurn,
+  turnExists,
+} from "./inProgressTurns.js";
 import { loseRole } from "./loseRoles.js";
 
 // Fisher-Yates (aka Knuth) Shuffle
@@ -54,6 +59,10 @@ export const loseRoleAuto = async (game, player, numRolesLosing) => {
   if (!committed) {
     console.log("Error committing loseRoleAuto for", player);
   } else {
+    // If the turn has been deleted, then the stage is over
+    if (!turnExists(game.gameID)) {
+      return true;
+    }
     const newRoleSwitch = { ...roleSwitchObj, losing: null };
     // Update the switching to null now that it has been switched
     setTurn(game, { roleSwitch: newRoleSwitch });
