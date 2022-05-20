@@ -16,6 +16,11 @@ export const coupAction = async (user, target, role) => {
       console.log("Error executing coup payment for", user.username);
     }
 
+    if (pStat.coins < 0) {
+      // This means the player didn't have enough coins
+      return;
+    }
+
     const committed = await updateUserAndGame(user, game, "updateGame");
 
     if (!committed) {

@@ -133,14 +133,6 @@ export default function CoupActionbar() {
         onClick: action,
         onClickArgs: ["tax"],
       },
-      {
-        title: "Coup ",
-        secondText: "For ",
-        targets: otherPlayers,
-        roles: roleNames,
-        onClick: action,
-        onClickArgs: ["coupAction", "target", "role"],
-      },
       // {
       //   title: "Assassinate~",
       //   selectionArgs: otherPlayers,
@@ -161,6 +153,15 @@ export default function CoupActionbar() {
       // },
     ];
 
+    const coupButtonInfo = {
+      title: "Coup ",
+      secondText: "For ",
+      targets: otherPlayers,
+      roles: roleNames,
+      onClick: action,
+      onClickArgs: ["coupAction", "target", "role"],
+    };
+
     let losingRoleButtonInfos = [];
     if (game.pStats) {
       const pStat = game.pStats.find((pStat) => {
@@ -177,7 +178,7 @@ export default function CoupActionbar() {
       }
     }
 
-    let buttonInfos;
+    let buttonInfos = [];
 
     switch (turn.stage) {
       case "callout":
@@ -215,7 +216,17 @@ export default function CoupActionbar() {
       case "postCallout":
         // If not pre/postCallout period, check if active player is this user
         if (turn.player === userObj.username) {
-          buttonInfos = regularButtonInfos;
+          if (game.pStats) {
+            const pStat = game.pStats.find((pStat) => {
+              return pStat.player === userObj.username;
+            });
+            if (pStat.coins < 10) {
+              buttonInfos = regularButtonInfos;
+            }
+            if (pStat.coins >= 7) {
+              buttonInfos.push(coupButtonInfo);
+            }
+          }
         } else {
           return;
         }
