@@ -322,7 +322,7 @@ export default function CoupActionbar() {
         }}
       >
         <div></div>
-        <h4 style={{ textAlign: "center" }}>{`${game.winner} Won!`}</h4>;
+        <h4 style={{ textAlign: "center" }}>{`${game.winner} Won!`}</h4>
       </div>
     );
   } else {
