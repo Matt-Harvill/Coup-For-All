@@ -343,6 +343,13 @@ export default function CoupActionbar() {
   };
 
   if (game.winner) {
+    let name;
+    if (userObj.username === game.winner) {
+      name = "You";
+    } else {
+      name = game.winner;
+    }
+
     return (
       <div
         style={{
@@ -355,7 +362,7 @@ export default function CoupActionbar() {
         }}
       >
         <div></div>
-        <h4 style={{ textAlign: "center" }}>{`${game.winner} Won!`}</h4>
+        <h4 style={{ textAlign: "center" }}>{`${name} Won!`}</h4>
       </div>
     );
   } else {
