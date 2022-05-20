@@ -74,9 +74,19 @@ export default function CoupActionButton(props) {
               if (onClickArgs) {
                 for (let arg of onClickArgs) {
                   if (arg === "target") {
-                    arg = target;
+                    // Make sure the initialTarget is used if target hasn't been set yet
+                    if (target === "") {
+                      arg = initialTarget;
+                    } else {
+                      arg = target;
+                    }
                   } else if (arg === "role") {
-                    arg = targetedRole;
+                    // Make sure the initialTarget is used if target hasn't been set yet
+                    if (targetedRole === "") {
+                      arg = initialRole;
+                    } else {
+                      arg = targetedRole;
+                    }
                   }
                   args.push(arg);
                 }

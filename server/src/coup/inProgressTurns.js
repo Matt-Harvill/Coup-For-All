@@ -189,8 +189,11 @@ const preCalloutOver = (game) => {
     case "assassinate":
     case "exchange":
     case "steal":
-    case "coup":
       setTurn(game, { stage: "callout" });
+      startNewStage(game);
+      break;
+    case "coup":
+      setTurn(game, { stage: "roleSwitch" });
       startNewStage(game);
       break;
     default:
@@ -211,6 +214,8 @@ const calloutOver = (game) => {
         break;
       case "tax":
         actionSuccess = true;
+        break;
+      case "coup":
         break;
       default:
         throw `${action} is not a valid action (in actionSuccess determination in calloutOver)`;
@@ -234,9 +239,10 @@ const calloutOver = (game) => {
       break;
     case "assassinate":
     case "steal":
+      break;
     case "coup":
-    // endStage(game);
-    // break;
+      endTurn(game);
+      break;
     case "exchange":
       // Do postCallout stuff
       setTurn(game, { stage: "postCallout" });
