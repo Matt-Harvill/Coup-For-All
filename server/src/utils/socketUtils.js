@@ -17,6 +17,10 @@ export const sendUpdatesSingle = async (username, game = undefined) => {
   // If socketID is defined (will be undefined if user isn't currently connected)
   if (socketID !== undefined) {
     const socket = io.sockets.sockets.get(socketID);
+    // If socket doesn't exist, return
+    if (!socket) {
+      return;
+    }
     const userObj = await dbUtils.getUserObj(username);
     socket.request.user = userObj; // Update the socket's user object
     socket.emit("updateUserObj", userObj); // Inform client of update to their userObj

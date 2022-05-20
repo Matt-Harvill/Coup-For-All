@@ -294,10 +294,21 @@ export default function CoupActionbar() {
         }
         break;
       case "callout":
-        if (turn.deciding.includes(userObj.username)) {
-          textToDisplay = "Pass or Callout";
+        let stageString;
+        if (turn.action === "foreignAid" && turn.targets.length === 0) {
+          stageString = "Block";
         } else {
-          textToDisplay = "Waiting for Others to Callout...";
+          stageString = "Callout";
+        }
+        if (turn.deciding.includes(userObj.username)) {
+          textToDisplay = `Pass or ${stageString}`;
+        } else {
+          if (!turn.deciding || (turn.deciding && turn.deciding.length === 0)) {
+            textToDisplay = `Finishing up ${stageString}...`;
+          } else {
+            const deciding = turn.deciding.join(", ");
+            textToDisplay = `Waiting for ${deciding} to ${stageString}...`;
+          }
         }
         break;
       case "roleSwitch":
@@ -313,7 +324,15 @@ export default function CoupActionbar() {
         ) {
           textToDisplay = "Switching a Role";
         } else {
-          textToDisplay = "Waiting for Others to Lose/Switch Roles...";
+          if (roleSwitch.losing && roleSwitch.switching) {
+            textToDisplay = `Waiting for ${roleSwitch.losing.player} to Lose their Role and ${roleSwitch.switching.player} to Switch their Role`;
+          } else if (roleSwitch.losing) {
+            textToDisplay = `Waiting for ${roleSwitch.losing.player} to Lose their Role`;
+          } else if (roleSwitch.switching) {
+            textToDisplay = `Waiting for ${roleSwitch.switching.player} to Switch their Role`;
+          } else {
+            textToDisplay = "Finishing up Role Losing/Switching...";
+          }
         }
         break;
       default:
