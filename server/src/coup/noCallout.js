@@ -1,5 +1,6 @@
 import { getGame } from "../utils/dbUtils.js";
 import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
+import { calloutTimeout } from "./moveTimeout.js";
 
 export const noCallout = async (user) => {
   const game = await getGame(user.gameTitle, user.gameID);
@@ -16,6 +17,6 @@ export const noCallout = async (user) => {
 
   // If all players have decided not to callout, end the callout
   if (deciding.length === 0) {
-    endStage(game);
+    calloutTimeout(game);
   }
 };

@@ -31,7 +31,7 @@ import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
 import { postCalloutForeignAid } from "./foreignAid.js";
 import { postCalloutTax } from "./tax.js";
 import { loseRoleAuto, switchRole } from "./roleSwitching.js";
-import { moveTimeout } from "./moveTimeout.js";
+import { calloutTimeout, moveTimeout } from "./moveTimeout.js";
 
 // Store the inProgress games' turn stages (mapped by gameID)
 const turns = {};
@@ -144,13 +144,20 @@ export const startNewStage = async (game) => {
     // Update the timeRem
     setTurn(game, { timeRemMS: timeRem() - updatePeriod });
 
-    // Go to next stage when time runs out
+    // Handle when time runs out
     if (timeRem() === 0) {
-      // If no move was made in precallout, call "moveTimeout"
-      if (stage === "preCallout") {
-        moveTimeout(game);
-      } else {
-        endStage(game);
+      switch (stage) {
+        case "preCallout":
+          // If no move was made in preCallout, call "moveTimeout"
+          moveTimeout(game);
+          break;
+        case "callout":
+          // If no callout was made in callout, call "calloutTimeout"
+          calloutTimeout(game);
+          break;
+        default:
+          endStage(game);
+          break;
       }
     }
   }, updatePeriod);
