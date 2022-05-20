@@ -69,11 +69,11 @@ export default function CoupActionbar() {
 
   const displayButtons = () => {
     const otherPlayers = getOtherPlayers();
+    const roleNames = ["Ambassador", "Assassin", "Captain", "Contessa", "Duke"];
 
     const calloutButtonInfos = [
       {
         title: "Pass",
-        selectionArgs: null,
         onClick: action,
         onClickArgs: ["noCallout"],
       },
@@ -96,7 +96,6 @@ export default function CoupActionbar() {
 
         const calloutButtonInfo = {
           title: title,
-          selectionArgs: null,
           onClick: action,
           onClickArgs: ["callout", turnTarget.target],
         };
@@ -109,7 +108,6 @@ export default function CoupActionbar() {
       if (turn.action === "foreignAid") {
         const calloutButtonInfo = {
           title: `Block ${turn.player}'s Foreign Aid`,
-          selectionArgs: null,
           onClick: action,
           onClickArgs: ["block", "foreignAid"],
         };
@@ -122,21 +120,26 @@ export default function CoupActionbar() {
     const regularButtonInfos = [
       {
         title: "Income",
-        selectionArgs: null,
         onClick: action,
         onClickArgs: ["income"],
       },
       {
         title: "Foreign Aid",
-        selectionArgs: null,
         onClick: action,
         onClickArgs: ["foreignAid"],
       },
       {
         title: "Tax",
-        selectionArgs: null,
         onClick: action,
         onClickArgs: ["tax"],
+      },
+      {
+        title: "Coup ",
+        secondText: "For ",
+        targets: otherPlayers,
+        roles: roleNames,
+        onClick: action,
+        onClickArgs: ["coupAction", "target", "role"],
       },
       // {
       //   title: "Assassinate~",
@@ -156,12 +159,6 @@ export default function CoupActionbar() {
       //   onClick: null,
       //   onClickArgs: null,
       // },
-      // {
-      //   title: "Coup~",
-      //   selectionArgs: otherPlayers,
-      //   onClick: null,
-      //   onClickArgs: null,
-      // },
     ];
 
     let losingRoleButtonInfos = [];
@@ -173,7 +170,6 @@ export default function CoupActionbar() {
         for (const role of pStat.roles) {
           losingRoleButtonInfos.push({
             title: `Lose ${role}`,
-            selectionArgs: null,
             onClick: action,
             onClickArgs: ["loseRole", role],
           });
@@ -245,7 +241,9 @@ export default function CoupActionbar() {
     return (
       <CoupActionButton
         title={buttonInfo.title}
-        selectionArgs={buttonInfo.selectionArgs}
+        secondText={buttonInfo.secondText}
+        targets={buttonInfo.targets}
+        roles={buttonInfo.roles}
         onClick={buttonInfo.onClick}
         onClickArgs={buttonInfo.onClickArgs}
       />

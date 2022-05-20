@@ -14,6 +14,7 @@ import { preCalloutTax } from "./tax.js";
 import { callout } from "./callout.js";
 import { loseRole } from "./loseRoles.js";
 import { blockForeignAid } from "./blockForeignAid.js";
+import { coupAction } from "./coupAction.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -112,6 +113,10 @@ export const eventSwitch = async (event, socket, ...args) => {
       break;
     case "tax":
       preCalloutTax(user);
+      break;
+    case "coupAction":
+      const [coupTarget, coupRole] = args;
+      coupAction(user, coupTarget, coupRole);
       break;
     case "noCallout":
       noCallout(user);

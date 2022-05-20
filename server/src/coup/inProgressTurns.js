@@ -258,6 +258,7 @@ export const endStage = (game) => {
       break;
     case "callout":
       const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
+      console.log(roleSwitch);
       if (roleSwitch.losing || roleSwitch.switching) {
         // Do roleSwitch stuff
         setTurn(game, { stage: "roleSwitch" });
