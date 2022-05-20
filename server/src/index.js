@@ -138,6 +138,16 @@ io.on("connection", (socket) => {
   // Disconnect
   socket.on("disconnect", () => {
     console.log("Client disconnected");
+    if (socket.request.user) {
+      const username = socket.request.user.username;
+      for (const [group, playerSet] of allOnlinePlayers.entries()) {
+        if (playerSet.has(username)) {
+          playerSet.delete(username);
+          io.emit(group, "online", Array.from(playerSet));
+          break;
+        }
+      }
+    }
   });
 });
 
