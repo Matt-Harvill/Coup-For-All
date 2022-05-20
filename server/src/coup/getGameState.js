@@ -9,7 +9,7 @@ export const publicGameState = (game, username) => {
     let newRoles = [];
     for (const role of pStat.roles) {
       if (pStat.player !== username) {
-        newRoles.push("default");
+        newRoles.push("hidden");
       } else {
         newRoles.push(role);
       }
