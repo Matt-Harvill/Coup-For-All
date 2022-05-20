@@ -104,8 +104,9 @@ export const loseRoleAuto = async (game, player, numRolesLosing) => {
     if (numRolesLosing < numRoles) {
       // Both roles are the same
       if (playerRoles[0] === playerRoles[1]) {
-        removeOneRole = true;
-        roleToLose = playerRoles[0];
+        // Changing so that not automatically lose even if they have the same role
+        // removeOneRole = true;
+        // roleToLose = playerRoles[0];
       }
     }
     // Player will lose from this role loss

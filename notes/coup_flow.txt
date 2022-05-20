@@ -29,3 +29,5 @@ I think that I need to break out of the startNewStage if the stage is ended by t
 
 I also need to add a display for the unavailRoles
 
+
+Change message during roleSwitch to show who's losing and/or switching roles

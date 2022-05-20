@@ -1,6 +1,6 @@
 import { getGame } from "../utils/dbUtils.js";
 import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
-import { calloutTimeout } from "./moveTimeout.js";
+import { calloutTimeout } from "./timeouts.js";
 
 export const noCallout = async (user) => {
   const game = await getGame(user.gameTitle, user.gameID);

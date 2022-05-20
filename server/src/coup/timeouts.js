@@ -2,6 +2,7 @@ import { getUserObj } from "../utils/dbUtils.js";
 import { coupAction } from "./coupAction.js";
 import { income } from "./income.js";
 import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
+import { loseRole } from "./loseRoles.js";
 
 const randomElement = (items) => {
   return items[Math.floor(Math.random() * items.length)];
@@ -62,4 +63,28 @@ export const calloutTimeout = (game) => {
 
   // End the callout stage
   endStage(game);
+};
+
+export const roleSwitchTimeout = async (game) => {
+  const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
+
+  if (roleSwitch.losing) {
+    const player = roleSwitch.losing.player;
+    const userObj = await getUserObj(player);
+
+    const pStat = game.pStats.find((pStat) => {
+      return pStat.player === player;
+    });
+
+    if (!pStat) {
+      console.log(
+        `Error in roleSwitchTimeout for ${player} with gameID ${game.gameID}`
+      );
+    } else {
+      const roleToLose = randomElement(pStat.roles);
+      // Lose a random role
+      await loseRole(userObj, roleToLose, game, player, roleSwitch);
+      // Lose Role ends the stage
+    }
+  }
 };

@@ -31,7 +31,7 @@ import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
 import { postCalloutForeignAid } from "./foreignAid.js";
 import { postCalloutTax } from "./tax.js";
 import { loseRoleAuto, switchRole } from "./roleSwitching.js";
-import { calloutTimeout, moveTimeout } from "./moveTimeout.js";
+import { calloutTimeout, moveTimeout, roleSwitchTimeout } from "./timeouts.js";
 
 // Store the inProgress games' turn stages (mapped by gameID)
 const turns = {};
@@ -166,6 +166,10 @@ export const startNewStage = async (game) => {
         case "callout":
           // If no callout was made in callout, call "calloutTimeout"
           calloutTimeout(game);
+          break;
+        case "roleSwitch":
+          // If no role was switched in roleSwitch, call "roleSwitchTimeout"
+          roleSwitchTimeout(game);
           break;
         default:
           endStage(game);
