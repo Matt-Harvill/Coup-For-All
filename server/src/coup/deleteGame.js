@@ -4,6 +4,9 @@ import { coupFormingGames, sendFormingGames } from "./coup.js";
 
 export const deleteGame = async (socket) => {
   const userObj = socket.request.user;
+  if (!userObj) {
+    return;
+  }
   // Get the game
   const game = await CoupGame.findOne({
     gameID: userObj.gameID,

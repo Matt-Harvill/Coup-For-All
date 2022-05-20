@@ -54,17 +54,17 @@ export const sendFormingGames = () => {
   io.emit("coup", "formingGames", Array.from(coupFormingGames));
 };
 
-const chatHandler = (socket, message) => {
-  io.emit("coup", "chat", socket.request.user.username, message);
+const chatHandler = (username, message) => {
+  io.emit("coup", "chat", username, message);
 };
 
-const playerOnlineHandler = async (socket) => {
-  addPlayer(socket.request.user.username);
+const playerOnlineHandler = async (username) => {
+  addPlayer(username);
   sendOnline();
 };
 
-const playerOfflineHandler = (socket) => {
-  removePlayer(socket.request.user.username);
+const playerOfflineHandler = (username) => {
+  removePlayer(username);
   sendOnline();
 };
 
@@ -74,6 +74,10 @@ export const getPublicGame = (game, username) => {
 
 export const eventSwitch = async (event, socket, ...args) => {
   const user = socket.request.user;
+  if (!user) {
+    return;
+  }
+
   switch (event) {
     case "leaveGame":
       await leaveGame(socket);
@@ -91,16 +95,16 @@ export const eventSwitch = async (event, socket, ...args) => {
       break;
     case "chat":
       const message = args[0];
-      chatHandler(socket, message);
+      chatHandler(user.username, message);
       break;
     case "formingGames":
       sendFormingGames();
       break;
     case "playerOnline":
-      await playerOnlineHandler(socket);
+      await playerOnlineHandler(user.username);
       break;
     case "playerOffline":
-      playerOfflineHandler(socket);
+      playerOfflineHandler(user.username);
       break;
     case "getGameState":
       getGameState(socket);

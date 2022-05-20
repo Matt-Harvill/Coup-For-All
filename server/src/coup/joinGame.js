@@ -5,6 +5,9 @@ import { assignRoles } from "./assignRoles.js";
 
 export const joinGame = async (socket, gameID) => {
   const userObj = socket.request.user;
+  if (!userObj) {
+    return;
+  }
 
   // Get the game
   const game = await CoupGame.findOne({

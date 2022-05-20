@@ -4,7 +4,11 @@ import { coupFormingGames, sendFormingGames } from "./coup.js";
 
 export const leaveGame = async (socket) => {
   const userObj = socket.request.user;
+  if (!userObj) {
+    return;
+  }
   const user = userObj.username;
+
   // Get the game
   const game = await CoupGame.findOne({
     gameID: userObj.gameID,

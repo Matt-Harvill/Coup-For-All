@@ -5,6 +5,9 @@ import { coupFormingGames, sendFormingGames } from "./coup.js";
 
 export const createGame = async (socket, privacy, maxPlayers) => {
   const userObj = socket.request.user;
+  if (!userObj) {
+    return;
+  }
 
   // Prevent user from creating multiple games
   const currGameStatus = userObj.gameStatus;

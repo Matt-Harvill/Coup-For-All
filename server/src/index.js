@@ -82,6 +82,9 @@ app.post("/register", (req, res) => {
 
 // Logout
 app.post("/logout", async (req, res) => {
+  if (!req.user) {
+    return res.end();
+  }
   const userSocket = getSocket(req.user.username);
   delete socketIDMap[req.user.username];
 
@@ -135,14 +138,6 @@ io.on("connection", (socket) => {
   // Disconnect
   socket.on("disconnect", () => {
     console.log("Client disconnected");
-    for (const [group, playerSet] of allOnlinePlayers.entries()) {
-      const username = socket.request.user.username;
-      if (playerSet.has(username)) {
-        playerSet.delete(username);
-        io.emit(group, "online", Array.from(playerSet));
-        break;
-      }
-    }
   });
 });
 

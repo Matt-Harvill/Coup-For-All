@@ -21,6 +21,9 @@ export const publicGameState = (game, username) => {
 
 export const getGameState = async (socket) => {
   const user = socket.request.user;
+  if (!user) {
+    return;
+  }
   // Start the game's turns if it hasn't yet
   if (
     user.gameTitle &&
