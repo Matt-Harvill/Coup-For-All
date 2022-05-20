@@ -37,10 +37,18 @@ export const loseRole = async (
       newRoles.push(role);
     }
   }
-  // Update player's roles
-  pStat.roles = newRoles;
 
-  const committed = await updateUserAndGame(username, game, "updateGame");
+  let committed;
+  // If nothing changed, skip to the end of function (committed === true )
+  if (!roleFound) {
+    // Pop the added unavailRole
+    game.unavailRoles.pop(roleToLose);
+    committed = true;
+  } else {
+    // Update player's roles
+    pStat.roles = newRoles;
+    committed = await updateUserAndGame(username, game, "updateGame");
+  }
 
   if (!committed) {
     console.log("Error committing loseRole for", username);

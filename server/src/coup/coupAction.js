@@ -33,6 +33,7 @@ export const coupAction = async (user, target, role) => {
           losing: {
             player: target,
             numRoles: 1,
+            role: role,
           },
           switching: null,
         },

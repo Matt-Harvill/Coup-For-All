@@ -117,6 +117,8 @@ export const startNewStage = async (game) => {
       }
       break;
     case "roleSwitch":
+      timeRemMS = 15000;
+      setTurn(game, { timeRemMS: timeRemMS });
       const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
       let stageEnding;
       // Handle switching role
@@ -135,7 +137,6 @@ export const startNewStage = async (game) => {
           return;
         }
       }
-      timeRemMS = 15000;
       break;
     default:
       throw `Not valid turn stage for gameID ${game.gameID}`;
@@ -152,6 +153,8 @@ export const startNewStage = async (game) => {
   const interval = setInterval(async () => {
     // Update the timeRem
     setTurn(game, { timeRemMS: timeRem() - updatePeriod });
+
+    // console.log("interval stage:", stage);
 
     // Handle when time runs out
     if (timeRem() === 0) {
@@ -264,7 +267,6 @@ export const endStage = (game) => {
       break;
     case "callout":
       const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
-      console.log(roleSwitch);
       if (roleSwitch.losing || roleSwitch.switching) {
         // Do roleSwitch stuff
         setTurn(game, { stage: "roleSwitch" });

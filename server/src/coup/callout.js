@@ -7,11 +7,11 @@ const calloutHandler = (game, user, target, targetRoles, targetAction) => {
   let isTurnAction;
   switch (targetAction) {
     case "foreignAid":
-      roleToCheck = "D";
+      roleToCheck = "Duke";
       isTurnAction = false;
       break;
     case "tax":
-      roleToCheck = "D";
+      roleToCheck = "Duke";
       isTurnAction = true;
       break;
     default:
