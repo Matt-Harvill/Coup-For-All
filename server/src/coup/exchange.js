@@ -46,9 +46,14 @@ export const exchangeRoles = async (user, roles) => {
       }
     }
     // Remove new roles from availRoles
-    availRoles = availRoles.concat(newRoles);
+    for (const role of newRoles) {
+      removeItemOnce(availRoles, role);
+    }
     // Update pStat
-    pStat.roles = oldRoles.concat(newRoles);
+    pStat.roles = [];
+    for (const role of roles) {
+      pStat.roles.push(role.role);
+    }
 
     const committed = await updateUserAndGame(user, game, "updateGame");
 
