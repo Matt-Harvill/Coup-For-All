@@ -15,6 +15,7 @@ import { callout } from "./callout.js";
 import { loseRole } from "./loseRoles.js";
 import { blockForeignAid } from "./blockForeignAid.js";
 import { coupAction } from "./coupAction.js";
+import { preCalloutExchange } from "./exchange.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -121,6 +122,9 @@ export const eventSwitch = async (event, socket, ...args) => {
     case "coupAction":
       const [coupTarget, coupRole] = args;
       coupAction(user, coupTarget, coupRole);
+      break;
+    case "exchange":
+      preCalloutExchange(user);
       break;
     case "noCallout":
       noCallout(user);

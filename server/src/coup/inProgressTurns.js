@@ -32,6 +32,7 @@ import { postCalloutForeignAid } from "./foreignAid.js";
 import { postCalloutTax } from "./tax.js";
 import { loseRoleAuto, switchRole } from "./roleSwitching.js";
 import { calloutTimeout, moveTimeout, roleSwitchTimeout } from "./timeouts.js";
+import { postCalloutExchange } from "./exchange.js";
 
 // Store the inProgress games' turn stages (mapped by gameID)
 const turns = {};
@@ -217,9 +218,8 @@ const calloutOver = (game) => {
   if (actionSuccess === null) {
     switch (action) {
       case "foreignAid":
-        actionSuccess = true;
-        break;
       case "tax":
+      case "exchange":
         actionSuccess = true;
         break;
       case "coup":
@@ -251,9 +251,11 @@ const calloutOver = (game) => {
       endTurn(game);
       break;
     case "exchange":
-      // Do postCallout stuff
-      setTurn(game, { stage: "postCallout" });
-      startNewStage(game);
+      if (actionSuccess) {
+        postCalloutExchange(game);
+      } else {
+        endTurn(game);
+      }
       break;
     default:
       throw `${action} is not valid action in calloutOver for gameID ${game.gameID}`;

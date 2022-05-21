@@ -14,6 +14,10 @@ const calloutHandler = (game, user, target, targetRoles, targetAction) => {
       roleToCheck = "Duke";
       isTurnAction = true;
       break;
+    case "exchange":
+      roleToCheck = "Ambassador";
+      isTurnAction = true;
+      break;
     default:
       throw `${targetAction} is not a valid callout action`;
   }

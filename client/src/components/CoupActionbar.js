@@ -90,6 +90,9 @@ export default function CoupActionbar() {
           case "tax":
             title = `Call Out ${turnTarget.target}'s 'Duke'`;
             break;
+          case "exchange":
+            title = `Call Out ${turnTarget.target}'s Ambassador`;
+            break;
           default:
             break;
         }
@@ -133,18 +136,18 @@ export default function CoupActionbar() {
         onClick: action,
         onClickArgs: ["tax"],
       },
+      {
+        title: "Exchange",
+        onClick: action,
+        onClickArgs: ["exchange"],
+      },
       // {
       //   title: "Assassinate~",
       //   selectionArgs: otherPlayers,
       //   onClick: null,
       //   onClickArgs: null,
       // },
-      // {
-      //   title: "Exchange~",
-      //   selectionArgs: null,
-      //   onClick: null,
-      //   onClickArgs: null,
-      // },
+
       // {
       //   title: "Steal~",
       //   selectionArgs: otherPlayers,

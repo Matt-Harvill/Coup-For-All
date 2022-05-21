@@ -48,13 +48,14 @@ export const moveTimeout = async (game) => {
 export const calloutTimeout = (game) => {
   const targets = getTurnProp(game.gameID, "targets");
 
-  if (targets && targets[0]) {
+  if (targets && targets.length > 0) {
     const firstTarget = targets[0];
     switch (firstTarget.action) {
-      case "foreignAid":
+      case "foreignAid": // If target's action is foreignAid, it was successfully blocked (actionSuccess === false)
         setTurn(game, { actionSuccess: false });
         break;
-      case "tax":
+      case "tax": // If target's action is tax and callout timed out, action was successful
+      case "exchange":
         setTurn(game, { actionSuccess: true });
       default:
         break;
