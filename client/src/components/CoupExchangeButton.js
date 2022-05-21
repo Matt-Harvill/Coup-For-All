@@ -13,6 +13,12 @@ export default function CoupExchangeButton(props) {
   } = props;
 
   const numRoles = playerRoles.length;
+  let titleText;
+  if (numRoles === 1) {
+    titleText = "Choose One Role";
+  } else if (numRoles === 2) {
+    titleText = "Choose Two Roles";
+  }
 
   const allRoles = playerRoles.concat(newRoles);
   let booleanSelected = [];
@@ -79,7 +85,7 @@ export default function CoupExchangeButton(props) {
           return;
         }}
       >
-        <div style={{ display: "block" }}>{title}</div>
+        <div style={{ display: "block" }}>{titleText}</div>
         <div style={{ display: "block", marginTop: 10 }}>
           {playerRolesText + " "}
           {displayPlayerRoleButtons()}
@@ -93,9 +99,12 @@ export default function CoupExchangeButton(props) {
           style={{ marginTop: 10 }}
           onClick={() => {
             let selectedRoles = [];
-            for (let i = 0; i < isSelected.length; i++) {
+            for (let i = 0; i < allRoles.length; i++) {
               if (isSelected[i]) {
-                selectedRoles.push(allRoles[i]);
+                selectedRoles.push({
+                  role: allRoles[i],
+                  isNew: i >= numRoles,
+                });
               }
             }
             // Only do something if exactly numRoles are sent

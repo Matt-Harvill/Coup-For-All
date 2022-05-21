@@ -196,13 +196,12 @@ export default function CoupActionbar() {
 
           exchangeButtonInfo = {
             exchangeButton: true,
-            title: "Choose Two Roles ",
             playerRolesText: playerRolesText,
             playerRoles: pStat.roles,
             newRolesText: "New Roles",
             newRoles: turn.exchangeRoles,
             onClick: action,
-            onClickArgs: ["exchange"],
+            onClickArgs: ["exchangeRoles"],
           };
         }
       }
@@ -291,7 +290,6 @@ export default function CoupActionbar() {
     if (buttonInfo.exchangeButton) {
       return (
         <CoupExchangeButton
-          title={buttonInfo.title}
           playerRolesText={buttonInfo.playerRolesText}
           playerRoles={buttonInfo.playerRoles}
           newRolesText={buttonInfo.newRolesText}

@@ -20,4 +20,4 @@ Add a game history to the game DB object
 For the frontend -> only show like 6 recent actions
 
 
-Add Ambassador
+Add Ambassador -> just implement the role switch now, everything else works well!

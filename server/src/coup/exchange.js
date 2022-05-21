@@ -1,6 +1,65 @@
-import { endStage, setTurn, startNewStage } from "./inProgressTurns.js";
-import { getGame } from "../utils/dbUtils.js";
+import {
+  endStage,
+  endTurn,
+  setTurn,
+  startNewStage,
+} from "./inProgressTurns.js";
+import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
 import { shuffleArray } from "../utils/shuffleArray.js";
+
+function removeItemOnce(arr, value) {
+  var index = arr.indexOf(value);
+  if (index > -1) {
+    arr.splice(index, 1);
+  }
+}
+
+export const exchangeRoles = async (user, roles) => {
+  const game = await getGame(user.gameTitle, user.gameID);
+  const pStat = game.pStats.find((pStat) => pStat.player === user.username);
+
+  if (!pStat) {
+    console.log("Error updating exchange for", user.username);
+  }
+
+  // Find which of the selected roles are new and which are not
+  let newRoles = [];
+  let oldRoles = [];
+  for (const role of roles) {
+    if (role.isNew) {
+      newRoles.push(role.role);
+    } else {
+      oldRoles.push(role.role);
+    }
+  }
+
+  // If a role was exchanged...
+  if (newRoles.length > 0) {
+    let availRoles = shuffleArray(game.availRoles);
+
+    // Add back the role(s) that is/are being exchanged into availRoles
+    for (const role of pStat.roles) {
+      if (!oldRoles.includes(role)) {
+        availRoles.push(role);
+      } else {
+        removeItemOnce(oldRoles, role);
+      }
+    }
+    // Remove new roles from availRoles
+    availRoles = availRoles.concat(newRoles);
+    // Update pStat
+    pStat.roles = oldRoles.concat(newRoles);
+
+    const committed = await updateUserAndGame(user, game, "updateGame");
+
+    if (!committed) {
+      console.log("Error committing exchange for", user.username);
+    }
+  }
+
+  // End the turn
+  endTurn(game);
+};
 
 export const postCalloutExchange = async (game) => {
   // Start postCallout stage
