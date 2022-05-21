@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { socket } from "../socket";
 import AppContext from "./AppContext";
 import CoupActionButton from "./CoupActionButton";
+import CoupExchangeButton from "./CoupExchangeButton";
 import CoupGameContext from "./CoupGameContext";
 import TimeLeft from "./TimeLeft";
 
@@ -189,13 +190,19 @@ export default function CoupActionbar() {
           return pStat.player === userObj.username;
         });
         if (pStat) {
+          const numRoles = pStat.roles.length;
+
+          const playerRolesText = numRoles === 1 ? "Your Role" : "Your Roles";
+
           exchangeButtonInfo = {
-            title: "Your Roles ",
-            secondText: "New Roles ",
-            targets: pStat.roles, // First select
-            roles: turn.exchangeRoles,
-            // onClick: action,
-            // onClickArgs: ["coupAction", "target", "role"],
+            exchangeButton: true,
+            title: "Choose Two Roles ",
+            playerRolesText: playerRolesText,
+            playerRoles: pStat.roles,
+            newRolesText: "New Roles",
+            newRoles: turn.exchangeRoles,
+            onClick: action,
+            onClickArgs: ["exchange"],
           };
         }
       }
@@ -281,16 +288,30 @@ export default function CoupActionbar() {
   };
 
   const makeButton = (buttonInfo) => {
-    return (
-      <CoupActionButton
-        title={buttonInfo.title}
-        secondText={buttonInfo.secondText}
-        targets={buttonInfo.targets}
-        roles={buttonInfo.roles}
-        onClick={buttonInfo.onClick}
-        onClickArgs={buttonInfo.onClickArgs}
-      />
-    );
+    if (buttonInfo.exchangeButton) {
+      return (
+        <CoupExchangeButton
+          title={buttonInfo.title}
+          playerRolesText={buttonInfo.playerRolesText}
+          playerRoles={buttonInfo.playerRoles}
+          newRolesText={buttonInfo.newRolesText}
+          newRoles={buttonInfo.newRoles}
+          onClick={buttonInfo.onClick}
+          onClickArgs={buttonInfo.onClickArgs}
+        />
+      );
+    } else {
+      return (
+        <CoupActionButton
+          title={buttonInfo.title}
+          secondText={buttonInfo.secondText}
+          targets={buttonInfo.targets}
+          roles={buttonInfo.roles}
+          onClick={buttonInfo.onClick}
+          onClickArgs={buttonInfo.onClickArgs}
+        />
+      );
+    }
   };
 
   const displayUnavailRoles = () => {
