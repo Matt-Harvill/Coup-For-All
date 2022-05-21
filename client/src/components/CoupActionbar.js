@@ -29,7 +29,8 @@ export default function CoupActionbar() {
   //        player: null,
   //        role: null
   //     }
-  //   }
+  //   },
+  //   exchangeRoles: [],
   //   deciding: [],
   // },
 
@@ -181,6 +182,25 @@ export default function CoupActionbar() {
       }
     }
 
+    let exchangeButtonInfo;
+    if (turn.exchangeRoles) {
+      if (game.pStats) {
+        const pStat = game.pStats.find((pStat) => {
+          return pStat.player === userObj.username;
+        });
+        if (pStat) {
+          exchangeButtonInfo = {
+            title: "Your Roles ",
+            secondText: "New Roles ",
+            targets: pStat.roles, // First select
+            roles: turn.exchangeRoles,
+            // onClick: action,
+            // onClickArgs: ["coupAction", "target", "role"],
+          };
+        }
+      }
+    }
+
     let buttonInfos = [];
 
     switch (turn.stage) {
@@ -221,8 +241,7 @@ export default function CoupActionbar() {
 
         break;
       case "preCallout":
-      case "postCallout":
-        // If not pre/postCallout period, check if active player is this user
+        // If  preCallout period, check if active player is this user
         if (turn.player === userObj.username) {
           if (game.pStats) {
             const pStat = game.pStats.find((pStat) => {
@@ -237,6 +256,11 @@ export default function CoupActionbar() {
           }
         } else {
           return;
+        }
+        break;
+      case "postCallout":
+        if (turn.player === userObj.username && exchangeButtonInfo) {
+          buttonInfos = [exchangeButtonInfo];
         }
         break;
       default:
@@ -314,11 +338,17 @@ export default function CoupActionbar() {
 
     switch (turn.stage) {
       case "preCallout":
-      case "postCallout":
         if (turn.player === userObj.username) {
           textToDisplay = "Make Your Move";
         } else {
           textToDisplay = `${turn.player} is Making their Move...`;
+        }
+        break;
+      case "postCallout":
+        if (turn.player === userObj.username) {
+          textToDisplay = "Make Your Move";
+        } else {
+          textToDisplay = `${turn.player} is Exchanging...`;
         }
         break;
       case "callout":

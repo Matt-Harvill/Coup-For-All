@@ -1,35 +1,18 @@
-import { endStage, endTurn, getTurnProp, setTurn } from "./inProgressTurns.js";
-import { getGame, updateUserAndGame, getUserObj } from "../utils/dbUtils.js";
+import { endStage, setTurn, startNewStage } from "./inProgressTurns.js";
+import { getGame } from "../utils/dbUtils.js";
+import { shuffleArray } from "../utils/shuffleArray.js";
 
 export const postCalloutExchange = async (game) => {
-  //---- for now just do nothing ----//
+  // Start postCallout stage
+  setTurn(game, { stage: "postCallout" });
+  startNewStage(game);
 
-  // // Do postCallout stuff
-  // setTurn(game, { stage: "postCallout" });
-  // startNewStage(game);
-
-  // const player = getTurnProp(game.gameID, "player");
-  // const user = await getUserObj(player);
-
-  // const pStat = game.pStats.find((pStat) => {
-  //   if (pStat.player === user.username) {
-  //     pStat.coins += 2;
-  //     return pStat;
-  //   }
-  // });
-
-  // if (!pStat) {
-  //   console.log("Error updating exchange for", user.username);
-  // }
-
-  // const committed = await updateUserAndGame(user, game, "updateGame");
-
-  // if (!committed) {
-  //   console.log("Error committing exchange for", user.username);
-  // }
-
-  // End the turn
-  endTurn(game);
+  // Shuffle the availableRoles
+  shuffleArray(game.availRoles);
+  // First two roles will be exchangeRoles -> Should always be at least two roles
+  const exchangeRoles = game.availRoles.slice(0, 2);
+  // Set the turn's exchangeRoles
+  setTurn(game, { exchangeRoles: exchangeRoles });
 };
 
 export const preCalloutExchange = async (user) => {

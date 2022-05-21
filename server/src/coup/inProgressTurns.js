@@ -22,7 +22,8 @@
 //        player: null,
 //        role: null
 //     }
-//   }
+//   },
+//   exchangeRoles: [],
 //   deciding: [],
 // },
 
@@ -341,6 +342,7 @@ export const createTurn = (game) => {
         losing: null,
         switching: null,
       },
+      exchangeRoles: null,
     };
 
     // Start the turn (in preCallout)
