@@ -18,5 +18,3 @@ The losingRole stage doesn't happen if no one calls out though
 
 Add a game history to the game DB object
 For the frontend -> only show like 6 recent actions
-
-

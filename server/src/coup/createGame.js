@@ -55,6 +55,13 @@ export const createGame = async (socket, privacy, maxPlayers) => {
       "Duke",
       "Duke",
     ],
+    unavailRoles: {
+      Ambassador: 0,
+      Assassin: 0,
+      Captain: 0,
+      Contessa: 0,
+      Duke: 0,
+    },
     winner: null,
   });
 

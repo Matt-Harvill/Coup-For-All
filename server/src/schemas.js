@@ -35,7 +35,13 @@ const coupGameSchema = new mongoose.Schema({
     },
   ],
   availRoles: [String],
-  unavailRoles: [String],
+  unavailRoles: {
+    Assassin: Number,
+    Ambassador: Number,
+    Captain: Number,
+    Contessa: Number,
+    Duke: Number,
+  },
   winner: String,
 });
 

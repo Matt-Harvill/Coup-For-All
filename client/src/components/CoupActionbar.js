@@ -268,11 +268,36 @@ export default function CoupActionbar() {
 
   const displayUnavailRoles = () => {
     const unavailRoles = game.unavailRoles;
-    if (unavailRoles && unavailRoles.length > 0) {
+
+    let roleHasBeenLost = false;
+    if (unavailRoles) {
+      // Key is the role name, value is the number of them
+      for (const [key, value] of Object.entries(unavailRoles)) {
+        if (value > 0) {
+          roleHasBeenLost = true;
+          break;
+        }
+      }
+    }
+
+    if (roleHasBeenLost) {
+      let unavailRoleStrings = [];
+
+      // Key is the role name, value is the number of them
+      for (const [key, value] of Object.entries(unavailRoles)) {
+        if (value === 1) {
+          unavailRoleStrings.push(key);
+        } else if (value > 1) {
+          unavailRoleStrings.push(`${key} (${value})`);
+        }
+      }
+
       return (
-        <div style={{ backgroundColor: "white", padding: 10 }}>
+        <div
+          style={{ backgroundColor: "white", padding: 10, textAlign: "center" }}
+        >
           <h5>Roles Out of Play</h5>
-          <p>{unavailRoles.join(", ")}</p>
+          <p>{unavailRoleStrings.join(", ")}</p>
         </div>
       );
     } else {
@@ -342,6 +367,18 @@ export default function CoupActionbar() {
     return <h4 style={{ textAlign: "center" }}>{textToDisplay}</h4>;
   };
 
+  const displayIsSpectator = () => {
+    if (game && game.outPlayers && game.outPlayers.includes(userObj.username)) {
+      return (
+        <div
+          style={{ backgroundColor: "white", padding: 10, textAlign: "center" }}
+        >
+          <h5>You Are Spectating</h5>
+        </div>
+      );
+    }
+  };
+
   if (game.winner) {
     let name;
     if (userObj.username === game.winner) {
@@ -387,6 +424,7 @@ export default function CoupActionbar() {
             <TimeLeft timeLeft={timeRem} maxTimeLeft={maxTimeRem} />
           )}
         </div>
+        {displayIsSpectator()}
       </div>
     );
   }

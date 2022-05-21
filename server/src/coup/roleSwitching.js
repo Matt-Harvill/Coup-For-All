@@ -32,7 +32,8 @@ const removePlayerFromGame = async (game, player, playerRoles) => {
   //--- Remove player from the game ---//
   // Add roles to the unavailable roles
   for (const role of playerRoles) {
-    game.unavailRoles.push(role);
+    // Add roleToLose to the unavailable roles
+    game.unavailRoles[role]++;
   }
   // Move player to outPlayers
   game.outPlayers.push(player);

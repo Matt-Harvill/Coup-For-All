@@ -25,8 +25,6 @@ export const loseRole = async (
   // Get the pStat
   const pStat = game.pStats.find((pStat) => pStat.player === username);
 
-  // Add roleToLose to the unavailable roles
-  game.unavailRoles.push(roleToLose);
   // Remove role from pStat
   let newRoles = [];
   let roleFound = false;
@@ -41,10 +39,10 @@ export const loseRole = async (
   let committed;
   // If nothing changed, skip to the end of function (committed === true )
   if (!roleFound) {
-    // Pop the added unavailRole
-    game.unavailRoles.pop(roleToLose);
     committed = true;
   } else {
+    // Add roleToLose to the unavailable roles
+    game.unavailRoles[roleToLose]++;
     // Update player's roles
     pStat.roles = newRoles;
     committed = await updateUserAndGame(username, game, "updateGame");
