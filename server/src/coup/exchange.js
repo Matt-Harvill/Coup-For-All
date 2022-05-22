@@ -55,6 +55,9 @@ export const exchangeRoles = async (user, roles) => {
       pStat.roles.push(role.role);
     }
 
+    // Set exchange roles to null (so exchangeButton hides before game update)
+    setTurn(game, { exchangeRoles: null });
+
     const committed = await updateUserAndGame(user, game, "updateGame");
 
     if (!committed) {

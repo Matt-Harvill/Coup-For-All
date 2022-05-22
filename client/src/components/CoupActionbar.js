@@ -365,7 +365,11 @@ export default function CoupActionbar() {
         break;
       case "postCallout":
         if (turn.player === userObj.username) {
-          textToDisplay = "Make Your Move";
+          if (turn.exchangeRoles) {
+            textToDisplay = "Make Your Move";
+          } else {
+            textToDisplay = "Committing Exchange...";
+          }
         } else {
           textToDisplay = `${turn.player} is Exchanging...`;
         }
