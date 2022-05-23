@@ -28,6 +28,7 @@ export const assassinateEndStage = async (game, stage) => {
         // Assassinate has been prepared and then blocked
         else if (target.action === "blockAssassinate") {
           endTurn(game);
+          return;
         } else {
           throw `${target.action} not valid target action in assassinate`;
         }
@@ -37,6 +38,7 @@ export const assassinateEndStage = async (game, stage) => {
       // Assassinate block not attempted, so go through with it
       if (target.action === "assassinate") {
         setTurn(game, { stage: "completeAction" });
+        completeAssassinate(game);
       }
       // Assassinate block attempted, check if block defends
       else if (target.action === "blockAssassinate") {
@@ -56,20 +58,23 @@ export const assassinateEndStage = async (game, stage) => {
           // Assassinate has been selected and not contested
           if (assassinating) {
             endTurn(game); // If assassinating, this was final stage
+            return;
           } else {
             setTurn(game, { stage: "completeAction" }); // If not assassinating, go to complete it
+            completeAssassinate(game);
           }
         } else {
           throw `${target.action} not valid target action in assassinate`;
         }
       } else {
         endTurn(game);
+        return;
       }
       break;
     case "completeAction":
       // After assassination complete, carry out losing roles
       setTurn(game, { stage: "loseSwapRoles" });
-      return;
+      break;
     default:
       throw `${stage} not valid endStage for tax`;
   }
@@ -78,19 +83,20 @@ export const assassinateEndStage = async (game, stage) => {
 };
 
 const prepareAssassinate = async (game) => {
+  const player = getTurnProp(game.gameID, "player");
   const pStat = game.pStats.find((pStat) => {
-    if (pStat.player === user.username) {
+    if (pStat.player === player) {
       pStat.coins -= 3;
       return pStat;
     }
   });
 
   if (!pStat) {
-    console.log(`Error preparing assassinate for ${user.username}`);
+    console.log(`Error preparing assassinate for ${player}`);
   } else {
-    const committed = await updateUserAndGame(user, game, "updateGame");
+    const committed = await updateUserAndGame(player, game, "updateGame");
     if (!committed) {
-      console.log(`Error committing assassinate prep for ${user.username}`);
+      console.log(`Error committing assassinate prep for ${player}`);
     } else {
       setTurn(game, { stage: "blockAction" });
     }

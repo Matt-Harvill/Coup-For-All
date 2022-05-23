@@ -21,14 +21,17 @@ export const taxEndStage = (game, stage) => {
       } else {
         // No one challenged tax
         setTurn(game, { stage: "completeAction" });
+        completeTax(game);
       }
       break;
     case "loseSwapRoles":
       const actionSuccess = getTurnProp(game.gameID, "actionSuccess");
       if (actionSuccess) {
         setTurn(game, { stage: "completeAction" });
+        completeTax(game);
       } else {
         endTurn(game);
+        return;
       }
       break;
     case "completeAction":

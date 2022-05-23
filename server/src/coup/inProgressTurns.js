@@ -14,6 +14,7 @@
 //   target: {
 //     target: String,
 //     action: String,
+//     blockingRole: String,
 //   },
 //   challenging: Array,
 
@@ -105,29 +106,24 @@ export const setTurn = (game, newStats) => {
 
 export const startNewStage = async (game) => {
   const stage = getTurnProp(game.gameID, "stage");
+  const player = getTurnProp(game.gameID, "player");
+  const otherPlayers = game.players.filter(
+    (gamePlayer) => gamePlayer !== player
+  );
 
   let timeRemMS;
   switch (stage) {
     case "selectAction":
     case "completeAction":
-      timeRemMS = 60000;
+      timeRemMS = 15000;
       break;
     case "blockAction":
-      timeRemMS = 30000;
-      break;
     case "challengeRole":
-      timeRemMS = 30000;
-      // const deciding = getTurnProp(game.gameID, "challenging");
-      // if (deciding.length === 0) {
-      //   // Go to next stage if no one to call out
-      //   // Set the timeRemMS (So time bar doesn't look weird)
-      //   setTurn(game, { timeRemMS: timeRemMS });
-      //   endStage(game);
-      //   return;
-      // }
+      timeRemMS = 10000;
+      setTurn(game, { timeRemMS: timeRemMS, challenging: otherPlayers });
       break;
     case "loseSwapRoles":
-      timeRemMS = 30000;
+      timeRemMS = 10000;
       setTurn(game, { timeRemMS: timeRemMS });
       const loseSwap = getTurnProp(game.gameID, "loseSwap");
       let stageEnding;
@@ -263,22 +259,12 @@ export const createTurn = (game) => {
       actionSuccess: true, // non-null
       assassinating: null,
 
-      target: {
-        target: null,
-        action: null,
-        blockingRole: null,
-      },
+      target: null,
       challenging: null,
 
       loseSwap: {
-        losing: {
-          player: null,
-          role: null,
-        },
-        swapping: {
-          player: null,
-          role: null,
-        },
+        losing: null,
+        swapping: null,
       },
 
       exchangeRoles: null,

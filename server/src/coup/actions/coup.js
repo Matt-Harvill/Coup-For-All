@@ -17,11 +17,12 @@ export const coupEndStage = (game, stage) => {
         setTurn(game, { stage: "loseSwapRoles" });
       } else {
         endTurn(game);
+        return;
       }
       break;
     case "loseSwapRoles":
       endTurn(game);
-      break;
+      return;
     default:
       throw `${stage} not valid endStage for coup`;
   }

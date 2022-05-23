@@ -52,6 +52,7 @@ const endOfLoseRoleAuto = (game, loseSwapObj, stillNeedToLoseRole) => {
 export const loseRoleAuto = async (game, player, numRolesLosing) => {
   const loseSwapObj = getTurnProp(game.gameID, "loseSwap");
   const pStat = game.pStats.find((pStat) => pStat.player === player);
+  console.log("pStat, player", pStat, player, "in loseRoleAuto");
   const playerRoles = pStat.roles;
   const numRoles = playerRoles.length;
 

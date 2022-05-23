@@ -15,12 +15,13 @@ export const foreignAidEndStage = (game, stage) => {
       setTurn(game, { stage: "blockAction" });
       break;
     case "blockAction":
-      // If there is a target, that means someone blocked, so start challenge stage
       const target = getTurnProp(game.gameID, "target");
+      // If there is a target, that means someone blocked, so start challenge stage
       if (target) {
         setTurn(game, { stage: "challengeRole" });
       } else {
         setTurn(game, { stage: "completeAction" });
+        completeForeignAid(game);
       }
       break;
     case "challengeRole":
@@ -30,14 +31,17 @@ export const foreignAidEndStage = (game, stage) => {
       } else {
         // If challengeRole had no challenge, foreignAid was successfully blocked
         endTurn(game);
+        return;
       }
       break;
     case "loseSwapRoles":
       const actionSuccess = getTurnProp(game.gameID, "actionSuccess");
       if (actionSuccess) {
         setTurn(game, { stage: "completeAction" });
+        completeForeignAid(game);
       } else {
         endTurn(game);
+        return;
       }
       break;
     case "completeAction":

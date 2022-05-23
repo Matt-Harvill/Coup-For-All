@@ -28,6 +28,7 @@ export const stealEndStage = (game, stage) => {
         // Block has not been contested
         else if (target.action === "blockSteal") {
           endTurn(game);
+          return;
         } else {
           throw `${target.action} not valid target action in steal`;
         }
@@ -41,6 +42,7 @@ export const stealEndStage = (game, stage) => {
       // Block not selected, continue to complete steal
       else if (target.action === "steal") {
         setTurn(game, { stage: "completeAction" });
+        completeSteal(game);
       } else {
         throw `${target.action} not valid target action in steal`;
       }
@@ -49,8 +51,10 @@ export const stealEndStage = (game, stage) => {
       const actionSuccess = getTurnProp(game.gameID, "actionSuccess");
       if (actionSuccess) {
         setTurn(game, { stage: "completeAction" });
+        completeSteal(game);
       } else {
         endTurn(game);
+        return;
       }
       break;
     case "completeAction":

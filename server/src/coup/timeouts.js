@@ -64,6 +64,7 @@ export const challengeTimeout = (game) => {
       case "exchange":
       case "steal":
         setTurn(game, { actionSuccess: true });
+        break;
       default:
         break;
     }

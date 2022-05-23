@@ -37,6 +37,7 @@ export const exchangeEndStage = (game, stage) => {
         prepareExchange(game);
       } else {
         endTurn(game);
+        return;
       }
       break;
     case "completeAction":

@@ -165,6 +165,7 @@ export const eventSwitch = async (event, socket, ...args) => {
         case "steal":
           const role = args[1];
           blockSteal(user, role);
+          break;
         case "assassinate":
           blockAssassinate(user);
           break;

@@ -9,22 +9,24 @@ import TimeLeft from "./TimeLeft";
 export default function CoupActionbar() {
   const { turn, game } = useContext(CoupGameContext);
   const { userObj } = useContext(AppContext);
-  const [maxTimeRem, setMaxTimeRem] = useState(60000);
+  const [maxTimeRem, setMaxTimeRem] = useState(15000);
   const timeRem = turn.timeRemMS;
 
   useEffect(() => {
-    switch (turn.stage) {
-      case "blockAction":
-      case "challengeRole":
-      case "loseSwapRoles":
-        setMaxTimeRem(30000);
-        break;
-      case "selectAction":
-      case "completeAction":
-        setMaxTimeRem(60000);
-        break;
-      default:
-        alert(`${turn.stage} is not a valid turn stage`);
+    if (turn.stage) {
+      switch (turn.stage) {
+        case "blockAction":
+        case "challengeRole":
+        case "loseSwapRoles":
+          setMaxTimeRem(10000);
+          break;
+        case "selectAction":
+        case "completeAction":
+          setMaxTimeRem(15000);
+          break;
+        default:
+          alert(`${turn.stage} is not a valid turn stage`);
+      }
     }
   }, [turn.stage]);
 
@@ -184,7 +186,7 @@ export default function CoupActionbar() {
               default:
                 alert("Not valid turn target action");
             }
-            title = `Call out ${turn.target}'s ${role}`;
+            title = `Challenge ${turn.target.target}'s ${role}`;
 
             const challengeButtonInfo = {
               title: title,
@@ -369,7 +371,7 @@ export default function CoupActionbar() {
         }
         break;
       case "blockAction":
-        if (turn.challenging.includes(userObj.username)) {
+        if (turn.challenging && turn.challenging.includes(userObj.username)) {
           textToDisplay = `Pass or Block`;
         } else {
           if (
