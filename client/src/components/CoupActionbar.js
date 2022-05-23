@@ -38,18 +38,18 @@ export default function CoupActionbar() {
 
   const { turn, game } = useContext(CoupGameContext);
   const { userObj } = useContext(AppContext);
-  const [maxTimeRem, setMaxTimeRem] = useState(30000);
+  const [maxTimeRem, setMaxTimeRem] = useState(60000);
   const timeRem = turn.timeRemMS;
 
   useEffect(() => {
     switch (turn.stage) {
       case "callout":
       case "roleSwitch":
-        setMaxTimeRem(15000);
+        setMaxTimeRem(30000);
         break;
       case "preCallout":
       case "postCallout":
-        setMaxTimeRem(30000);
+        setMaxTimeRem(60000);
         break;
       default:
         break;

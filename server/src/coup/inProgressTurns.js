@@ -107,10 +107,10 @@ export const startNewStage = async (game) => {
   switch (stage) {
     case "preCallout":
     case "postCallout":
-      timeRemMS = 30000;
+      timeRemMS = 60000;
       break;
     case "callout":
-      timeRemMS = 15000;
+      timeRemMS = 30000;
       const deciding = getTurnProp(game.gameID, "deciding");
       if (deciding.length === 0) {
         // Go to next stage if no one to call out
@@ -121,7 +121,7 @@ export const startNewStage = async (game) => {
       }
       break;
     case "roleSwitch":
-      timeRemMS = 15000;
+      timeRemMS = 30000;
       setTurn(game, { timeRemMS: timeRemMS });
       const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
       let stageEnding;

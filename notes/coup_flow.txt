@@ -23,6 +23,5 @@ For the frontend -> only show like 6 recent actions
 For switching roles, make it like the lose roles where it isn't automatic (looks weird and is too quick)
 
 
-Start all roles selected for exchange as red
-
-Spectators have the ability to see what others have
+As of now, once a challenge happens, no more chance to block.
+I will need to restructure everything such that only one target at a time and that the end of callout lets blocking for certain roles
