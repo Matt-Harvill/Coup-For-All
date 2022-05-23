@@ -1,5 +1,5 @@
 import { getGame } from "../utils/dbUtils.js";
-import { setTurn, startNewStage } from "./inProgressTurns.js";
+import { endStage, setTurn } from "./inProgressTurns.js";
 
 export const blockForeignAid = async (user) => {
   const game = await getGame(user.gameTitle, user.gameID);
@@ -9,18 +9,15 @@ export const blockForeignAid = async (user) => {
       (player) => player !== user.username
     );
 
-    // Update turn -> add player as a target, update deciding to be other players
     setTurn(game, {
       target: {
         target: user.username,
-        action: "foreignAid",
-        attacking: "none",
+        action: "blockForeignAid",
       },
-      deciding: otherPlayers,
+      challenging: otherPlayers,
     });
 
-    // Restart callout stage
-    startNewStage(game);
+    endStage(game);
   }
 };
 
@@ -32,18 +29,35 @@ export const blockSteal = async (user, role) => {
       (player) => player !== user.username
     );
 
-    // Update turn -> add player as a target, update deciding to be other players
     setTurn(game, {
       target: {
         target: user.username,
         action: "blockSteal",
-        attacking: "none",
         blockingRole: role,
       },
-      deciding: otherPlayers,
+      challenging: otherPlayers,
     });
 
-    // Restart callout stage
-    startNewStage(game);
+    endStage(game);
+  }
+};
+
+export const blockAssassinate = async (user) => {
+  const game = await getGame(user.gameTitle, user.gameID);
+
+  if (game) {
+    const otherPlayers = game.players.filter(
+      (player) => player !== user.username
+    );
+
+    setTurn(game, {
+      target: {
+        target: user.username,
+        action: "blockAssassinate",
+      },
+      challenging: otherPlayers,
+    });
+
+    endStage(game);
   }
 };

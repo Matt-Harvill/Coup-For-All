@@ -1,15 +1,11 @@
 import { getGame } from "../utils/dbUtils.js";
 import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
 
-// Handle a callout for tax action
-const calloutHandler = (game, user, target, targetRoles, targetAction) => {
+const challengeHandler = (game, user, target, targetRoles, targetAction) => {
   let roleToCheck;
   let isTurnAction;
   switch (targetAction) {
-    case "foreignAid":
-      roleToCheck = "Duke";
-      isTurnAction = false;
-      break;
+    // Actions are turnAction
     case "tax":
       roleToCheck = "Duke";
       isTurnAction = true;
@@ -22,14 +18,26 @@ const calloutHandler = (game, user, target, targetRoles, targetAction) => {
       roleToCheck = "Captain";
       isTurnAction = true;
       break;
+    case "assassinate":
+      roleToCheck = "Assassin";
+      isTurnAction = true;
+      break;
+    // Blocks are not turnAction
+    case "blockForeignAid":
+      roleToCheck = "Duke";
+      isTurnAction = false;
+      break;
     case "blockSteal":
       const target = getTurnProp(game.gameID, "target");
-      // const target = targets.find((target) => (target.action = "blockSteal"));
       roleToCheck = target.blockingRole;
       isTurnAction = false;
       break;
+    case "blockAssassinate":
+      roleToCheck = "Contessa";
+      isTurnAction = false;
+      break;
     default:
-      throw `${targetAction} is not a valid callout action`;
+      throw `${targetAction} is not a valid challenge action`;
   }
 
   let playerLosingRole, playerSwitchingRole, actionSuccess;
@@ -45,12 +53,11 @@ const calloutHandler = (game, user, target, targetRoles, targetAction) => {
     actionSuccess = !isTurnAction;
   }
 
-  // Create losing object for use in roleSwitch obj
+  // Create losing object for use in loseSwap obj
   const losing = {
     player: playerLosingRole,
-    numRoles: 1,
   };
-  // Create switching object for use in roleSwitch obj
+  // Create switching object for use in loseSwap obj
   let switching = null;
   if (playerSwitchingRole) {
     switching = {
@@ -59,31 +66,28 @@ const calloutHandler = (game, user, target, targetRoles, targetAction) => {
     };
   }
 
-  // Update roleSwitch object
   setTurn(game, {
-    roleSwitch: {
+    loseSwap: {
       losing: losing,
       switching: switching,
     },
     actionSuccess: actionSuccess,
   });
 
-  // Go to next stage => will be roleSwitch
   endStage(game);
 };
 
-export const callout = async (user, target) => {
+export const challengeRole = async (user, target) => {
   const game = await getGame(user.gameTitle, user.gameID);
   const gameID = game.gameID;
 
   // Get action (to compare to roles)
   const targetObj = getTurnProp(gameID, "target");
-  // const targetInfo = targets.find((turnTarget) => turnTarget.target === target);
   const targetAction = targetObj.action;
 
   // Get roles for target (to compare to action)
   const targetPStat = game.pStats.find((pStat) => pStat.player === target);
   const targetRoles = targetPStat.roles;
 
-  calloutHandler(game, user, target, targetRoles, targetAction);
+  challengeHandler(game, user, target, targetRoles, targetAction);
 };

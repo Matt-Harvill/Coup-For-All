@@ -9,7 +9,7 @@ import { getGame, updateUserAndGame } from "../../utils/dbUtils.js";
 
 // Assassinate -> selectAction, challengeRole (loseSwapRoles), blockAction (challengeRole (loseSwapRoles)), completeAction (loseSwapRoles)
 
-export const assassinateEndStage = (game, stage) => {
+export const assassinateEndStage = async (game, stage) => {
   const target = getTurnProp(game.gameID, "target");
 
   switch (stage) {
@@ -97,7 +97,7 @@ const prepareAssassinate = async (game) => {
   }
 };
 
-export const completeAssassinate = async (game) => {
+export const completeAssassinate = (game) => {
   const target = getTurnProp(game.gameID, "attacking");
 
   setTurn(game, {
@@ -106,6 +106,7 @@ export const completeAssassinate = async (game) => {
         player: target,
       },
     },
+    assassinating: true,
   });
 
   endStage(game);

@@ -8,7 +8,7 @@ const randomElement = (items) => {
   return items[Math.floor(Math.random() * items.length)];
 };
 
-export const moveTimeout = async (game) => {
+export const selectActionTimeout = async (game) => {
   const player = getTurnProp(game.gameID, "player");
   const userObj = await getUserObj(player);
 
@@ -18,7 +18,7 @@ export const moveTimeout = async (game) => {
 
   if (!pStat) {
     console.log(
-      `Error in moveTimeout for ${player} with gameID ${game.gameID}`
+      `Error in selectActionTimeout for ${player} with gameID ${game.gameID}`
     );
   } else {
     if (pStat.coins >= 10) {
@@ -37,24 +37,26 @@ export const moveTimeout = async (game) => {
       const role = randomElement(roleNames);
 
       console.log(`Auto-couping ${target} for ${role}...`);
-
       await selectAndCompleteCoup(userObj, target, role);
     } else {
+      // Auto take income if no action specified
       await selectAndCompleteIncome(userObj);
     }
   }
 };
 
-export const calloutTimeout = (game) => {
+export const challengeTimeout = (game) => {
   const target = getTurnProp(game.gameID, "target");
 
   if (target) {
     switch (target.action) {
+      case "blockAssassinate":
       case "blockSteal":
-      case "foreignAid": // If target's action is foreignAid, it was successfully blocked (actionSuccess === false)
+      case "blockForeignAid":
         setTurn(game, { actionSuccess: false });
         break;
-      case "tax": // If target's action is tax and callout timed out, action was successful
+      case "assassinate":
+      case "tax":
       case "exchange":
       case "steal":
         setTurn(game, { actionSuccess: true });
@@ -63,15 +65,14 @@ export const calloutTimeout = (game) => {
     }
   }
 
-  // End the callout stage
   endStage(game);
 };
 
-export const roleSwitchTimeout = async (game) => {
-  const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
+export const loseSwapRolesTimeout = async (game) => {
+  const loseSwap = getTurnProp(game.gameID, "loseSwap");
 
-  if (roleSwitch.losing) {
-    const player = roleSwitch.losing.player;
+  if (loseSwap.losing) {
+    const player = loseSwap.losing.player;
     const userObj = await getUserObj(player);
 
     const pStat = game.pStats.find((pStat) => {
@@ -80,13 +81,12 @@ export const roleSwitchTimeout = async (game) => {
 
     if (!pStat) {
       console.log(
-        `Error in roleSwitchTimeout for ${player} with gameID ${game.gameID}`
+        `Error in loseSwapRolesTimeout for ${player} with gameID ${game.gameID}`
       );
     } else {
       const roleToLose = randomElement(pStat.roles);
-      // Lose a random role
-      await loseRole(userObj, roleToLose, game, player, roleSwitch);
       // Lose Role ends the stage
+      await loseRole(userObj, roleToLose, game, player, loseSwap);
     }
   }
 };

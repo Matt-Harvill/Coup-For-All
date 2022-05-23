@@ -9,14 +9,19 @@ import { leaveGame } from "./leaveGame.js";
 import { getGameState, publicGameState } from "./getGameState.js";
 import { selectAndCompleteIncome } from "./actions/income.js";
 import { selectForeignAid } from "./actions/foreignAid.js";
-import { noCallout } from "./noCallout.js";
+import { noChallengeRole } from "./noChallengeRole.js";
 import { selectTax } from "./actions/tax.js";
-import { callout } from "./callout.js";
+import { challengeRole } from "./challengeRole.js";
 import { loseRole } from "./loseRoles.js";
-import { blockForeignAid, blockSteal } from "./blocks.js";
+import {
+  blockAssassinate,
+  blockForeignAid,
+  blockSteal,
+} from "./blockActions.js";
 import { selectAndCompleteCoup } from "./actions/coup.js";
 import { completeExchange, selectExchange } from "./actions/exchange.js";
 import { selectSteal } from "./actions/steal.js";
+import { selectAssassinate } from "./actions/assassinate.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -128,6 +133,10 @@ export const eventSwitch = async (event, socket, ...args) => {
       const stealTarget = args[0];
       selectSteal(user, stealTarget);
       break;
+    case "assassinate":
+      const assassinateTarget = args[0];
+      selectAssassinate(user, assassinateTarget);
+      break;
     case "exchange":
       selectExchange(user);
       break;
@@ -135,19 +144,19 @@ export const eventSwitch = async (event, socket, ...args) => {
       const roles = args;
       completeExchange(user, roles);
       break;
-    case "noCallout":
-      noCallout(user);
+    case "noChallengeRole":
+      noChallengeRole(user);
       break;
-    case "callout":
+    case "challengeRole":
       const target = args[0];
-      callout(user, target);
+      challengeRole(user, target);
       break;
     case "loseRole":
       const role = args[0];
       // Only need user and role for this loseRole call
       loseRole(user, role, null, null, null);
       break;
-    case "block":
+    case "blockAction":
       const action = args[0];
       switch (action) {
         case "foreignAid":
@@ -156,8 +165,11 @@ export const eventSwitch = async (event, socket, ...args) => {
         case "steal":
           const role = args[1];
           blockSteal(user, role);
-        default:
+        case "assassinate":
+          blockAssassinate(user);
           break;
+        default:
+          throw `${action} is not a valid 'coup' blockAction event`;
       }
       break;
     default:

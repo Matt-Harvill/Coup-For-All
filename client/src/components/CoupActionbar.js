@@ -7,33 +7,6 @@ import CoupGameContext from "./CoupGameContext";
 import TimeLeft from "./TimeLeft";
 
 export default function CoupActionbar() {
-  // turn: {
-  //   player: String,
-  //   action: String,
-  //   attacking: String,
-  //   actionSuccess: null,
-  //   timeRemMS: String,
-  //   interval: (),
-  //   stage: String, // Turn can be preCallout, callout, postCallout
-  //   target: {
-  //       target: String,
-  //       action: String,
-  //       attacking: String
-  //   },
-  //   roleSwitch: {
-  //     losing: {
-  //        player: null,
-  //        role: null
-  //     },
-  //     switching: {
-  //        player: null,
-  //        role: null
-  //     }
-  //   },
-  //   exchangeRoles: [],
-  //   deciding: [],
-  // },
-
   const { turn, game } = useContext(CoupGameContext);
   const { userObj } = useContext(AppContext);
   const [maxTimeRem, setMaxTimeRem] = useState(60000);
@@ -41,13 +14,13 @@ export default function CoupActionbar() {
 
   useEffect(() => {
     switch (turn.stage) {
-      case "block":
-      case "callout":
-      case "roleSwitch":
+      case "blockAction":
+      case "challengeRole":
+      case "loseSwap":
         setMaxTimeRem(30000);
         break;
-      case "preCallout":
-      case "postCallout":
+      case "selectAction":
+      case "completeAction":
         setMaxTimeRem(60000);
         break;
       default:
@@ -89,7 +62,7 @@ export default function CoupActionbar() {
       {
         title: "Pass",
         onClick: action,
-        onClickArgs: ["noCallout"],
+        onClickArgs: ["noChallengeRole"],
       },
     ];
 
@@ -119,7 +92,7 @@ export default function CoupActionbar() {
       const calloutButtonInfo = {
         title: title,
         onClick: action,
-        onClickArgs: ["callout", turnTarget.target],
+        onClickArgs: ["challengeRole", turnTarget.target],
       };
 
       // Add new buttonInfo to calloutButtonInfos
@@ -133,7 +106,7 @@ export default function CoupActionbar() {
           title: `Block ${turn.player}'s Steal With:`,
           roles: ["Ambassador", "Captain"],
           onClick: action,
-          onClickArgs: ["block", "steal", "role"],
+          onClickArgs: ["blockAction", "steal", "role"],
         });
       }
     } else {
@@ -142,7 +115,7 @@ export default function CoupActionbar() {
         const calloutButtonInfo = {
           title: `Block ${turn.player}'s Foreign Aid`,
           onClick: action,
-          onClickArgs: ["block", "foreignAid"],
+          onClickArgs: ["blockAction", "foreignAid"],
         };
 
         // Add new buttonInfo to calloutButtonInfos
@@ -238,8 +211,8 @@ export default function CoupActionbar() {
     let buttonInfos = [];
 
     switch (turn.stage) {
-      case "block":
-      case "callout":
+      case "blockAction":
+      case "challengeRole":
         // Don't display callout buttons if user has decided (or is being accused)
         if (!turn.deciding.includes(userObj.username)) {
           return;
@@ -249,19 +222,19 @@ export default function CoupActionbar() {
           buttonInfos = calloutButtonInfos;
         }
         break;
-      case "roleSwitch":
+      case "loseSwap":
         // Get the player's pStat
         const pStat = game.pStats.find(
           (pStat) => pStat.player === userObj.username
         );
         // If the player has roles, check them to see if they need to chose a role to lose
         if (pStat && pStat.roles) {
-          const roleSwitch = turn.roleSwitch;
+          const loseSwap = turn.loseSwap;
           const playerRoles = pStat.roles;
           if (
-            roleSwitch.losing &&
-            roleSwitch.losing.player === userObj.username &&
-            roleSwitch.losing.numRoles < playerRoles.length
+            loseSwap.losing &&
+            loseSwap.losing.player === userObj.username &&
+            loseSwap.losing.numRoles < playerRoles.length
             // && playerRoles.length === 2 &&
             // playerRoles[0] !== playerRoles[1]
           ) {
@@ -275,8 +248,8 @@ export default function CoupActionbar() {
         }
 
         break;
-      case "preCallout":
-        // If  preCallout period, check if active player is this user
+      case "selectAction":
+        // If  selectAction period, check if active player is this user
         if (turn.player === userObj.username) {
           if (game.pStats) {
             const pStat = game.pStats.find((pStat) => {
@@ -296,7 +269,7 @@ export default function CoupActionbar() {
           return;
         }
         break;
-      case "postCallout":
+      case "completeAction":
         if (turn.player === userObj.username && exchangeButtonInfo) {
           buttonInfos = [exchangeButtonInfo];
         }
@@ -388,14 +361,14 @@ export default function CoupActionbar() {
     let textToDisplay;
 
     switch (turn.stage) {
-      case "preCallout":
+      case "selectAction":
         if (turn.player === userObj.username) {
           textToDisplay = "Make Your Move";
         } else {
           textToDisplay = `${turn.player} is Making their Move...`;
         }
         break;
-      case "postCallout":
+      case "completeAction":
         if (turn.player === userObj.username) {
           if (turn.exchangeRoles) {
             textToDisplay = "Make Your Move";
@@ -406,8 +379,8 @@ export default function CoupActionbar() {
           textToDisplay = `${turn.player} is Exchanging...`;
         }
         break;
-      case "block":
-      case "callout":
+      case "blockAction":
+      case "challengeRole":
         let stageString;
         if (turn.action === "foreignAid" && !turn.target) {
           stageString = "Block";
@@ -425,25 +398,22 @@ export default function CoupActionbar() {
           }
         }
         break;
-      case "roleSwitch":
-        const roleSwitch = turn.roleSwitch;
-        if (
-          roleSwitch.losing &&
-          roleSwitch.losing.player === userObj.username
-        ) {
+      case "loseSwap":
+        const loseSwap = turn.loseSwap;
+        if (loseSwap.losing && loseSwap.losing.player === userObj.username) {
           textToDisplay = "Losing a Role";
         } else if (
-          roleSwitch.switching &&
-          roleSwitch.switching.player === userObj.username
+          loseSwap.switching &&
+          loseSwap.switching.player === userObj.username
         ) {
           textToDisplay = "Switching a Role";
         } else {
-          if (roleSwitch.losing && roleSwitch.switching) {
-            textToDisplay = `Waiting for ${roleSwitch.losing.player} to Lose their Role and ${roleSwitch.switching.player} to Switch their Role`;
-          } else if (roleSwitch.losing) {
-            textToDisplay = `Waiting for ${roleSwitch.losing.player} to Lose their Role`;
-          } else if (roleSwitch.switching) {
-            textToDisplay = `Waiting for ${roleSwitch.switching.player} to Switch their Role`;
+          if (loseSwap.losing && loseSwap.switching) {
+            textToDisplay = `Waiting for ${loseSwap.losing.player} to Lose their Role and ${loseSwap.switching.player} to Switch their Role`;
+          } else if (loseSwap.losing) {
+            textToDisplay = `Waiting for ${loseSwap.losing.player} to Lose their Role`;
+          } else if (loseSwap.switching) {
+            textToDisplay = `Waiting for ${loseSwap.switching.player} to Switch their Role`;
           } else {
             textToDisplay = "Finishing up Role Losing/Switching...";
           }

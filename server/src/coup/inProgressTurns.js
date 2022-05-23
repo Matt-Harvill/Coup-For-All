@@ -34,17 +34,18 @@
 
 import { getSocket } from "../utils/socketUtils.js";
 import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
+import { loseRoleAuto, switchRole } from "./loseSwaping.js";
 import {
-  foreignAidEndStage,
-  completeForeignAid,
-} from "./actions/foreignAid.js";
-import { completeTax, taxEndStage } from "./actions/tax.js";
-import { loseRoleAuto, switchRole } from "./roleSwitching.js";
-import { calloutTimeout, moveTimeout, roleSwitchTimeout } from "./timeouts.js";
-import { exchangeEndStage } from "./actions/exchange.js";
-import { completeSteal, stealEndStage } from "./actions/steal.js";
+  challengeTimeout,
+  selectActionTimeout,
+  loseSwapRolesTimeout,
+} from "./timeouts.js";
 import { incomeEndStage } from "./actions/income.js";
+import { foreignAidEndStage } from "./actions/foreignAid.js";
+import { taxEndStage } from "./actions/tax.js";
+import { exchangeEndStage } from "./actions/exchange.js";
 import { coupEndStage } from "./actions/coup.js";
+import { stealEndStage } from "./actions/steal.js";
 import { assassinateEndStage } from "./actions/assassinate.js";
 
 // Store the inProgress games' turn stages (mapped by gameID)
@@ -115,14 +116,14 @@ export const startNewStage = async (game) => {
 
   let timeRemMS;
   switch (stage) {
-    case "preCallout":
-    case "postCallout":
+    case "selectAction":
+    case "completeAction":
       timeRemMS = 60000;
       break;
-    case "block":
+    case "blockAction":
       timeRemMS = 30000;
       break;
-    case "callout":
+    case "challengeRole":
       timeRemMS = 30000;
       const deciding = getTurnProp(game.gameID, "deciding");
       if (deciding.length === 0) {
@@ -133,13 +134,13 @@ export const startNewStage = async (game) => {
         return;
       }
       break;
-    case "roleSwitch":
+    case "loseSwap":
       timeRemMS = 30000;
       setTurn(game, { timeRemMS: timeRemMS });
-      const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
+      const loseSwap = getTurnProp(game.gameID, "loseSwap");
       let stageEnding;
       // Handle switching role
-      const switching = roleSwitch.switching;
+      const switching = loseSwap.switching;
       if (switching && switching.player) {
         stageEnding = await switchRole(game, switching.player, switching.role);
         if (stageEnding) {
@@ -147,7 +148,7 @@ export const startNewStage = async (game) => {
         }
       }
       // Handle losing role(s)
-      const losing = roleSwitch.losing;
+      const losing = loseSwap.losing;
       if (losing && losing.player) {
         stageEnding = await loseRoleAuto(game, losing.player, losing.numRoles);
         if (stageEnding) {
@@ -176,18 +177,15 @@ export const startNewStage = async (game) => {
     // Handle when time runs out
     if (timeRem() === 0) {
       switch (stage) {
-        case "preCallout":
-          // If no move was made in preCallout, call "moveTimeout"
-          moveTimeout(game);
+        case "selectAction":
+          selectActionTimeout(game);
           break;
-        case "block":
-        case "callout":
-          // If no callout was made in callout, call "calloutTimeout"
-          calloutTimeout(game);
+        case "blockAction":
+        case "challengeRole":
+          challengeTimeout(game);
           break;
-        case "roleSwitch":
-          // If no role was switched in roleSwitch, call "roleSwitchTimeout"
-          roleSwitchTimeout(game);
+        case "loseSwap":
+          loseSwapRolesTimeout(game);
           break;
         default:
           endStage(game);
@@ -198,93 +196,6 @@ export const startNewStage = async (game) => {
 
   // Set new interval (after interval declared) -> clears the old interval
   setTurn(game, { interval: interval });
-};
-
-// Handle preCallout stage ending
-const preCalloutOver = (game) => {
-  const action = getTurnProp(game.gameID, "action");
-
-  switch (action) {
-    case "income":
-      endTurn(game);
-      break;
-    case "foreignAid":
-      setTurn(game, { stage: "block" });
-      startNewStage(game);
-      break;
-    case "tax":
-    case "assassinate":
-    case "exchange":
-    case "steal":
-      setTurn(game, { stage: "callout" });
-      startNewStage(game);
-      break;
-    case "coup":
-      setTurn(game, { stage: "roleSwitch" });
-      startNewStage(game);
-      break;
-    default:
-      throw `Not valid action in preCalloutOver for gameID ${game.gameID}`;
-  }
-};
-
-// Handle callout stage ending
-const calloutOver = (game) => {
-  const action = getTurnProp(game.gameID, "action");
-  let actionSuccess = getTurnProp(game.gameID, "actionSuccess");
-
-  // If actionSuccess is null then action was allowed
-  if (actionSuccess === null) {
-    switch (action) {
-      case "steal":
-      case "foreignAid":
-      case "tax":
-      case "exchange":
-        actionSuccess = true;
-        break;
-      case "coup":
-        break;
-      default:
-        throw `${action} is not a valid action (in actionSuccess determination in calloutOver)`;
-    }
-  }
-
-  switch (action) {
-    case "foreignAid":
-      if (actionSuccess) {
-        completeForeignAid(game);
-      } else {
-        endTurn(game);
-      }
-      break;
-    case "tax":
-      if (actionSuccess) {
-        completeTax(game);
-      } else {
-        endTurn(game);
-      }
-      break;
-    case "assassinate":
-    case "steal":
-      if (actionSuccess) {
-        completeSteal(game);
-      } else {
-        endTurn(game);
-      }
-      break;
-    case "coup":
-      endTurn(game);
-      break;
-    case "exchange":
-      if (actionSuccess) {
-        // prepareExchange(game);
-      } else {
-        endTurn(game);
-      }
-      break;
-    default:
-      throw `${action} is not valid action in calloutOver for gameID ${game.gameID}`;
-  }
 };
 
 // End the current stage and start the next
@@ -316,35 +227,6 @@ export const endStage = (game) => {
       break;
     default:
       throw `${action} not valid (in endStage)`;
-  }
-
-  switch (stage) {
-    case "preCallout":
-      // Starts the new stage after updating it
-      preCalloutOver(game);
-      break;
-    case "block":
-    case "callout":
-      const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
-      if (roleSwitch.losing || roleSwitch.switching) {
-        // Do roleSwitch stuff
-        setTurn(game, { stage: "roleSwitch" });
-        startNewStage(game);
-        return;
-      }
-      // Starts the new stage after updating it
-      calloutOver(game);
-      break;
-    case "roleSwitch":
-      // Call calloutOver b/c losing and switching has been handled
-      calloutOver(game);
-      break;
-    case "postCallout":
-      // Starts the new stage after updating it
-      endTurn(game);
-      break;
-    default:
-      throw `Not valid turn stage for gameID ${game.gameID}`;
   }
 };
 
@@ -386,19 +268,19 @@ export const createTurn = (game) => {
       player: game.players[0],
       action: null,
       attacking: null,
-      actionSuccess: null,
+      actionSuccess: true,
       timeRemMS: null,
       interval: null,
-      stage: "preCallout",
+      stage: "selectAction",
       target: null,
-      roleSwitch: {
+      loseSwap: {
         losing: null,
         switching: null,
       },
       exchangeRoles: null,
     };
 
-    // Start the turn (in preCallout)
+    // Start the turn (in selectAction)
     startNewStage(game);
   }
 };

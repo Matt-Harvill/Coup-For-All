@@ -27,7 +27,7 @@ As of now, once a challenge happens, no more chance to block.
 I will need to restructure everything such that only one target at a time and that the end of callout lets blocking for certain roles
 
 At any given time there will only be one turnTarget - DONE
-Possible stages: preCallout, callout, block (another callout), postCallout 
+Possible stages: selectAction, callout, block (another callout), completeAction 
 New names: selectAction, challengeRole, blockAction, loseSwapRoles, completeAction
 
 // Income -> selectAction

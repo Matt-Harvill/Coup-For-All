@@ -25,7 +25,7 @@ const removePlayerFromGame = async (game, player, playerRoles) => {
   return committed;
 };
 
-const endOfLoseRoleAuto = (game, roleSwitchObj, stillNeedToLoseRole) => {
+const endOfLoseRoleAuto = (game, loseSwapObj, stillNeedToLoseRole) => {
   // If the turn has been deleted, then the stage is over
   if (!turnExists(game.gameID)) {
     return true;
@@ -35,12 +35,12 @@ const endOfLoseRoleAuto = (game, roleSwitchObj, stillNeedToLoseRole) => {
   if (stillNeedToLoseRole) {
     return;
   } else {
-    const newRoleSwitch = { ...roleSwitchObj, losing: null };
+    const newRoleSwitch = { ...loseSwapObj, losing: null };
     // Update the switching to null now that it has been switched
-    setTurn(game, { roleSwitch: newRoleSwitch });
+    setTurn(game, { loseSwap: newRoleSwitch });
 
     // If losing and switching has been taken care of, end the stage
-    const newRoleSwitchObj = getTurnProp(game.gameID, "roleSwitch");
+    const newRoleSwitchObj = getTurnProp(game.gameID, "loseSwap");
     if (!newRoleSwitchObj.switching && !newRoleSwitchObj.losing) {
       endStage(game);
       // Return true for stage ending
@@ -50,7 +50,7 @@ const endOfLoseRoleAuto = (game, roleSwitchObj, stillNeedToLoseRole) => {
 };
 
 export const loseRoleAuto = async (game, player, numRolesLosing) => {
-  const roleSwitchObj = getTurnProp(game.gameID, "roleSwitch");
+  const loseSwapObj = getTurnProp(game.gameID, "loseSwap");
   const pStat = game.pStats.find((pStat) => pStat.player === player);
   const playerRoles = pStat.roles;
   const numRoles = playerRoles.length;
@@ -64,9 +64,9 @@ export const loseRoleAuto = async (game, player, numRolesLosing) => {
   // remove one/one or two/two (player is out)
 
   // Specific role to lose is specified
-  if (roleSwitchObj.losing.role) {
+  if (loseSwapObj.losing.role) {
     // Player has the role
-    if (playerRoles.includes(roleSwitchObj.losing.role)) {
+    if (playerRoles.includes(loseSwapObj.losing.role)) {
       // It is player's only role
       if (playerRoles.length === 1) {
         playerOut = true;
@@ -74,7 +74,7 @@ export const loseRoleAuto = async (game, player, numRolesLosing) => {
       // It is not player's only role
       removeOneRole = true;
       // Either way
-      roleToLose = roleSwitchObj.losing.role;
+      roleToLose = loseSwapObj.losing.role;
     } else {
       stillNeedToLoseRole = false;
     }
@@ -103,7 +103,7 @@ export const loseRoleAuto = async (game, player, numRolesLosing) => {
   // Loss results in player losing one role
   else if (removeOneRole) {
     // loseRole cleans up
-    await loseRole(null, roleToLose, game, player, roleSwitchObj);
+    await loseRole(null, roleToLose, game, player, loseSwapObj);
     // Return true for stage ending
     return true;
   } else {
@@ -119,12 +119,12 @@ export const loseRoleAuto = async (game, player, numRolesLosing) => {
     console.log("Error committing loseRoleAuto for", player);
   } else {
     // Return true for stage ending
-    return endOfLoseRoleAuto(game, roleSwitchObj, stillNeedToLoseRole);
+    return endOfLoseRoleAuto(game, loseSwapObj, stillNeedToLoseRole);
   }
 };
 
 export const switchRole = async (game, player, roleToSwitch) => {
-  const roleSwitchObj = getTurnProp(game.gameID, "roleSwitch");
+  const loseSwapObj = getTurnProp(game.gameID, "loseSwap");
   const pStat = game.pStats.find((pStat) => pStat.player === player);
 
   let newRoles = [];
@@ -152,12 +152,12 @@ export const switchRole = async (game, player, roleToSwitch) => {
   if (!committed) {
     console.log("Error committing switchRole for", player);
   } else {
-    const newRoleSwitch = { ...roleSwitchObj, switching: null };
+    const newRoleSwitch = { ...loseSwapObj, switching: null };
     // Update the switching to null now that it has been switched
-    setTurn(game, { roleSwitch: newRoleSwitch });
+    setTurn(game, { loseSwap: newRoleSwitch });
 
     // If losing and switching has been taken care of, end the stage
-    const newRoleSwitchObj = getTurnProp(game.gameID, "roleSwitch");
+    const newRoleSwitchObj = getTurnProp(game.gameID, "loseSwap");
     if (!newRoleSwitchObj.switching && !newRoleSwitchObj.losing) {
       endStage(game);
       // Return true for stage ending

@@ -3,7 +3,6 @@ import "../styles/CoupActionButton.css";
 
 export default function CoupExchangeButton(props) {
   const {
-    title,
     playerRolesText,
     playerRoles,
     newRolesText,
