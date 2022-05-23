@@ -126,7 +126,6 @@ export const selectAssassinate = async (user, target) => {
       target: {
         target: user.username,
         action: "assassinate",
-        attacking: target,
       },
       challenging: otherPlayers,
     });

@@ -24,7 +24,7 @@ export default function CoupActionbar() {
         setMaxTimeRem(60000);
         break;
       default:
-        break;
+        alert(`${turn.stage} is not a valid turn stage`);
     }
   }, [turn.stage]);
 
@@ -54,110 +54,14 @@ export default function CoupActionbar() {
   };
 
   const displayButtons = () => {
-    const otherPlayers = getOtherPlayers();
-    const stealablePlayers = getStealablePlayers();
-    const roleNames = ["Ambassador", "Assassin", "Captain", "Contessa", "Duke"];
-
-    const calloutButtonInfos = [
-      {
-        title: "Pass",
-        onClick: action,
-        onClickArgs: ["noChallengeRole"],
-      },
-    ];
-
-    // If there is a target, allow user to call them out
-    if (turn.target) {
-      // Make Call out button for the target
-      const turnTarget = turn.target;
-      let title;
-      switch (turnTarget.action) {
-        case "foreignAid": // Foreign Aid is blocked by Duke, so it is also calling out a Duke
-        case "tax":
-          title = `Call Out ${turnTarget.target}'s 'Duke'`;
-          break;
-        case "exchange":
-          title = `Call Out ${turnTarget.target}'s Ambassador`;
-          break;
-        case "steal":
-          title = `Call Out ${turnTarget.target}'s Captain`;
-          break;
-        case "blockSteal":
-          title = `Call Out ${turnTarget.target}'s ${turnTarget.blockingRole}`;
-          break;
-        default:
-          break;
-      }
-
-      const calloutButtonInfo = {
-        title: title,
-        onClick: action,
-        onClickArgs: ["challengeRole", turnTarget.target],
-      };
-
-      // Add new buttonInfo to calloutButtonInfos
-      calloutButtonInfos.push(calloutButtonInfo);
-
-      if (
-        turnTarget.action === "steal" &&
-        turnTarget.attacking === userObj.username
-      ) {
-        calloutButtonInfos.push({
-          title: `Block ${turn.player}'s Steal With:`,
-          roles: ["Ambassador", "Captain"],
-          onClick: action,
-          onClickArgs: ["blockAction", "steal", "role"],
-        });
-      }
-    } else {
-      // If the action if foreignAid but no turnTargets, display block capability
-      if (turn.action === "foreignAid") {
-        const calloutButtonInfo = {
-          title: `Block ${turn.player}'s Foreign Aid`,
-          onClick: action,
-          onClickArgs: ["blockAction", "foreignAid"],
-        };
-
-        // Add new buttonInfo to calloutButtonInfos
-        calloutButtonInfos.push(calloutButtonInfo);
-      }
+    let pStat;
+    if (game.pStats) {
+      pStat = game.pStats.find((pStat) => {
+        return pStat.player === userObj.username;
+      });
     }
-
-    const regularButtonInfos = [
-      {
-        title: "Income",
-        onClick: action,
-        onClickArgs: ["income"],
-      },
-      {
-        title: "Foreign Aid",
-        onClick: action,
-        onClickArgs: ["foreignAid"],
-      },
-      {
-        title: "Tax",
-        onClick: action,
-        onClickArgs: ["tax"],
-      },
-      {
-        title: "Exchange",
-        onClick: action,
-        onClickArgs: ["exchange"],
-      },
-      {
-        title: "Assassinate",
-        targets: otherPlayers,
-        onClick: action,
-        onClickArgs: ["assassinate", "target"],
-      },
-    ];
-
-    const stealButtonInfo = {
-      title: "Steal (up to 2 coins) From",
-      targets: stealablePlayers,
-      onClick: action,
-      onClickArgs: ["steal", "target"],
-    };
+    const otherPlayers = getOtherPlayers();
+    const roleNames = ["Ambassador", "Assassin", "Captain", "Contessa", "Duke"];
 
     const coupButtonInfo = {
       title: "Coup ",
@@ -168,76 +72,149 @@ export default function CoupActionbar() {
       onClickArgs: ["coup", "target", "role"],
     };
 
-    let losingRoleButtonInfos = [];
-    if (game.pStats) {
-      const pStat = game.pStats.find((pStat) => {
-        return pStat.player === userObj.username;
-      });
-      if (pStat) {
-        for (const role of pStat.roles) {
-          losingRoleButtonInfos.push({
-            title: `Lose ${role}`,
-            onClick: action,
-            onClickArgs: ["loseRole", role],
-          });
-        }
-      }
-    }
+    const challengeButtonInfos = [
+      {
+        title: "Pass",
+        onClick: action,
+        onClickArgs: ["noChallengeRole"],
+      },
+    ];
 
+    // Exchange Button Info
     let exchangeButtonInfo;
-    if (turn.exchangeRoles) {
-      if (game.pStats) {
-        const pStat = game.pStats.find((pStat) => {
-          return pStat.player === userObj.username;
-        });
-        if (pStat) {
-          const numRoles = pStat.roles.length;
+    if (turn.exchangeRoles && pStat) {
+      const numRoles = pStat.roles.length;
 
-          const playerRolesText = numRoles === 1 ? "Your Role" : "Your Roles";
+      const playerRolesText = numRoles === 1 ? "Your role" : "Your roles";
 
-          exchangeButtonInfo = {
-            exchangeButton: true,
-            playerRolesText: playerRolesText,
-            playerRoles: pStat.roles,
-            newRolesText: "New Roles",
-            newRoles: turn.exchangeRoles,
-            onClick: action,
-            onClickArgs: ["exchangeRoles"],
-          };
-        }
-      }
+      exchangeButtonInfo = {
+        exchangeButton: true,
+        playerRolesText: playerRolesText,
+        playerRoles: pStat.roles,
+        newRolesText: "New roles",
+        newRoles: turn.exchangeRoles,
+        onClick: action,
+        onClickArgs: ["exchangeRoles"],
+      };
     }
 
     let buttonInfos = [];
 
     switch (turn.stage) {
-      case "blockAction":
-      case "challengeRole":
-        // Don't display callout buttons if user has decided (or is being accused)
-        if (!turn.deciding.includes(userObj.username)) {
+      case "selectAction":
+        // If  selectAction period, check if active player is this user
+        if (turn.player === userObj.username && pStat) {
+          const stealablePlayers = getStealablePlayers();
+          const regularButtonInfos = [
+            {
+              title: "Income",
+              onClick: action,
+              onClickArgs: ["income"],
+            },
+            {
+              title: "Foreign Aid",
+              onClick: action,
+              onClickArgs: ["foreignAid"],
+            },
+            {
+              title: "Tax",
+              onClick: action,
+              onClickArgs: ["tax"],
+            },
+            {
+              title: "Exchange",
+              onClick: action,
+              onClickArgs: ["exchange"],
+            },
+            {
+              title: "Assassinate",
+              targets: otherPlayers,
+              onClick: action,
+              onClickArgs: ["assassinate", "target"],
+            },
+          ];
+
+          // If player can steal, add that button
+          if (stealablePlayers && stealablePlayers.length > 0) {
+            const stealButtonInfo = {
+              title: "Steal (up to 2 coins) From",
+              targets: stealablePlayers,
+              onClick: action,
+              onClickArgs: ["steal", "target"],
+            };
+            regularButtonInfos.push(stealButtonInfo);
+          }
+
+          if (pStat.coins < 10) {
+            buttonInfos = regularButtonInfos;
+          }
+          if (pStat.coins >= 7) {
+            buttonInfos.push(coupButtonInfo);
+          }
+        } else {
           return;
         }
-        // If user is not being called out, let them call out or pass
-        else {
-          buttonInfos = calloutButtonInfos;
+        break;
+      case "challengeRole":
+        if (!turn.challenging.includes(userObj.username)) {
+          return;
+        } else {
+          if (turn.target) {
+            let title, role;
+            switch (turn.target.action) {
+              case "blockForeignAid":
+              case "tax":
+                role = "Duke";
+                break;
+              case "exchange":
+                role = "Ambassador";
+                break;
+              case "steal":
+                role = "Captain";
+                break;
+              case "assassinate":
+                role = "Assassin";
+                break;
+              case "blockSteal":
+                role = turn.target.blockingRole;
+                break;
+              case "blockAssassinate":
+                role = "Contessa";
+                break;
+              default:
+                alert("Not valid turn target action");
+            }
+            title = `Call out ${turn.target}'s ${role}`;
+
+            const challengeButtonInfo = {
+              title: title,
+              onClick: action,
+              onClickArgs: ["challengeRole", turn.target.target],
+            };
+
+            // Add new buttonInfo to challengeButtonInfos
+            challengeButtonInfos.push(challengeButtonInfo);
+            buttonInfos = challengeButtonInfos;
+          }
         }
         break;
       case "loseSwapRoles":
-        // Get the player's pStat
-        const pStat = game.pStats.find(
-          (pStat) => pStat.player === userObj.username
-        );
         // If the player has roles, check them to see if they need to chose a role to lose
         if (pStat && pStat.roles) {
           const loseSwap = turn.loseSwap;
           const playerRoles = pStat.roles;
-          if (
-            loseSwap.losing &&
-            loseSwap.losing.player === userObj.username &&
-            loseSwap.losing.numRoles < playerRoles.length
-            // && playerRoles.length === 2 &&
-            // playerRoles[0] !== playerRoles[1]
-          ) {
+          if (loseSwap.losing && loseSwap.losing.player === userObj.username) {
+            // Losing Role Button Infos
+            let losingRoleButtonInfos = [];
+            if (pStat) {
+              for (const role of pStat.roles) {
+                losingRoleButtonInfos.push({
+                  title: `Lose ${role}`,
+                  onClick: action,
+                  onClickArgs: ["loseRole", role],
+                });
+              }
+            }
             // If the same role, don't automatically lose anymore, but just show one button
             if (playerRoles.length === 2 && playerRoles[0] === playerRoles[1]) {
               buttonInfos.push(losingRoleButtonInfos[0]);
@@ -246,32 +223,44 @@ export default function CoupActionbar() {
             }
           }
         }
-
-        break;
-      case "selectAction":
-        // If  selectAction period, check if active player is this user
-        if (turn.player === userObj.username) {
-          if (game.pStats) {
-            const pStat = game.pStats.find((pStat) => {
-              return pStat.player === userObj.username;
-            });
-            if (stealablePlayers && stealablePlayers.length > 0) {
-              regularButtonInfos.push(stealButtonInfo);
-            }
-            if (pStat.coins < 10) {
-              buttonInfos = regularButtonInfos;
-            }
-            if (pStat.coins >= 7) {
-              buttonInfos.push(coupButtonInfo);
-            }
-          }
-        } else {
-          return;
-        }
         break;
       case "completeAction":
         if (turn.player === userObj.username && exchangeButtonInfo) {
           buttonInfos = [exchangeButtonInfo];
+        }
+        break;
+      case "blockAction":
+        if (turn.player === userObj.username) {
+          return;
+        } else {
+          let actionTitle, title, roles;
+          let onClickArgs = ["blockAction", turn.action];
+
+          if (turn.attacking && turn.attacking === userObj.username) {
+            if (turn.action === "assassinate") {
+              actionTitle = "assassination";
+            } else if (turn.action === "steal") {
+              title = `Block ${turn.player}'s steal with:`;
+              roles = ["Ambassador", "Captain"];
+              onClickArgs = ["blockAction", "steal", "role"];
+            }
+          } else if (turn.action === "foreignAid") {
+            actionTitle = "foreign aid";
+          }
+          if (!title) {
+            title = `Block ${turn.player}'s ${actionTitle}`;
+          }
+
+          const blockButtonInfo = {
+            title: title,
+            roles: roles,
+            onClick: action,
+            onClickArgs: onClickArgs,
+          };
+
+          // Add new buttonInfo to challengeButtonInfos
+          challengeButtonInfos.push(blockButtonInfo);
+          buttonInfos = challengeButtonInfos;
         }
         break;
       default:
@@ -363,45 +352,56 @@ export default function CoupActionbar() {
     switch (turn.stage) {
       case "selectAction":
         if (turn.player === userObj.username) {
-          textToDisplay = "Make Your Move";
+          textToDisplay = "Select your action";
         } else {
-          textToDisplay = `${turn.player} is Making their Move...`;
+          textToDisplay = `${turn.player} is selecting their action...`;
         }
         break;
       case "completeAction":
         if (turn.player === userObj.username) {
           if (turn.exchangeRoles) {
-            textToDisplay = "Make Your Move";
+            textToDisplay = "Exchange roles";
           } else {
-            textToDisplay = "Committing Exchange...";
+            textToDisplay = "Completing your action...";
           }
         } else {
-          textToDisplay = `${turn.player} is Exchanging...`;
+          textToDisplay = `${turn.player} is completing their ${turn.action}...`;
         }
         break;
       case "blockAction":
-      case "challengeRole":
-        let stageString;
-        if (turn.action === "foreignAid" && !turn.target) {
-          stageString = "Block";
+        if (turn.challenging.includes(userObj.username)) {
+          textToDisplay = `Pass or Block`;
         } else {
-          stageString = "Callout";
-        }
-        if (turn.deciding.includes(userObj.username)) {
-          textToDisplay = `Pass or ${stageString}`;
-        } else {
-          if (!turn.deciding || (turn.deciding && turn.deciding.length === 0)) {
-            textToDisplay = `Finishing up ${stageString}...`;
+          if (
+            !turn.challenging ||
+            (turn.challenging && turn.challenging.length === 0)
+          ) {
+            textToDisplay = `Finishing up Blocking...`;
           } else {
-            const deciding = turn.deciding.join(", ");
-            textToDisplay = `Waiting for ${deciding} to ${stageString}...`;
+            const challenging = turn.challenging.join(", ");
+            textToDisplay = `Waiting for ${challenging} to Pass or Block...`;
+          }
+        }
+        break;
+      case "challengeRole":
+        if (turn.challenging.includes(userObj.username)) {
+          textToDisplay = `Pass or Challenge`;
+        } else {
+          if (
+            !turn.challenging ||
+            (turn.challenging && turn.challenging.length === 0)
+          ) {
+            textToDisplay = `Finishing up Challenging...`;
+          } else {
+            const challenging = turn.challenging.join(", ");
+            textToDisplay = `Waiting for ${challenging} to Pass or Challenge...`;
           }
         }
         break;
       case "loseSwapRoles":
         const loseSwap = turn.loseSwap;
         if (loseSwap.losing && loseSwap.losing.player === userObj.username) {
-          textToDisplay = "Losing a Role";
+          textToDisplay = "Lose a Role";
         } else if (
           loseSwap.swapping &&
           loseSwap.swapping.player === userObj.username

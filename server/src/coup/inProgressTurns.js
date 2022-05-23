@@ -14,7 +14,6 @@
 //   target: {
 //     target: String,
 //     action: String,
-//     attacking: String,
 //   },
 //   challenging: Array,
 
@@ -267,7 +266,6 @@ export const createTurn = (game) => {
       target: {
         target: null,
         action: null,
-        attacking: null,
         blockingRole: null,
       },
       challenging: null,

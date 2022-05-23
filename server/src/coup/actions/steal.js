@@ -105,7 +105,7 @@ export const selectSteal = async (user, target) => {
     setTurn(game, {
       action: "steal",
       attacking: target,
-      target: { target: user.username, action: "steal", attacking: target },
+      target: { target: user.username, action: "steal" },
       challenging: otherPlayers,
     });
 
