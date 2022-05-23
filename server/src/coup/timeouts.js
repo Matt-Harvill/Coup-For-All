@@ -1,6 +1,6 @@
 import { getUserObj } from "../utils/dbUtils.js";
-import { coupAction } from "./actions/coupAction.js";
-import { selectIncome } from "./actions/income.js";
+import { selectAndCompleteCoup } from "./actions/coup.js";
+import { selectAndCompleteIncome } from "./actions/income.js";
 import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
 import { loseRole } from "./loseRoles.js";
 
@@ -38,9 +38,9 @@ export const moveTimeout = async (game) => {
 
       console.log(`Auto-couping ${target} for ${role}...`);
 
-      await coupAction(userObj, target, role);
+      await selectAndCompleteCoup(userObj, target, role);
     } else {
-      await selectIncome(userObj);
+      await selectAndCompleteIncome(userObj);
     }
   }
 };

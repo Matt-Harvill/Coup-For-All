@@ -7,16 +7,16 @@ import { deleteGame } from "./deleteGame.js";
 import { joinGame } from "./joinGame.js";
 import { leaveGame } from "./leaveGame.js";
 import { getGameState, publicGameState } from "./getGameState.js";
-import { selectIncome } from "./actions/income.js";
+import { selectAndCompleteIncome } from "./actions/income.js";
 import { selectForeignAid } from "./actions/foreignAid.js";
 import { noCallout } from "./noCallout.js";
 import { selectTax } from "./actions/tax.js";
 import { callout } from "./callout.js";
 import { loseRole } from "./loseRoles.js";
 import { blockForeignAid, blockSteal } from "./blocks.js";
-import { coupAction } from "./actions/coupAction.js";
+import { selectAndCompleteCoup } from "./actions/coup.js";
 import { completeExchange, selectExchange } from "./actions/exchange.js";
-import { preCalloutSteal } from "./actions/steal.js";
+import { selectSteal } from "./actions/steal.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -112,7 +112,7 @@ export const eventSwitch = async (event, socket, ...args) => {
       getGameState(socket);
       break;
     case "income":
-      selectIncome(user);
+      selectAndCompleteIncome(user);
       break;
     case "foreignAid":
       selectForeignAid(user);
@@ -120,13 +120,13 @@ export const eventSwitch = async (event, socket, ...args) => {
     case "tax":
       selectTax(user);
       break;
-    case "coupAction":
+    case "coup":
       const [coupTarget, coupRole] = args;
-      coupAction(user, coupTarget, coupRole);
+      selectAndCompleteCoup(user, coupTarget, coupRole);
       break;
     case "steal":
       const stealTarget = args[0];
-      preCalloutSteal(user, stealTarget);
+      selectSteal(user, stealTarget);
       break;
     case "exchange":
       selectExchange(user);

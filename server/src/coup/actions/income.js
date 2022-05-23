@@ -11,7 +11,7 @@ export const incomeEndStage = (game, stage) => {
   }
 };
 
-export const selectIncome = async (user) => {
+export const selectAndCompleteIncome = async (user) => {
   const game = await getGame(user.gameTitle, user.gameID);
 
   if (!game) {

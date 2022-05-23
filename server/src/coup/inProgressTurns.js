@@ -40,10 +40,10 @@ import {
 import { completeTax, taxEndStage } from "./actions/tax.js";
 import { loseRoleAuto, switchRole } from "./roleSwitching.js";
 import { calloutTimeout, moveTimeout, roleSwitchTimeout } from "./timeouts.js";
-import { exchangeEndStage, prepareExchange } from "./actions/exchange.js";
-import { postCalloutSteal, stealEndStage } from "./actions/steal.js";
+import { exchangeEndStage } from "./actions/exchange.js";
+import { completeSteal, stealEndStage } from "./actions/steal.js";
 import { incomeEndStage } from "./actions/income.js";
-import { coupEndStage } from "./actions/coupAction.js";
+import { coupEndStage } from "./actions/coup.js";
 import { assassinateEndStage } from "./actions/assassinate.js";
 
 // Store the inProgress games' turn stages (mapped by gameID)
@@ -266,7 +266,7 @@ const calloutOver = (game) => {
     case "assassinate":
     case "steal":
       if (actionSuccess) {
-        postCalloutSteal(game);
+        completeSteal(game);
       } else {
         endTurn(game);
       }
@@ -276,7 +276,7 @@ const calloutOver = (game) => {
       break;
     case "exchange":
       if (actionSuccess) {
-        prepareExchange(game);
+        // prepareExchange(game);
       } else {
         endTurn(game);
       }

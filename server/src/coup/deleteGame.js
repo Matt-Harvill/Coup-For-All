@@ -1,6 +1,6 @@
 import * as dbUtils from "../utils/dbUtils.js";
 import { CoupGame } from "../schemas.js";
-import { coupFormingGames, sendFormingGames } from "./coup.js";
+import { coupFormingGames, sendFormingGames } from "./coupEventHandler.js";
 
 export const deleteGame = async (socket) => {
   const userObj = socket.request.user;

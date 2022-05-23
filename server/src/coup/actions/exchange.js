@@ -8,6 +8,13 @@ import {
 import { getGame, updateUserAndGame } from "../../utils/dbUtils.js";
 import { shuffleArray } from "../../utils/shuffleArray.js";
 
+const removeItemOnce = (arr, value) => {
+  var index = arr.indexOf(value);
+  if (index > -1) {
+    arr.splice(index, 1);
+  }
+};
+
 export const exchangeEndStage = (game, stage) => {
   switch (stage) {
     case "selectAction":
@@ -18,13 +25,13 @@ export const exchangeEndStage = (game, stage) => {
       if (loseSwap.losing || loseSwap.swapping) {
         setTurn(game, { stage: "loseSwapRoles" });
       } else {
-        setTurn(game, { stage: "completeAction" });
+        prepareExchange(game);
       }
       break;
     case "loseSwapRoles":
       const actionSuccess = getTurnProp(game.gameID, "actionSuccess");
       if (actionSuccess) {
-        setTurn(game, { stage: "completeAction" });
+        prepareExchange(game);
       } else {
         endTurn(game);
       }
@@ -39,12 +46,11 @@ export const exchangeEndStage = (game, stage) => {
   startNewStage(game);
 };
 
-function removeItemOnce(arr, value) {
-  var index = arr.indexOf(value);
-  if (index > -1) {
-    arr.splice(index, 1);
-  }
-}
+const prepareExchange = (game) => {
+  shuffleArray(game.availRoles);
+  const exchangeRoles = game.availRoles.slice(0, 2); // First two roles
+  setTurn(game, { exchangeRoles: exchangeRoles, stage: "completeAction" });
+};
 
 export const completeExchange = async (user, selectedRoles) => {
   const game = await getGame(user.gameTitle, user.gameID);
@@ -97,12 +103,6 @@ export const completeExchange = async (user, selectedRoles) => {
       endStage(game);
     }
   }
-};
-
-export const prepareExchange = (game) => {
-  shuffleArray(game.availRoles);
-  const exchangeRoles = game.availRoles.slice(0, 2); // First two roles
-  setTurn(game, { exchangeRoles: exchangeRoles });
 };
 
 export const selectExchange = async (user) => {

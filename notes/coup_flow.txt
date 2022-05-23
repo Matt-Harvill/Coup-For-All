@@ -36,5 +36,7 @@ New names: selectAction, challengeRole, blockAction, loseAndOrSwap, completeActi
 - Exchange -> preCallout, callout, postCallout
 - Coup -> preCallout
 - Steal -> preCallout, callout, block (another callout), postCallout
-- Assassinate -> preCallout, callout, block (another callout), postCallout
+- Assassinate -> preCallout, callout (loseAndOrSwap), block (another callout (loseAndOrSwap)), postCallout (loseAndOrSwap)
+
+prepareAssassinate could possibly halt the game if DB can't be committed to
 

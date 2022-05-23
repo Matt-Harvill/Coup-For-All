@@ -192,7 +192,7 @@ export default function CoupActionbar() {
       targets: otherPlayers,
       roles: roleNames,
       onClick: action,
-      onClickArgs: ["coupAction", "target", "role"],
+      onClickArgs: ["coup", "target", "role"],
     };
 
     let losingRoleButtonInfos = [];

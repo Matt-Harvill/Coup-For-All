@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import * as dbUtils from "../utils/dbUtils.js";
 import { CoupGame } from "../schemas.js";
-import { coupFormingGames, sendFormingGames } from "./coup.js";
+import { coupFormingGames, sendFormingGames } from "./coupEventHandler.js";
 
 export const createGame = async (socket, privacy, maxPlayers) => {
   const userObj = socket.request.user;

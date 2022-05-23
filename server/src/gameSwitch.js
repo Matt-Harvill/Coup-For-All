@@ -1,4 +1,4 @@
-import * as coup from "./coup/coup.js";
+import * as coup from "./coup/coupEventHandler.js";
 import * as all from "./all.js";
 
 export default function gameSwitch(gameTitle) {
