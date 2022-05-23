@@ -25,3 +25,15 @@ For switching roles, make it like the lose roles where it isn't automatic (looks
 
 As of now, once a challenge happens, no more chance to block.
 I will need to restructure everything such that only one target at a time and that the end of callout lets blocking for certain roles
+
+At any given time there will only be one turnTarget
+Possible stages: preCallout, callout, block (another callout), postCallout 
+
+- Income -> preCallout
+- ForeignAid -> preCallout, block (another callout), postCallout
+- Tax -> preCallout, callout, postCallout
+- Exchange -> preCallout, callout, postCallout
+- Coup -> preCallout
+- Steal -> preCallout, callout, block (another callout), postCallout
+- Assassinate -> preCallout, callout, block (another callout), postCallout
+

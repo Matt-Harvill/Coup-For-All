@@ -46,11 +46,10 @@ export const moveTimeout = async (game) => {
 };
 
 export const calloutTimeout = (game) => {
-  const targets = getTurnProp(game.gameID, "targets");
+  const target = getTurnProp(game.gameID, "target");
 
-  if (targets && targets.length > 0) {
-    const firstTarget = targets[0];
-    switch (firstTarget.action) {
+  if (target) {
+    switch (target.action) {
       case "blockSteal":
       case "foreignAid": // If target's action is foreignAid, it was successfully blocked (actionSuccess === false)
         setTurn(game, { actionSuccess: false });

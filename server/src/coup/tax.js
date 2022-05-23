@@ -37,7 +37,7 @@ export const preCalloutTax = async (user) => {
     // Update the action to tax, add player as a target, update deciding to be other players
     setTurn(game, {
       action: "tax",
-      targets: [{ target: user.username, action: "tax", attacking: "none" }],
+      target: { target: user.username, action: "tax", attacking: "none" },
       deciding: otherPlayers,
     });
 

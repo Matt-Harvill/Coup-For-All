@@ -93,9 +93,7 @@ export const preCalloutExchange = async (user) => {
     // Update the action to exchange, add player as a target, update deciding to be other players
     setTurn(game, {
       action: "exchange",
-      targets: [
-        { target: user.username, action: "exchange", attacking: "none" },
-      ],
+      target: { target: user.username, action: "exchange", attacking: "none" },
       deciding: otherPlayers,
     });
 

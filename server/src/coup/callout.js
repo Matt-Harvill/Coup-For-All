@@ -23,8 +23,8 @@ const calloutHandler = (game, user, target, targetRoles, targetAction) => {
       isTurnAction = true;
       break;
     case "blockSteal":
-      const targets = getTurnProp(game.gameID, "targets");
-      const target = targets.find((target) => (target.action = "blockSteal"));
+      const target = getTurnProp(game.gameID, "target");
+      // const target = targets.find((target) => (target.action = "blockSteal"));
       roleToCheck = target.blockingRole;
       isTurnAction = false;
       break;
@@ -77,9 +77,9 @@ export const callout = async (user, target) => {
   const gameID = game.gameID;
 
   // Get action (to compare to roles)
-  const targets = getTurnProp(gameID, "targets");
-  const targetInfo = targets.find((turnTarget) => turnTarget.target === target);
-  const targetAction = targetInfo.action;
+  const targetObj = getTurnProp(gameID, "target");
+  // const targetInfo = targets.find((turnTarget) => turnTarget.target === target);
+  const targetAction = targetObj.action;
 
   // Get roles for target (to compare to action)
   const targetPStat = game.pStats.find((pStat) => pStat.player === target);

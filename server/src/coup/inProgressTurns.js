@@ -7,13 +7,11 @@
 //   timeRemMS: String,
 //   interval: (),
 //   stage: String, // Turn can be preCallout, callout, postCallout
-//   targets: [
-//     {
+//   target: {
 //       target: String,
 //       action: String,
 //       attacking: String
-//     },
-//   ],
+//   },
 //   roleSwitch: {
 //     losing: {
 //        player: null,
@@ -109,6 +107,9 @@ export const startNewStage = async (game) => {
     case "postCallout":
       timeRemMS = 60000;
       break;
+    case "block":
+      timeRemMS = 30000;
+      break;
     case "callout":
       timeRemMS = 30000;
       const deciding = getTurnProp(game.gameID, "deciding");
@@ -167,6 +168,7 @@ export const startNewStage = async (game) => {
           // If no move was made in preCallout, call "moveTimeout"
           moveTimeout(game);
           break;
+        case "block":
         case "callout":
           // If no callout was made in callout, call "calloutTimeout"
           calloutTimeout(game);
@@ -280,6 +282,7 @@ export const endStage = (game) => {
       // Starts the new stage after updating it
       preCalloutOver(game);
       break;
+    case "block":
     case "callout":
       const roleSwitch = getTurnProp(game.gameID, "roleSwitch");
       if (roleSwitch.losing || roleSwitch.switching) {
@@ -346,7 +349,7 @@ export const createTurn = (game) => {
       timeRemMS: null,
       interval: null,
       stage: "preCallout",
-      targets: [],
+      target: null,
       roleSwitch: {
         losing: null,
         switching: null,

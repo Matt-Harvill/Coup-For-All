@@ -15,13 +15,11 @@ export default function CoupActionbar() {
   //   timeRemMS: String,
   //   interval: (),
   //   stage: String, // Turn can be preCallout, callout, postCallout
-  //   targets: [
-  //     {
+  //   target: {
   //       target: String,
   //       action: String,
   //       attacking: String
-  //     },
-  //   ],
+  //   },
   //   roleSwitch: {
   //     losing: {
   //        player: null,
@@ -43,6 +41,7 @@ export default function CoupActionbar() {
 
   useEffect(() => {
     switch (turn.stage) {
+      case "block":
       case "callout":
       case "roleSwitch":
         setMaxTimeRem(30000);
@@ -94,49 +93,48 @@ export default function CoupActionbar() {
       },
     ];
 
-    // If there are targets, allow user to call them out
-    if (turn.targets && turn.targets.length > 0) {
-      // Loop through targets to make Call out buttons for each target (or block depending on action)
-      for (const turnTarget of turn.targets) {
-        let title;
-        switch (turnTarget.action) {
-          case "foreignAid": // Foreign Aid is blocked by Duke, so it is also calling out a Duke
-          case "tax":
-            title = `Call Out ${turnTarget.target}'s 'Duke'`;
-            break;
-          case "exchange":
-            title = `Call Out ${turnTarget.target}'s Ambassador`;
-            break;
-          case "steal":
-            title = `Call Out ${turnTarget.target}'s Captain`;
-            break;
-          case "blockSteal":
-            title = `Call Out ${turnTarget.target}'s ${turnTarget.blockingRole}`;
-            break;
-          default:
-            break;
-        }
+    // If there is a target, allow user to call them out
+    if (turn.target) {
+      // Make Call out button for the target
+      const turnTarget = turn.target;
+      let title;
+      switch (turnTarget.action) {
+        case "foreignAid": // Foreign Aid is blocked by Duke, so it is also calling out a Duke
+        case "tax":
+          title = `Call Out ${turnTarget.target}'s 'Duke'`;
+          break;
+        case "exchange":
+          title = `Call Out ${turnTarget.target}'s Ambassador`;
+          break;
+        case "steal":
+          title = `Call Out ${turnTarget.target}'s Captain`;
+          break;
+        case "blockSteal":
+          title = `Call Out ${turnTarget.target}'s ${turnTarget.blockingRole}`;
+          break;
+        default:
+          break;
+      }
 
-        const calloutButtonInfo = {
-          title: title,
+      const calloutButtonInfo = {
+        title: title,
+        onClick: action,
+        onClickArgs: ["callout", turnTarget.target],
+      };
+
+      // Add new buttonInfo to calloutButtonInfos
+      calloutButtonInfos.push(calloutButtonInfo);
+
+      if (
+        turnTarget.action === "steal" &&
+        turnTarget.attacking === userObj.username
+      ) {
+        calloutButtonInfos.push({
+          title: `Block ${turn.player}'s Steal With:`,
+          roles: ["Ambassador", "Captain"],
           onClick: action,
-          onClickArgs: ["callout", turnTarget.target],
-        };
-
-        // Add new buttonInfo to calloutButtonInfos
-        calloutButtonInfos.push(calloutButtonInfo);
-
-        if (
-          turnTarget.action === "steal" &&
-          turnTarget.attacking === userObj.username
-        ) {
-          calloutButtonInfos.push({
-            title: `Block ${turn.player}'s Steal With:`,
-            roles: ["Ambassador", "Captain"],
-            onClick: action,
-            onClickArgs: ["block", "steal", "role"],
-          });
-        }
+          onClickArgs: ["block", "steal", "role"],
+        });
       }
     } else {
       // If the action if foreignAid but no turnTargets, display block capability
@@ -240,6 +238,7 @@ export default function CoupActionbar() {
     let buttonInfos = [];
 
     switch (turn.stage) {
+      case "block":
       case "callout":
         // Don't display callout buttons if user has decided (or is being accused)
         if (!turn.deciding.includes(userObj.username)) {
@@ -407,9 +406,10 @@ export default function CoupActionbar() {
           textToDisplay = `${turn.player} is Exchanging...`;
         }
         break;
+      case "block":
       case "callout":
         let stageString;
-        if (turn.action === "foreignAid" && turn.targets.length === 0) {
+        if (turn.action === "foreignAid" && !turn.target) {
           stageString = "Block";
         } else {
           stageString = "Callout";

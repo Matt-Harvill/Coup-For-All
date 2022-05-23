@@ -11,9 +11,11 @@ export const blockForeignAid = async (user) => {
 
     // Update turn -> add player as a target, update deciding to be other players
     setTurn(game, {
-      targets: [
-        { target: user.username, action: "foreignAid", attacking: "none" },
-      ],
+      target: {
+        target: user.username,
+        action: "foreignAid",
+        attacking: "none",
+      },
       deciding: otherPlayers,
     });
 
@@ -32,14 +34,12 @@ export const blockSteal = async (user, role) => {
 
     // Update turn -> add player as a target, update deciding to be other players
     setTurn(game, {
-      targets: [
-        {
-          target: user.username,
-          action: "blockSteal",
-          attacking: "none",
-          blockingRole: role,
-        },
-      ],
+      target: {
+        target: user.username,
+        action: "blockSteal",
+        attacking: "none",
+        blockingRole: role,
+      },
       deciding: otherPlayers,
     });
 
