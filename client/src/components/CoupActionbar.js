@@ -232,7 +232,7 @@ export default function CoupActionbar() {
         }
         break;
       case "blockAction":
-        if (turn.player === userObj.username) {
+        if (!turn.challenging.includes(userObj.username)) {
           return;
         } else {
           let actionTitle, title, roles;
@@ -371,14 +371,14 @@ export default function CoupActionbar() {
         }
         break;
       case "blockAction":
-        if (turn.challenging && turn.challenging.includes(userObj.username)) {
-          textToDisplay = `Pass or Block`;
+        if (
+          !turn.challenging ||
+          (turn.challenging && turn.challenging.length === 0)
+        ) {
+          textToDisplay = `Finishing up Blocking...`;
         } else {
-          if (
-            !turn.challenging ||
-            (turn.challenging && turn.challenging.length === 0)
-          ) {
-            textToDisplay = `Finishing up Blocking...`;
+          if (turn.challenging.includes(userObj.username)) {
+            textToDisplay = `Pass or Block`;
           } else {
             const challenging = turn.challenging.join(", ");
             textToDisplay = `Waiting for ${challenging} to Pass or Block...`;
@@ -386,14 +386,14 @@ export default function CoupActionbar() {
         }
         break;
       case "challengeRole":
-        if (turn.challenging.includes(userObj.username)) {
-          textToDisplay = `Pass or Challenge`;
+        if (
+          !turn.challenging ||
+          (turn.challenging && turn.challenging.length === 0)
+        ) {
+          textToDisplay = `Finishing up Challenging...`;
         } else {
-          if (
-            !turn.challenging ||
-            (turn.challenging && turn.challenging.length === 0)
-          ) {
-            textToDisplay = `Finishing up Challenging...`;
+          if (turn.challenging.includes(userObj.username)) {
+            textToDisplay = `Pass or Challenge`;
           } else {
             const challenging = turn.challenging.join(", ");
             textToDisplay = `Waiting for ${challenging} to Pass or Challenge...`;

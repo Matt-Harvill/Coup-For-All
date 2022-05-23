@@ -106,10 +106,8 @@ export const setTurn = (game, newStats) => {
 
 export const startNewStage = async (game) => {
   const stage = getTurnProp(game.gameID, "stage");
-  const player = getTurnProp(game.gameID, "player");
-  const otherPlayers = game.players.filter(
-    (gamePlayer) => gamePlayer !== player
-  );
+
+  let challenging;
 
   let timeRemMS;
   switch (stage) {
@@ -118,9 +116,26 @@ export const startNewStage = async (game) => {
       timeRemMS = 15000;
       break;
     case "blockAction":
-    case "challengeRole":
+      const action = getTurnProp(game.gameID, "action");
+      if (action === "foreignAid") {
+        const player = getTurnProp(game.gameID, "player");
+        challenging = game.players.filter(
+          (gamePlayer) => gamePlayer !== player
+        );
+      } else {
+        const attackedPlayer = getTurnProp(game.gameID, "attacking");
+        challenging = [attackedPlayer];
+      }
       timeRemMS = 10000;
-      setTurn(game, { timeRemMS: timeRemMS, challenging: otherPlayers });
+      setTurn(game, { timeRemMS: timeRemMS, challenging: challenging });
+      break;
+    case "challengeRole":
+      const target = getTurnProp(game.gameID, "target");
+      timeRemMS = 10000;
+      challenging = game.players.filter(
+        (gamePlayer) => gamePlayer !== target.target
+      );
+      setTurn(game, { timeRemMS: timeRemMS, challenging: challenging });
       break;
     case "loseSwapRoles":
       timeRemMS = 10000;
