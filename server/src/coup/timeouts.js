@@ -51,11 +51,13 @@ export const calloutTimeout = (game) => {
   if (targets && targets.length > 0) {
     const firstTarget = targets[0];
     switch (firstTarget.action) {
+      case "blockSteal":
       case "foreignAid": // If target's action is foreignAid, it was successfully blocked (actionSuccess === false)
         setTurn(game, { actionSuccess: false });
         break;
       case "tax": // If target's action is tax and callout timed out, action was successful
       case "exchange":
+      case "steal":
         setTurn(game, { actionSuccess: true });
       default:
         break;

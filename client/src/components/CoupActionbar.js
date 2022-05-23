@@ -10,6 +10,7 @@ export default function CoupActionbar() {
   // turn: {
   //   player: String,
   //   action: String,
+  //   attacking: String,
   //   actionSuccess: null,
   //   timeRemMS: String,
   //   interval: (),
@@ -65,12 +66,24 @@ export default function CoupActionbar() {
     }
   };
 
+  const getStealablePlayers = () => {
+    if (game.players) {
+      return game.players.filter((player) => {
+        const [pStat] = game.pStats.filter((pStat) => pStat.player === player);
+        return player !== userObj.username && pStat.coins > 0;
+      });
+    } else {
+      return null;
+    }
+  };
+
   const action = (args) => {
     socket.emit("coup", ...args);
   };
 
   const displayButtons = () => {
     const otherPlayers = getOtherPlayers();
+    const stealablePlayers = getStealablePlayers();
     const roleNames = ["Ambassador", "Assassin", "Captain", "Contessa", "Duke"];
 
     const calloutButtonInfos = [
@@ -86,7 +99,6 @@ export default function CoupActionbar() {
       // Loop through targets to make Call out buttons for each target (or block depending on action)
       for (const turnTarget of turn.targets) {
         let title;
-
         switch (turnTarget.action) {
           case "foreignAid": // Foreign Aid is blocked by Duke, so it is also calling out a Duke
           case "tax":
@@ -94,6 +106,12 @@ export default function CoupActionbar() {
             break;
           case "exchange":
             title = `Call Out ${turnTarget.target}'s Ambassador`;
+            break;
+          case "steal":
+            title = `Call Out ${turnTarget.target}'s Captain`;
+            break;
+          case "blockSteal":
+            title = `Call Out ${turnTarget.target}'s ${turnTarget.blockingRole}`;
             break;
           default:
             break;
@@ -107,6 +125,18 @@ export default function CoupActionbar() {
 
         // Add new buttonInfo to calloutButtonInfos
         calloutButtonInfos.push(calloutButtonInfo);
+
+        if (
+          turnTarget.action === "steal" &&
+          turnTarget.attacking === userObj.username
+        ) {
+          calloutButtonInfos.push({
+            title: `Block ${turn.player}'s Steal With:`,
+            roles: ["Ambassador", "Captain"],
+            onClick: action,
+            onClickArgs: ["block", "steal", "role"],
+          });
+        }
       }
     } else {
       // If the action if foreignAid but no turnTargets, display block capability
@@ -149,14 +179,14 @@ export default function CoupActionbar() {
       //   onClick: null,
       //   onClickArgs: null,
       // },
-
-      // {
-      //   title: "Steal~",
-      //   selectionArgs: otherPlayers,
-      //   onClick: null,
-      //   onClickArgs: null,
-      // },
     ];
+
+    const stealButtonInfo = {
+      title: "Steal (up to 2 coins) From",
+      targets: stealablePlayers,
+      onClick: action,
+      onClickArgs: ["steal", "target"],
+    };
 
     const coupButtonInfo = {
       title: "Coup ",
@@ -253,6 +283,9 @@ export default function CoupActionbar() {
             const pStat = game.pStats.find((pStat) => {
               return pStat.player === userObj.username;
             });
+            if (stealablePlayers && stealablePlayers.length > 0) {
+              regularButtonInfos.push(stealButtonInfo);
+            }
             if (pStat.coins < 10) {
               buttonInfos = regularButtonInfos;
             }

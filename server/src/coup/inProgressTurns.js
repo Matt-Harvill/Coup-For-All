@@ -2,6 +2,7 @@
 // turn: {
 //   player: String,
 //   action: String,
+//   attacking: String,
 //   actionSuccess: null,
 //   timeRemMS: String,
 //   interval: (),
@@ -34,6 +35,7 @@ import { postCalloutTax } from "./tax.js";
 import { loseRoleAuto, switchRole } from "./roleSwitching.js";
 import { calloutTimeout, moveTimeout, roleSwitchTimeout } from "./timeouts.js";
 import { postCalloutExchange } from "./exchange.js";
+import { postCalloutSteal } from "./steal.js";
 
 // Store the inProgress games' turn stages (mapped by gameID)
 const turns = {};
@@ -218,6 +220,7 @@ const calloutOver = (game) => {
   // If actionSuccess is null then action was allowed
   if (actionSuccess === null) {
     switch (action) {
+      case "steal":
       case "foreignAid":
       case "tax":
       case "exchange":
@@ -247,6 +250,11 @@ const calloutOver = (game) => {
       break;
     case "assassinate":
     case "steal":
+      if (actionSuccess) {
+        postCalloutSteal(game);
+      } else {
+        endTurn(game);
+      }
       break;
     case "coup":
       endTurn(game);
@@ -333,6 +341,7 @@ export const createTurn = (game) => {
     turns[game.gameID] = {
       player: game.players[0],
       action: "",
+      attacking: null,
       actionSuccess: null,
       timeRemMS: null,
       interval: null,

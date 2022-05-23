@@ -13,9 +13,10 @@ import { noCallout } from "./noCallout.js";
 import { preCalloutTax } from "./tax.js";
 import { callout } from "./callout.js";
 import { loseRole } from "./loseRoles.js";
-import { blockForeignAid } from "./blockForeignAid.js";
+import { blockForeignAid, blockSteal } from "./blockForeignAid.js";
 import { coupAction } from "./coupAction.js";
 import { exchangeRoles, preCalloutExchange } from "./exchange.js";
+import { preCalloutSteal } from "./steal.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -123,6 +124,10 @@ export const eventSwitch = async (event, socket, ...args) => {
       const [coupTarget, coupRole] = args;
       coupAction(user, coupTarget, coupRole);
       break;
+    case "steal":
+      const stealTarget = args[0];
+      preCalloutSteal(user, stealTarget);
+      break;
     case "exchange":
       preCalloutExchange(user);
       break;
@@ -148,6 +153,9 @@ export const eventSwitch = async (event, socket, ...args) => {
         case "foreignAid":
           blockForeignAid(user);
           break;
+        case "steal":
+          const role = args[1];
+          blockSteal(user, role);
         default:
           break;
       }

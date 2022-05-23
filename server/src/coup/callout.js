@@ -18,6 +18,16 @@ const calloutHandler = (game, user, target, targetRoles, targetAction) => {
       roleToCheck = "Ambassador";
       isTurnAction = true;
       break;
+    case "steal":
+      roleToCheck = "Captain";
+      isTurnAction = true;
+      break;
+    case "blockSteal":
+      const targets = getTurnProp(game.gameID, "targets");
+      const target = targets.find((target) => (target.action = "blockSteal"));
+      roleToCheck = target.blockingRole;
+      isTurnAction = false;
+      break;
     default:
       throw `${targetAction} is not a valid callout action`;
   }
