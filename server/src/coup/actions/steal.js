@@ -1,5 +1,7 @@
-import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
-import { endStage, endTurn, getTurnProp, setTurn } from "./inProgressTurns.js";
+import { getGame, updateUserAndGame } from "../../utils/dbUtils.js";
+import { endStage, endTurn, getTurnProp, setTurn } from "../inProgressTurns.js";
+
+export const stealEndStage = (game, stage) => {};
 
 export const postCalloutSteal = async (game) => {
   const player = getTurnProp(game.gameID, "player");

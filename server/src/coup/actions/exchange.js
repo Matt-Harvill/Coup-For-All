@@ -3,9 +3,11 @@ import {
   endTurn,
   setTurn,
   startNewStage,
-} from "./inProgressTurns.js";
-import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
-import { shuffleArray } from "../utils/shuffleArray.js";
+} from "../inProgressTurns.js";
+import { getGame, updateUserAndGame } from "../../utils/dbUtils.js";
+import { shuffleArray } from "../../utils/shuffleArray.js";
+
+export const exchangeEndStage = (game, stage) => {};
 
 function removeItemOnce(arr, value) {
   var index = arr.indexOf(value);

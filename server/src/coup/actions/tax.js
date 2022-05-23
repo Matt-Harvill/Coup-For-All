@@ -1,5 +1,7 @@
-import { endStage, endTurn, getTurnProp, setTurn } from "./inProgressTurns.js";
-import { getGame, updateUserAndGame, getUserObj } from "../utils/dbUtils.js";
+import { endStage, endTurn, getTurnProp, setTurn } from "../inProgressTurns.js";
+import { getGame, updateUserAndGame, getUserObj } from "../../utils/dbUtils.js";
+
+export const taxEndStage = (game, stage) => {};
 
 export const postCalloutTax = async (game) => {
   const player = getTurnProp(game.gameID, "player");

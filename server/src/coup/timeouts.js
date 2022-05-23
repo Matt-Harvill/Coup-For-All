@@ -1,6 +1,6 @@
 import { getUserObj } from "../utils/dbUtils.js";
-import { coupAction } from "./coupAction.js";
-import { income } from "./income.js";
+import { coupAction } from "./actions/coupAction.js";
+import { selectIncome } from "./actions/income.js";
 import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
 import { loseRole } from "./loseRoles.js";
 
@@ -40,7 +40,7 @@ export const moveTimeout = async (game) => {
 
       await coupAction(userObj, target, role);
     } else {
-      await income(userObj);
+      await selectIncome(userObj);
     }
   }
 };

@@ -28,12 +28,18 @@
 
 import { getSocket } from "../utils/socketUtils.js";
 import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
-import { postCalloutForeignAid } from "./foreignAid.js";
-import { postCalloutTax } from "./tax.js";
+import {
+  foreignAidEndStage,
+  completeForeignAid,
+} from "./actions/foreignAid.js";
+import { postCalloutTax, taxEndStage } from "./actions/tax.js";
 import { loseRoleAuto, switchRole } from "./roleSwitching.js";
 import { calloutTimeout, moveTimeout, roleSwitchTimeout } from "./timeouts.js";
-import { postCalloutExchange } from "./exchange.js";
-import { postCalloutSteal } from "./steal.js";
+import { exchangeEndStage, postCalloutExchange } from "./actions/exchange.js";
+import { postCalloutSteal, stealEndStage } from "./actions/steal.js";
+import { incomeEndStage } from "./actions/income.js";
+import { coupEndStage } from "./actions/coupAction.js";
+import { assassinateEndStage } from "./actions/assassinate.js";
 
 // Store the inProgress games' turn stages (mapped by gameID)
 const turns = {};
@@ -193,11 +199,13 @@ const preCalloutOver = (game) => {
   const action = getTurnProp(game.gameID, "action");
 
   switch (action) {
-    case "":
     case "income":
       endTurn(game);
       break;
     case "foreignAid":
+      setTurn(game, { stage: "block" });
+      startNewStage(game);
+      break;
     case "tax":
     case "assassinate":
     case "exchange":
@@ -238,7 +246,7 @@ const calloutOver = (game) => {
   switch (action) {
     case "foreignAid":
       if (actionSuccess) {
-        postCalloutForeignAid(game);
+        completeForeignAid(game);
       } else {
         endTurn(game);
       }
@@ -275,7 +283,34 @@ const calloutOver = (game) => {
 
 // End the current stage and start the next
 export const endStage = (game) => {
+  const action = getTurnProp(game.gameID, "action");
   const stage = getTurnProp(game.gameID, "stage");
+
+  switch (action) {
+    case "income":
+      incomeEndStage(game, stage);
+      break;
+    case "foreignAid":
+      foreignAidEndStage(game, stage);
+      break;
+    case "tax":
+      taxEndStage(game, stage);
+      break;
+    case "exchange":
+      exchangeEndStage(game, stage);
+      break;
+    case "coup":
+      coupEndStage(game, stage);
+      break;
+    case "steal":
+      stealEndStage(game, stage);
+      break;
+    case "assassinate":
+      assassinateEndStage(game, stage);
+      break;
+    default:
+      throw `${action} not valid (in endStage)`;
+  }
 
   switch (stage) {
     case "preCallout":
@@ -343,7 +378,7 @@ export const createTurn = (game) => {
     // Create a new turn object if game isn't in progress (in memory)
     turns[game.gameID] = {
       player: game.players[0],
-      action: "",
+      action: null,
       attacking: null,
       actionSuccess: null,
       timeRemMS: null,

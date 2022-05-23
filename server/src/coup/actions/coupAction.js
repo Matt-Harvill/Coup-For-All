@@ -1,5 +1,7 @@
-import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
-import { endStage, setTurn } from "./inProgressTurns.js";
+import { getGame, updateUserAndGame } from "../../utils/dbUtils.js";
+import { endStage, setTurn } from "../inProgressTurns.js";
+
+export const coupEndStage = (game, stage) => {};
 
 export const coupAction = async (user, target, role) => {
   const game = await getGame(user.gameTitle, user.gameID);

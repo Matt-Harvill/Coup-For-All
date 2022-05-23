@@ -7,16 +7,16 @@ import { deleteGame } from "./deleteGame.js";
 import { joinGame } from "./joinGame.js";
 import { leaveGame } from "./leaveGame.js";
 import { getGameState, publicGameState } from "./getGameState.js";
-import { income } from "./income.js";
-import { preCalloutForeignAid } from "./foreignAid.js";
+import { selectIncome } from "./actions/income.js";
+import { selectForeignAid } from "./actions/foreignAid.js";
 import { noCallout } from "./noCallout.js";
-import { preCalloutTax } from "./tax.js";
+import { preCalloutTax } from "./actions/tax.js";
 import { callout } from "./callout.js";
 import { loseRole } from "./loseRoles.js";
-import { blockForeignAid, blockSteal } from "./blockForeignAid.js";
-import { coupAction } from "./coupAction.js";
-import { exchangeRoles, preCalloutExchange } from "./exchange.js";
-import { preCalloutSteal } from "./steal.js";
+import { blockForeignAid, blockSteal } from "./blocks.js";
+import { coupAction } from "./actions/coupAction.js";
+import { exchangeRoles, preCalloutExchange } from "./actions/exchange.js";
+import { preCalloutSteal } from "./actions/steal.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -112,10 +112,10 @@ export const eventSwitch = async (event, socket, ...args) => {
       getGameState(socket);
       break;
     case "income":
-      income(user);
+      selectIncome(user);
       break;
     case "foreignAid":
-      preCalloutForeignAid(user);
+      selectForeignAid(user);
       break;
     case "tax":
       preCalloutTax(user);
