@@ -7,6 +7,8 @@ import {
 } from "../inProgressTurns.js";
 import { getGame, updateUserAndGame, getUserObj } from "../../utils/dbUtils.js";
 
+// ForeignAid -> selectAction, blockAction (challengeRole (loseSwapRoles)), completeAction
+
 export const foreignAidEndStage = (game, stage) => {
   switch (stage) {
     case "selectAction":

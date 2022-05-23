@@ -9,6 +9,7 @@
 //   attacking: String,
 
 //   actionSuccess: Boolean,
+//   assassinating: Boolean,
 
 //   target: {
 //     target: String,

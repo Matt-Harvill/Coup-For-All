@@ -15,6 +15,8 @@ const removeItemOnce = (arr, value) => {
   }
 };
 
+// Exchange -> selectAction, challengeRole (loseSwapRoles), completeAction
+
 export const exchangeEndStage = (game, stage) => {
   switch (stage) {
     case "selectAction":
@@ -25,6 +27,7 @@ export const exchangeEndStage = (game, stage) => {
       if (loseSwap.losing || loseSwap.swapping) {
         setTurn(game, { stage: "loseSwapRoles" });
       } else {
+        // No one challenged exchange
         prepareExchange(game);
       }
       break;

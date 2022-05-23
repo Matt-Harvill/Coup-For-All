@@ -7,6 +7,8 @@ import {
 } from "../inProgressTurns.js";
 import { getGame, updateUserAndGame } from "../../utils/dbUtils.js";
 
+// Assassinate -> selectAction, challengeRole (loseSwapRoles), blockAction (challengeRole (loseSwapRoles)), completeAction (loseSwapRoles)
+
 export const assassinateEndStage = (game, stage) => {
   const target = getTurnProp(game.gameID, "target");
 
@@ -19,19 +21,25 @@ export const assassinateEndStage = (game, stage) => {
       if (loseSwap.losing || loseSwap.swapping) {
         setTurn(game, { stage: "loseSwapRoles" });
       } else {
+        // Assassinate has been selected and not contested
         if (target.action === "assassinate") {
           prepareAssassinate(game);
-        } else if (target.action === "blockAssassinate") {
-          setTurn(game, { stage: "completeAction" });
+        }
+        // Assassinate has been prepared and then blocked
+        else if (target.action === "blockAssassinate") {
+          endTurn(game);
         } else {
           throw `${target.action} not valid target action in assassinate`;
         }
       }
       break;
     case "blockAction":
+      // Assassinate block not attempted, so go through with it
       if (target.action === "assassinate") {
         setTurn(game, { stage: "completeAction" });
-      } else if (target.action === "blockAssassinate") {
+      }
+      // Assassinate block attempted, check if block defends
+      else if (target.action === "blockAssassinate") {
         setTurn(game, { stage: "challengeRole" });
       } else {
         throw `${target.action} not valid target action in assassinate`;
@@ -40,10 +48,17 @@ export const assassinateEndStage = (game, stage) => {
     case "loseSwapRoles":
       const actionSuccess = getTurnProp(game.gameID, "actionSuccess");
       if (actionSuccess) {
+        // Assassinate has been selected and not contested
         if (target.action === "assassinate") {
           prepareAssassinate(game);
         } else if (target.action === "blockAssassinate") {
-          setTurn(game, { stage: "completeAction" });
+          const assassinating = getTurnProp(game.gameID, "assassinating");
+          // Assassinate has been selected and not contested
+          if (assassinating) {
+            endTurn(game); // If assassinating, this was final stage
+          } else {
+            setTurn(game, { stage: "completeAction" }); // If not assassinating, go to complete it
+          }
         } else {
           throw `${target.action} not valid target action in assassinate`;
         }
@@ -52,7 +67,8 @@ export const assassinateEndStage = (game, stage) => {
       }
       break;
     case "completeAction":
-      endTurn(game);
+      // After assassination complete, carry out losing roles
+      setTurn(game, { stage: "loseSwapRoles" });
       return;
     default:
       throw `${stage} not valid endStage for tax`;

@@ -7,6 +7,8 @@ import {
 } from "../inProgressTurns.js";
 import { getGame, updateUserAndGame, getUserObj } from "../../utils/dbUtils.js";
 
+// Tax -> selectAction, challengeRole (loseSwapRoles), completeAction
+
 export const taxEndStage = (game, stage) => {
   switch (stage) {
     case "selectAction":
@@ -17,6 +19,7 @@ export const taxEndStage = (game, stage) => {
       if (loseSwap.losing || loseSwap.swapping) {
         setTurn(game, { stage: "loseSwapRoles" });
       } else {
+        // No one challenged tax
         setTurn(game, { stage: "completeAction" });
       }
       break;

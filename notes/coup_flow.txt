@@ -28,15 +28,15 @@ I will need to restructure everything such that only one target at a time and th
 
 At any given time there will only be one turnTarget - DONE
 Possible stages: preCallout, callout, block (another callout), postCallout 
-New names: selectAction, challengeRole, blockAction, loseAndOrSwap, completeAction
+New names: selectAction, challengeRole, blockAction, loseSwapRoles, completeAction
 
-- Income -> preCallout
-- ForeignAid -> preCallout, block (another callout), postCallout
-- Tax -> preCallout, callout, postCallout
-- Exchange -> preCallout, callout, postCallout
-- Coup -> preCallout
-- Steal -> preCallout, callout, block (another callout), postCallout
-- Assassinate -> preCallout, callout (loseAndOrSwap), block (another callout (loseAndOrSwap)), postCallout (loseAndOrSwap)
+// Income -> selectAction
+// ForeignAid -> selectAction, blockAction (challengeRole (loseSwapRoles)), completeAction
+// Tax -> selectAction, challengeRole (loseSwapRoles), completeAction
+// Exchange -> selectAction, challengeRole (loseSwapRoles), completeAction
+// Coup -> selectAction, loseSwapRoles
+// Steal -> selectAction, challengeRole (loseSwapRoles), blockAction (challengeRole (loseSwapRoles)), completeAction
+// Assassinate -> selectAction, challengeRole (loseSwapRoles), blockAction (challengeRole (loseSwapRoles)), completeAction, loseSwapRoles
 
 prepareAssassinate could possibly halt the game if DB can't be committed to
 

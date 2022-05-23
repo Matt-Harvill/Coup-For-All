@@ -7,6 +7,8 @@ import {
 } from "../inProgressTurns.js";
 import { getGame, updateUserAndGame } from "../../utils/dbUtils.js";
 
+// Coup -> selectAction, loseSwapRoles
+
 export const coupEndStage = (game, stage) => {
   switch (stage) {
     case "selectAction":

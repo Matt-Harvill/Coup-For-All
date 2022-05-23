@@ -7,6 +7,8 @@ import {
 } from "../inProgressTurns.js";
 import { getGame, updateUserAndGame } from "../../utils/dbUtils.js";
 
+// Steal -> selectAction, challengeRole (loseSwapRoles), blockAction (challengeRole (loseSwapRoles)), completeAction
+
 export const stealEndStage = (game, stage) => {
   const target = getTurnProp(game.gameID, "target");
 
@@ -19,9 +21,12 @@ export const stealEndStage = (game, stage) => {
       if (loseSwap.losing || loseSwap.swapping) {
         setTurn(game, { stage: "loseSwapRoles" });
       } else {
+        // Steal has been selected and not contested
         if (target.action === "steal") {
           setTurn(game, { stage: "blockAction" });
-        } else if (target.action === "blockSteal") {
+        }
+        // Block has not been contested
+        else if (target.action === "blockSteal") {
           endTurn(game);
         } else {
           throw `${target.action} not valid target action in steal`;
@@ -29,9 +34,12 @@ export const stealEndStage = (game, stage) => {
       }
       break;
     case "blockAction":
+      // Block selected, allow for challenging blocker
       if (target.action === "blockSteal") {
         setTurn(game, { stage: "challengeRole" });
-      } else if (target.action === "steal") {
+      }
+      // Block not selected, continue to complete steal
+      else if (target.action === "steal") {
         setTurn(game, { stage: "completeAction" });
       } else {
         throw `${target.action} not valid target action in steal`;

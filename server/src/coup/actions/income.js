@@ -1,6 +1,8 @@
 import { getGame, updateUserAndGame } from "../../utils/dbUtils.js";
 import { endStage, endTurn, setTurn } from "../inProgressTurns.js";
 
+// Income -> selectAction
+
 export const incomeEndStage = (game, stage) => {
   switch (stage) {
     case "selectAction":
