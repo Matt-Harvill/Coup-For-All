@@ -40,5 +40,4 @@ New names: selectAction, challengeRole, blockAction, loseSwapRoles, completeActi
 
 prepareAssassinate could possibly halt the game if DB can't be committed to
 
-
-need to fix updating challenging array
+fixed the block stage, now I need to fix the assassinate action

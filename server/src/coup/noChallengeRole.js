@@ -7,14 +7,19 @@ export const noChallengeRole = async (user) => {
   const gameID = game.gameID;
 
   let challenging = getTurnProp(gameID, "challenging");
-  // Remove player from challenging
-  challenging = challenging.filter((undecidedPlayer) => {
-    return undecidedPlayer !== user.username;
-  });
 
-  setTurn(game, { challenging: challenging });
+  if (!challenging) {
+    console.log(`Error in noChallengeRole, challenging is ${challenging}`);
+  } else {
+    // Remove player from challenging
+    challenging = challenging.filter((undecidedPlayer) => {
+      return undecidedPlayer !== user.username;
+    });
 
-  if (challenging.length === 0) {
-    challengeTimeout(game);
+    setTurn(game, { challenging: challenging });
+
+    if (challenging.length === 0) {
+      challengeTimeout(game);
+    }
   }
 };
