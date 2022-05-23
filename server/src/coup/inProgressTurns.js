@@ -1,30 +1,35 @@
 // Mapped by gameID
-// turn: {
+// let turn = {
+//   timeRemMS: String,
+//   interval: Function,
+//   stage: String, // selectAction, challengeRole, blockAction, loseSwapRoles, completeAction
+
 //   player: String,
 //   action: String,
 //   attacking: String,
-//   actionSuccess: null,
-//   timeRemMS: String,
-//   interval: (),
-//   stage: String, // Turn can be preCallout, callout, postCallout
+
+//   actionSuccess: Boolean,
+
 //   target: {
-//       target: String,
-//       action: String,
-//       attacking: String
+//     target: String,
+//     action: String,
+//     attacking: String,
 //   },
-//   roleSwitch: {
+//   challenging: Array,
+
+//   loseSwap: {
 //     losing: {
-//        player: null,
-//        role: null
+//       player: String,
+//       role: String,
 //     },
-//     switching: {
-//        player: null,
-//        role: null
-//     }
+//     swapping: {
+//       player: String,
+//       role: String,
+//     },
 //   },
-//   exchangeRoles: [],
-//   deciding: [],
-// },
+
+//   exchangeRoles: Array,
+// };
 
 import { getSocket } from "../utils/socketUtils.js";
 import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
@@ -32,10 +37,10 @@ import {
   foreignAidEndStage,
   completeForeignAid,
 } from "./actions/foreignAid.js";
-import { postCalloutTax, taxEndStage } from "./actions/tax.js";
+import { completeTax, taxEndStage } from "./actions/tax.js";
 import { loseRoleAuto, switchRole } from "./roleSwitching.js";
 import { calloutTimeout, moveTimeout, roleSwitchTimeout } from "./timeouts.js";
-import { exchangeEndStage, postCalloutExchange } from "./actions/exchange.js";
+import { exchangeEndStage, prepareExchange } from "./actions/exchange.js";
 import { postCalloutSteal, stealEndStage } from "./actions/steal.js";
 import { incomeEndStage } from "./actions/income.js";
 import { coupEndStage } from "./actions/coupAction.js";
@@ -253,7 +258,7 @@ const calloutOver = (game) => {
       break;
     case "tax":
       if (actionSuccess) {
-        postCalloutTax(game);
+        completeTax(game);
       } else {
         endTurn(game);
       }
@@ -271,7 +276,7 @@ const calloutOver = (game) => {
       break;
     case "exchange":
       if (actionSuccess) {
-        postCalloutExchange(game);
+        prepareExchange(game);
       } else {
         endTurn(game);
       }

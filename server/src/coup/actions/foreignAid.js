@@ -7,38 +7,6 @@ import {
 } from "../inProgressTurns.js";
 import { getGame, updateUserAndGame, getUserObj } from "../../utils/dbUtils.js";
 
-let turn = {
-  timeRemMS: String,
-  interval: Function,
-  stage: String, // selectAction, challengeRole, blockAction, loseSwapRoles, completeAction
-
-  player: String,
-  action: String,
-  attacking: String,
-
-  actionSuccess: Boolean,
-
-  target: {
-    target: String,
-    action: String,
-    attacking: String,
-  },
-  challenging: Array,
-
-  loseSwap: {
-    losing: {
-      player: String,
-      role: String,
-    },
-    swapping: {
-      player: String,
-      role: String,
-    },
-  },
-
-  exchangeRoles: Array,
-};
-
 export const foreignAidEndStage = (game, stage) => {
   switch (stage) {
     case "selectAction":
@@ -58,11 +26,17 @@ export const foreignAidEndStage = (game, stage) => {
       if (loseSwap.losing || loseSwap.swapping) {
         setTurn(game, { stage: "loseSwapRoles" });
       } else {
-        setTurn(game, { stage: "completeAction" });
+        // If challengeRole had no challenge, foreignAid was successfully blocked
+        endTurn(game);
       }
       break;
     case "loseSwapRoles":
-      setTurn(game, { stage: "completeAction" });
+      const actionSuccess = getTurnProp(game.gameID, "actionSuccess");
+      if (actionSuccess) {
+        setTurn(game, { stage: "completeAction" });
+      } else {
+        endTurn(game);
+      }
       break;
     case "completeAction":
       endTurn(game);

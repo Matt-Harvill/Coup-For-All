@@ -1,13 +1,43 @@
 import {
   endStage,
   endTurn,
+  getTurnProp,
   setTurn,
   startNewStage,
 } from "../inProgressTurns.js";
 import { getGame, updateUserAndGame } from "../../utils/dbUtils.js";
 import { shuffleArray } from "../../utils/shuffleArray.js";
 
-export const exchangeEndStage = (game, stage) => {};
+export const exchangeEndStage = (game, stage) => {
+  switch (stage) {
+    case "selectAction":
+      setTurn(game, { stage: "challengeRole" });
+      break;
+    case "challengeRole":
+      const loseSwap = getTurnProp(game.gameID, "loseSwap");
+      if (loseSwap.losing || loseSwap.swapping) {
+        setTurn(game, { stage: "loseSwapRoles" });
+      } else {
+        setTurn(game, { stage: "completeAction" });
+      }
+      break;
+    case "loseSwapRoles":
+      const actionSuccess = getTurnProp(game.gameID, "actionSuccess");
+      if (actionSuccess) {
+        setTurn(game, { stage: "completeAction" });
+      } else {
+        endTurn(game);
+      }
+      break;
+    case "completeAction":
+      endTurn(game);
+      return;
+    default:
+      throw `${stage} not valid endStage for exchange`;
+  }
+
+  startNewStage(game);
+};
 
 function removeItemOnce(arr, value) {
   var index = arr.indexOf(value);
@@ -16,90 +46,81 @@ function removeItemOnce(arr, value) {
   }
 }
 
-export const exchangeRoles = async (user, roles) => {
+export const completeExchange = async (user, selectedRoles) => {
   const game = await getGame(user.gameTitle, user.gameID);
   const pStat = game.pStats.find((pStat) => pStat.player === user.username);
 
   if (!pStat) {
-    console.log("Error updating exchange for", user.username);
-  }
-
-  // Find which of the selected roles are new and which are not
-  let newRoles = [];
-  let oldRoles = [];
-  for (const role of roles) {
-    if (role.isNew) {
-      newRoles.push(role.role);
-    } else {
-      oldRoles.push(role.role);
-    }
-  }
-
-  // If a role was exchanged...
-  if (newRoles.length > 0) {
-    let availRoles = shuffleArray(game.availRoles);
-
-    // Add back the role(s) that is/are being exchanged into availRoles
-    for (const role of pStat.roles) {
-      if (!oldRoles.includes(role)) {
-        availRoles.push(role);
+    console.log(`Error completing exchange for ${user.username}`);
+  } else {
+    let newRoles = [];
+    let oldRoles = [];
+    for (const role of selectedRoles) {
+      if (role.isNew) {
+        newRoles.push(role.role);
       } else {
-        removeItemOnce(oldRoles, role);
+        oldRoles.push(role.role);
       }
     }
-    // Remove new roles from availRoles
-    for (const role of newRoles) {
-      removeItemOnce(availRoles, role);
-    }
-    // Update pStat
-    pStat.roles = [];
-    for (const role of roles) {
-      pStat.roles.push(role.role);
-    }
 
-    // Set exchange roles to null (so exchangeButton hides before game update)
-    setTurn(game, { exchangeRoles: null });
+    if (newRoles.length > 0) {
+      let availRoles = shuffleArray(game.availRoles);
 
-    const committed = await updateUserAndGame(user, game, "updateGame");
+      // Add back the role(s) that is/are being exchanged into availRoles
+      for (const role of pStat.roles) {
+        if (!oldRoles.includes(role)) {
+          availRoles.push(role);
+        } else {
+          removeItemOnce(oldRoles, role);
+        }
+      }
+      // Remove new roles from availRoles
+      for (const role of newRoles) {
+        removeItemOnce(availRoles, role);
+      }
+      // Update pStat
+      pStat.roles = [];
+      for (const role of selectedRoles) {
+        pStat.roles.push(role.role);
+      }
 
-    if (!committed) {
-      console.log("Error committing exchange for", user.username);
+      setTurn(game, { exchangeRoles: null }); // so exchangeButton hides before game update
+
+      const committed = await updateUserAndGame(user, game, "updateGame");
+
+      if (!committed) {
+        console.log(`Error committing exchange for ${user.username}`);
+      } else {
+        endStage(game);
+      }
+    } else {
+      endStage(game);
     }
   }
-
-  // End the turn
-  endTurn(game);
 };
 
-export const postCalloutExchange = async (game) => {
-  // Start postCallout stage
-  setTurn(game, { stage: "postCallout" });
-  startNewStage(game);
-
-  // Shuffle the availableRoles
+export const prepareExchange = (game) => {
   shuffleArray(game.availRoles);
-  // First two roles will be exchangeRoles -> Should always be at least two roles
-  const exchangeRoles = game.availRoles.slice(0, 2);
-  // Set the turn's exchangeRoles
+  const exchangeRoles = game.availRoles.slice(0, 2); // First two roles
   setTurn(game, { exchangeRoles: exchangeRoles });
 };
 
-export const preCalloutExchange = async (user) => {
+export const selectExchange = async (user) => {
   const game = await getGame(user.gameTitle, user.gameID);
 
-  if (game) {
+  if (!game) {
+    console.log(`Error selecting exchange for ${user.username}`);
+  } else {
     const otherPlayers = game.players.filter(
       (player) => player !== user.username
     );
 
-    // Update the action to exchange, add player as a target, update deciding to be other players
     setTurn(game, {
       action: "exchange",
-      target: { target: user.username, action: "exchange", attacking: "none" },
-      deciding: otherPlayers,
+      target: { target: user.username, action: "exchange" },
+      challenging: otherPlayers,
     });
 
-    // End the preCallout stage for exchange
     endStage(game);
   }
 };

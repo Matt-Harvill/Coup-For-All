@@ -10,12 +10,12 @@ import { getGameState, publicGameState } from "./getGameState.js";
 import { selectIncome } from "./actions/income.js";
 import { selectForeignAid } from "./actions/foreignAid.js";
 import { noCallout } from "./noCallout.js";
-import { preCalloutTax } from "./actions/tax.js";
+import { selectTax } from "./actions/tax.js";
 import { callout } from "./callout.js";
 import { loseRole } from "./loseRoles.js";
 import { blockForeignAid, blockSteal } from "./blocks.js";
 import { coupAction } from "./actions/coupAction.js";
-import { exchangeRoles, preCalloutExchange } from "./actions/exchange.js";
+import { completeExchange, selectExchange } from "./actions/exchange.js";
 import { preCalloutSteal } from "./actions/steal.js";
 
 // Set of coup players in lobby
@@ -118,7 +118,7 @@ export const eventSwitch = async (event, socket, ...args) => {
       selectForeignAid(user);
       break;
     case "tax":
-      preCalloutTax(user);
+      selectTax(user);
       break;
     case "coupAction":
       const [coupTarget, coupRole] = args;
@@ -129,11 +129,11 @@ export const eventSwitch = async (event, socket, ...args) => {
       preCalloutSteal(user, stealTarget);
       break;
     case "exchange":
-      preCalloutExchange(user);
+      selectExchange(user);
       break;
     case "exchangeRoles":
       const roles = args;
-      exchangeRoles(user, roles);
+      completeExchange(user, roles);
       break;
     case "noCallout":
       noCallout(user);

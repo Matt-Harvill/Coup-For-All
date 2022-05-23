@@ -1,9 +1,44 @@
-import { endStage, endTurn, getTurnProp, setTurn } from "../inProgressTurns.js";
+import {
+  endStage,
+  endTurn,
+  getTurnProp,
+  setTurn,
+  startNewStage,
+} from "../inProgressTurns.js";
 import { getGame, updateUserAndGame, getUserObj } from "../../utils/dbUtils.js";
 
-export const taxEndStage = (game, stage) => {};
+export const taxEndStage = (game, stage) => {
+  switch (stage) {
+    case "selectAction":
+      setTurn(game, { stage: "challengeRole" });
+      break;
+    case "challengeRole":
+      const loseSwap = getTurnProp(game.gameID, "loseSwap");
+      if (loseSwap.losing || loseSwap.swapping) {
+        setTurn(game, { stage: "loseSwapRoles" });
+      } else {
+        setTurn(game, { stage: "completeAction" });
+      }
+      break;
+    case "loseSwapRoles":
+      const actionSuccess = getTurnProp(game.gameID, "actionSuccess");
+      if (actionSuccess) {
+        setTurn(game, { stage: "completeAction" });
+      } else {
+        endTurn(game);
+      }
+      break;
+    case "completeAction":
+      endTurn(game);
+      return;
+    default:
+      throw `${stage} not valid endStage for tax`;
+  }
 
-export const postCalloutTax = async (game) => {
+  startNewStage(game);
+};
+
+export const completeTax = async (game) => {
   const player = getTurnProp(game.gameID, "player");
   const user = await getUserObj(player);
 
@@ -15,35 +50,33 @@ export const postCalloutTax = async (game) => {
   });
 
   if (!pStat) {
-    console.log("Error updating tax for", user.username);
+    console.log(`Error completing tax for ${user.username}`);
+  } else {
+    const committed = await updateUserAndGame(user, game, "updateGame");
+    if (!committed) {
+      console.log(`Error committing tax for ${user.username}`);
+    } else {
+      endStage(game);
+    }
   }
-
-  const committed = await updateUserAndGame(user, game, "updateGame");
-
-  if (!committed) {
-    console.log("Error committing tax for", user.username);
-  }
-
-  // End the turn
-  endTurn(game);
 };
 
-export const preCalloutTax = async (user) => {
+export const selectTax = async (user) => {
   const game = await getGame(user.gameTitle, user.gameID);
 
-  if (game) {
+  if (!game) {
+    console.log(`Error selecting tax for ${user.username}`);
+  } else {
     const otherPlayers = game.players.filter(
       (player) => player !== user.username
     );
 
-    // Update the action to tax, add player as a target, update deciding to be other players
     setTurn(game, {
       action: "tax",
-      target: { target: user.username, action: "tax", attacking: "none" },
-      deciding: otherPlayers,
+      target: { target: user.username, action: "tax" },
+      challenging: otherPlayers,
     });
 
-    // End the preCallout stage for tax
     endStage(game);
   }
 };
