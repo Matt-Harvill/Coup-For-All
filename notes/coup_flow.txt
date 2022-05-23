@@ -22,7 +22,6 @@ For the frontend -> only show like 6 recent actions
 
 For switching roles, make it like the lose roles where it isn't automatic (looks weird and is too quick)
 
-Implement Stealing
 
 Start all roles selected for exchange as red
 

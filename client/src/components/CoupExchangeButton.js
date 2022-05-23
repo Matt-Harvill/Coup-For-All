@@ -23,11 +23,11 @@ export default function CoupExchangeButton(props) {
   const allRoles = playerRoles.concat(newRoles);
   let booleanSelected = [];
   for (let i = 0; i < allRoles.length; i++) {
-    if (i < numRoles) {
-      booleanSelected.push(true);
-    } else {
-      booleanSelected.push(false);
-    }
+    // if (i < numRoles) {
+    //   booleanSelected.push(true);
+    // } else {
+    booleanSelected.push(false);
+    // }
   }
   const [isSelected, setIsSelected] = useState(booleanSelected); // Indexes for selected roles
 

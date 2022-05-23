@@ -4,18 +4,22 @@ import { createTurn } from "./inProgressTurns.js";
 export const publicGameState = (game, username) => {
   // Change other players' data -> Don't show their roles to other clients
   const publicGame = JSON.parse(JSON.stringify(game._doc));
+  const isSpectator = publicGame.outPlayers.includes(username);
 
-  for (const pStat of publicGame.pStats) {
-    let newRoles = [];
-    for (const role of pStat.roles) {
-      if (pStat.player !== username) {
-        newRoles.push("hidden");
-      } else {
-        newRoles.push(role);
+  if (!isSpectator) {
+    for (const pStat of publicGame.pStats) {
+      let newRoles = [];
+      for (const role of pStat.roles) {
+        if (pStat.player !== username) {
+          newRoles.push("hidden");
+        } else {
+          newRoles.push(role);
+        }
       }
+      pStat.roles = newRoles;
     }
-    pStat.roles = newRoles;
   }
+
   return { ...publicGame, availRoles: null };
   // return publicGame;
 };
