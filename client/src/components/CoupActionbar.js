@@ -16,7 +16,7 @@ export default function CoupActionbar() {
     switch (turn.stage) {
       case "blockAction":
       case "challengeRole":
-      case "loseSwap":
+      case "loseSwapRoles":
         setMaxTimeRem(30000);
         break;
       case "selectAction":
@@ -144,12 +144,12 @@ export default function CoupActionbar() {
         onClick: action,
         onClickArgs: ["exchange"],
       },
-      // {
-      //   title: "Assassinate~",
-      //   selectionArgs: otherPlayers,
-      //   onClick: null,
-      //   onClickArgs: null,
-      // },
+      {
+        title: "Assassinate",
+        targets: otherPlayers,
+        onClick: action,
+        onClickArgs: ["assassinate", "target"],
+      },
     ];
 
     const stealButtonInfo = {
@@ -222,7 +222,7 @@ export default function CoupActionbar() {
           buttonInfos = calloutButtonInfos;
         }
         break;
-      case "loseSwap":
+      case "loseSwapRoles":
         // Get the player's pStat
         const pStat = game.pStats.find(
           (pStat) => pStat.player === userObj.username
@@ -398,22 +398,22 @@ export default function CoupActionbar() {
           }
         }
         break;
-      case "loseSwap":
+      case "loseSwapRoles":
         const loseSwap = turn.loseSwap;
         if (loseSwap.losing && loseSwap.losing.player === userObj.username) {
           textToDisplay = "Losing a Role";
         } else if (
-          loseSwap.switching &&
-          loseSwap.switching.player === userObj.username
+          loseSwap.swapping &&
+          loseSwap.swapping.player === userObj.username
         ) {
           textToDisplay = "Switching a Role";
         } else {
-          if (loseSwap.losing && loseSwap.switching) {
-            textToDisplay = `Waiting for ${loseSwap.losing.player} to Lose their Role and ${loseSwap.switching.player} to Switch their Role`;
+          if (loseSwap.losing && loseSwap.swapping) {
+            textToDisplay = `Waiting for ${loseSwap.losing.player} to Lose their Role and ${loseSwap.swapping.player} to Switch their Role`;
           } else if (loseSwap.losing) {
             textToDisplay = `Waiting for ${loseSwap.losing.player} to Lose their Role`;
-          } else if (loseSwap.switching) {
-            textToDisplay = `Waiting for ${loseSwap.switching.player} to Switch their Role`;
+          } else if (loseSwap.swapping) {
+            textToDisplay = `Waiting for ${loseSwap.swapping.player} to Switch their Role`;
           } else {
             textToDisplay = "Finishing up Role Losing/Switching...";
           }

@@ -20,7 +20,7 @@ Add a game history to the game DB object
 For the frontend -> only show like 6 recent actions
 
 
-For switching roles, make it like the lose roles where it isn't automatic (looks weird and is too quick)
+For swapping roles, make it like the lose roles where it isn't automatic (looks weird and is too quick)
 
 
 As of now, once a challenge happens, no more chance to block.

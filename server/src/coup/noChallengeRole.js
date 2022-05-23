@@ -6,16 +6,15 @@ export const noChallengeRole = async (user) => {
   const game = await getGame(user.gameTitle, user.gameID);
   const gameID = game.gameID;
 
-  let deciding = getTurnProp(gameID, "deciding");
-  // Remove player from still deciding
-  deciding = deciding.filter((undecidedPlayer) => {
+  let challenging = getTurnProp(gameID, "challenging");
+  // Remove player from challenging
+  challenging = challenging.filter((undecidedPlayer) => {
     return undecidedPlayer !== user.username;
   });
 
-  // Update the deciding array
-  setTurn(game, { deciding: deciding });
+  setTurn(game, { challenging: challenging });
 
-  if (deciding.length === 0) {
+  if (challenging.length === 0) {
     challengeTimeout(game);
   }
 };

@@ -45,13 +45,13 @@ export const loseRole = async (user, roleToLose, game, player, loseSwapObj) => {
   if (!committed) {
     console.log("Error committing loseRole for", username);
   } else {
-    const newRoleSwitch = { ...loseSwapObj, losing: null };
     // Update the losing to null now that it has been switched
+    const newRoleSwitch = { ...loseSwapObj, losing: null };
     setTurn(game, { loseSwap: newRoleSwitch });
 
-    // If losing and switching has been taken care of, end the stage
+    // If losing and swapping has been taken care of, end the stage
     const newRoleSwitchObj = getTurnProp(game.gameID, "loseSwap");
-    if (!newRoleSwitchObj.switching && !newRoleSwitchObj.losing) {
+    if (!newRoleSwitchObj.swapping && !newRoleSwitchObj.losing) {
       endStage(game);
     }
   }

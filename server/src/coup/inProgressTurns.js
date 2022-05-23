@@ -34,11 +34,12 @@
 
 import { getSocket } from "../utils/socketUtils.js";
 import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
-import { loseRoleAuto, switchRole } from "./loseSwaping.js";
+import { loseRoleAuto, switchRole } from "./loseSwapRoles.js";
 import {
   challengeTimeout,
   selectActionTimeout,
   loseSwapRolesTimeout,
+  completeActionTimeout,
 } from "./timeouts.js";
 import { incomeEndStage } from "./actions/income.js";
 import { foreignAidEndStage } from "./actions/foreignAid.js";
@@ -51,10 +52,8 @@ import { assassinateEndStage } from "./actions/assassinate.js";
 // Store the inProgress games' turn stages (mapped by gameID)
 const turns = {};
 
-// Have an update period for all time updates
 const updatePeriod = 100; // 100ms
 
-// See if turn exists
 export const turnExists = (gameID) => {
   if (turns[gameID]) {
     return true;
@@ -63,7 +62,6 @@ export const turnExists = (gameID) => {
   }
 };
 
-// Return a specific prop from the turn
 export const getTurnProp = (gameID, prop) => {
   const turn = turns[gameID];
   if (turn) {
@@ -71,7 +69,6 @@ export const getTurnProp = (gameID, prop) => {
   }
 };
 
-// Return the turn's toString (by gameID)
 export const turnToString = (gameID) => {
   const turn = turns[gameID];
   const turnWithoutInterval = { ...turn, interval: undefined };
@@ -79,9 +76,7 @@ export const turnToString = (gameID) => {
   return turnWithoutInterval;
 };
 
-// Send turn to all sockets in the game
 const sendTurnUpdates = (game) => {
-  // Update players with updated turn
   const allPlayers = game.players.concat(game.outPlayers);
   for (const player of allPlayers) {
     const socket = getSocket(player); // Get all the sockets of players in the game
@@ -98,7 +93,6 @@ export const setTurn = (game, newStats) => {
   if (turn) {
     for (let [key, value] of Object.entries(newStats)) {
       if (key == "interval" && turn.interval) {
-        // Clear the old interval
         clearInterval(turn.interval);
       }
       // Set the key's new value
@@ -110,7 +104,6 @@ export const setTurn = (game, newStats) => {
   }
 };
 
-// Handle starting a new stage
 export const startNewStage = async (game) => {
   const stage = getTurnProp(game.gameID, "stage");
 
@@ -125,24 +118,24 @@ export const startNewStage = async (game) => {
       break;
     case "challengeRole":
       timeRemMS = 30000;
-      const deciding = getTurnProp(game.gameID, "deciding");
-      if (deciding.length === 0) {
-        // Go to next stage if no one to call out
-        // Set the timeRemMS (So time bar doesn't look weird)
-        setTurn(game, { timeRemMS: timeRemMS });
-        endStage(game);
-        return;
-      }
+      // const deciding = getTurnProp(game.gameID, "challenging");
+      // if (deciding.length === 0) {
+      //   // Go to next stage if no one to call out
+      //   // Set the timeRemMS (So time bar doesn't look weird)
+      //   setTurn(game, { timeRemMS: timeRemMS });
+      //   endStage(game);
+      //   return;
+      // }
       break;
-    case "loseSwap":
+    case "loseSwapRoles":
       timeRemMS = 30000;
       setTurn(game, { timeRemMS: timeRemMS });
       const loseSwap = getTurnProp(game.gameID, "loseSwap");
       let stageEnding;
-      // Handle switching role
-      const switching = loseSwap.switching;
-      if (switching && switching.player) {
-        stageEnding = await switchRole(game, switching.player, switching.role);
+      // Handle swapping role
+      const swapping = loseSwap.swapping;
+      if (swapping && swapping.player) {
+        stageEnding = await switchRole(game, swapping.player, swapping.role);
         if (stageEnding) {
           return;
         }
@@ -150,7 +143,7 @@ export const startNewStage = async (game) => {
       // Handle losing role(s)
       const losing = loseSwap.losing;
       if (losing && losing.player) {
-        stageEnding = await loseRoleAuto(game, losing.player, losing.numRoles);
+        stageEnding = await loseRoleAuto(game, losing.player, 1);
         if (stageEnding) {
           return;
         }
@@ -160,10 +153,8 @@ export const startNewStage = async (game) => {
       throw `Not valid turn stage for gameID ${game.gameID}`;
   }
 
-  // Set timeRem
   setTurn(game, { timeRemMS: timeRemMS });
 
-  // Return the turn's timeRem
   const timeRem = () => {
     return getTurnProp(game.gameID, "timeRemMS");
   };
@@ -172,24 +163,26 @@ export const startNewStage = async (game) => {
     // Update the timeRem
     setTurn(game, { timeRemMS: timeRem() - updatePeriod });
 
-    // console.log("interval stage:", stage);
-
-    // Handle when time runs out
+    // Timeout Handler
     if (timeRem() === 0) {
       switch (stage) {
         case "selectAction":
           selectActionTimeout(game);
           break;
-        case "blockAction":
         case "challengeRole":
           challengeTimeout(game);
           break;
-        case "loseSwap":
+        case "loseSwapRoles":
           loseSwapRolesTimeout(game);
           break;
-        default:
+        case "completeAction":
+          completeActionTimeout(game);
+          break;
+        case "blockAction":
           endStage(game);
           break;
+        default:
+          throw `${stage} not valid in timeoutHandler`;
       }
     }
   }, updatePeriod);
@@ -198,7 +191,6 @@ export const startNewStage = async (game) => {
   setTurn(game, { interval: interval });
 };
 
-// End the current stage and start the next
 export const endStage = (game) => {
   const action = getTurnProp(game.gameID, "action");
   const stage = getTurnProp(game.gameID, "stage");
@@ -230,9 +222,7 @@ export const endStage = (game) => {
   }
 };
 
-// End the turn (by game)
 export const endTurn = async (game) => {
-  // Delete the current turn
   deleteTurn(game.gameID);
 
   const activePlayer = game.players.shift(); // Pop off the queue
@@ -241,11 +231,9 @@ export const endTurn = async (game) => {
   await updateUserAndGame(activePlayer, game, "updateGame"); // Update the game (So turn order is saved)
   const updatedGame = await getGame(game.gameTitle, game.gameID); // Get the updated game
 
-  // Create a new turn with the updated game
   createTurn(updatedGame);
 };
 
-// Delete the turn (by gameID)
 export const deleteTurn = (gameID) => {
   const turn = turns[gameID];
 
@@ -258,29 +246,46 @@ export const deleteTurn = (gameID) => {
   }
 };
 
-// Create the turn (by game)
 export const createTurn = (game) => {
   const turn = turns[game.gameID];
 
   if (!turn) {
     // Create a new turn object if game isn't in progress (in memory)
+
     turns[game.gameID] = {
-      player: game.players[0],
-      action: null,
-      attacking: null,
-      actionSuccess: true,
       timeRemMS: null,
       interval: null,
-      stage: "selectAction",
-      target: null,
-      loseSwap: {
-        losing: null,
-        switching: null,
+      stage: "selectAction", // non-null
+
+      player: game.players[0], // non-null
+      action: null,
+      attacking: null,
+
+      actionSuccess: true, // non-null
+      assassinating: null,
+
+      target: {
+        target: null,
+        action: null,
+        attacking: null,
+        blockingRole: null,
       },
+      challenging: null,
+
+      loseSwap: {
+        losing: {
+          player: null,
+          role: null,
+        },
+        swapping: {
+          player: null,
+          role: null,
+        },
+      },
+
       exchangeRoles: null,
     };
 
-    // Start the turn (in selectAction)
     startNewStage(game);
   }
 };

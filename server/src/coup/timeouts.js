@@ -1,8 +1,10 @@
 import { getUserObj } from "../utils/dbUtils.js";
+import { shuffleArray } from "../utils/shuffleArray.js";
 import { selectAndCompleteCoup } from "./actions/coup.js";
+import { completeExchange } from "./actions/exchange.js";
 import { selectAndCompleteIncome } from "./actions/income.js";
 import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
-import { loseRole } from "./loseRoles.js";
+import { loseRole } from "./loseRole.js";
 
 const randomElement = (items) => {
   return items[Math.floor(Math.random() * items.length)];
@@ -50,11 +52,13 @@ export const challengeTimeout = (game) => {
 
   if (target) {
     switch (target.action) {
+      // If blocks aren't challenged, action is failure
       case "blockAssassinate":
       case "blockSteal":
       case "blockForeignAid":
         setTurn(game, { actionSuccess: false });
         break;
+      // If actions aren't challenged, action is success
       case "assassinate":
       case "tax":
       case "exchange":
@@ -87,6 +91,32 @@ export const loseSwapRolesTimeout = async (game) => {
       const roleToLose = randomElement(pStat.roles);
       // Lose Role ends the stage
       await loseRole(userObj, roleToLose, game, player, loseSwap);
+    }
+  }
+};
+
+export const completeActionTimeout = async (game) => {
+  const player = getTurnProp(game.gameID, "player");
+  const userObj = await getUserObj(player);
+
+  const pStat = game.pStats.find((pStat) => {
+    return pStat.player === player;
+  });
+
+  if (!pStat) {
+    console.log(
+      `Error in selectActionTimeout for ${player} with gameID ${game.gameID}`
+    );
+  } else {
+    const turnAction = getTurnProp(game.gameID, "action");
+
+    if (turnAction === "exchange") {
+      const newExchangingRoles = getTurnProp(game.gameID, "exchangingRoles");
+      const allExchangingRoles = pStat.roles.concat(newExchangingRoles);
+      shuffleArray(allExchangingRoles);
+
+      // Complete Exchange ends the stage
+      await completeExchange(userObj, allExchangingRoles);
     }
   }
 };

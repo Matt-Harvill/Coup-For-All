@@ -12,7 +12,7 @@ import { selectForeignAid } from "./actions/foreignAid.js";
 import { noChallengeRole } from "./noChallengeRole.js";
 import { selectTax } from "./actions/tax.js";
 import { challengeRole } from "./challengeRole.js";
-import { loseRole } from "./loseRoles.js";
+import { loseRole } from "./loseRole.js";
 import {
   blockAssassinate,
   blockForeignAid,

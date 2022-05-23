@@ -57,10 +57,10 @@ const challengeHandler = (game, user, target, targetRoles, targetAction) => {
   const losing = {
     player: playerLosingRole,
   };
-  // Create switching object for use in loseSwap obj
-  let switching = null;
+  // Create swapping object for use in loseSwap obj
+  let swapping = null;
   if (playerSwitchingRole) {
-    switching = {
+    swapping = {
       player: playerSwitchingRole,
       role: roleToCheck,
     };
@@ -69,7 +69,7 @@ const challengeHandler = (game, user, target, targetRoles, targetAction) => {
   setTurn(game, {
     loseSwap: {
       losing: losing,
-      switching: switching,
+      swapping: swapping,
     },
     actionSuccess: actionSuccess,
   });
