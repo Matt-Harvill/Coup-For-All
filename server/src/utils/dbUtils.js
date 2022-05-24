@@ -130,9 +130,6 @@ export const updateUserAndGame = async (user, game, update) => {
               !updatedGame.players.includes(user) &&
               (user === player || user === attacked)
             ) {
-              console.log(
-                `endTurn in dbUtils with player: ${player}, attacking: ${attacked}, user: ${user}`
-              );
               await endTurn(updatedGame);
             }
           }

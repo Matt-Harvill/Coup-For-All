@@ -110,9 +110,11 @@ export const setTurn = (game, newStats) => {
 export const startNewStage = async (game) => {
   const stage = getTurnProp(game.gameID, "stage");
 
-  let challenging;
+  let challenging, timeRemMS;
 
-  let timeRemMS;
+  // At each new stage, set displayLoseButtons to false to reset it
+  setTurn(game, { displayLoseButtons: false });
+
   switch (stage) {
     case "selectAction":
     case "completeAction":

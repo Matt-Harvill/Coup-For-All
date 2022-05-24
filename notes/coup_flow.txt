@@ -40,3 +40,4 @@ next items of business are fixing possible concurrency problems (mostly in thing
 - if two challenges at the same time, nothing happens -> fix it so only one challenge allowed
 - think about other actions that are like this (like blocking foreign aid)
 
+Hid lose role button on assassination role loss
