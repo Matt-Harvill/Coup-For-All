@@ -37,3 +37,9 @@ I will need to restructure everything such that only one target at a time and th
 prepareAssassinate could possibly halt the game if DB can't be committed to
 
 next items of business are fixing possible concurrency problems (mostly in things like challengeRole etc.)
+- if two challenges at the same time, nothing happens -> fix it so only one challenge allowed
+- think about other actions that are like this (like blocking foreign aid)
+
+After challenge for captain, should still be able to block -> look back over the flow of turns to make sure its good
+
+If someone challenges the assassination on them (and loses), the turn needs to end

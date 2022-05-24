@@ -9,7 +9,7 @@ import { getGame, updateUserAndGame } from "../../utils/dbUtils.js";
 
 // Steal -> selectAction, challengeRole (loseSwapRoles), blockAction (challengeRole (loseSwapRoles)), completeAction
 
-export const stealEndStage = (game, stage) => {
+export const stealEndStage = async (game, stage) => {
   const target = getTurnProp(game.gameID, "target");
 
   switch (stage) {
@@ -42,7 +42,6 @@ export const stealEndStage = (game, stage) => {
       // Block not selected, continue to complete steal
       else if (target.action === "steal") {
         setTurn(game, { stage: "completeAction" });
-        completeSteal(game);
       } else {
         throw `${target.action} not valid target action in steal`;
       }
@@ -50,8 +49,16 @@ export const stealEndStage = (game, stage) => {
     case "loseSwapRoles":
       const actionSuccess = getTurnProp(game.gameID, "actionSuccess");
       if (actionSuccess) {
-        setTurn(game, { stage: "completeAction" });
-        completeSteal(game);
+        // Block selected, allow for challenging blocker
+        if (target.action === "blockSteal") {
+          setTurn(game, { stage: "completeAction" });
+        }
+        // Block not selected, continue to complete steal
+        else if (target.action === "steal") {
+          setTurn(game, { stage: "blockAction" });
+        } else {
+          throw `${target.action} not valid target action in steal`;
+        }
       } else {
         endTurn(game);
         return;
@@ -64,7 +71,11 @@ export const stealEndStage = (game, stage) => {
       throw `${stage} not valid endStage for tax`;
   }
 
-  startNewStage(game);
+  await startNewStage(game);
+  const newStage = getTurnProp(game.gameID, "stage");
+  if (newStage === "completeAction") {
+    completeSteal(game);
+  }
 };
 
 export const completeSteal = async (game) => {
