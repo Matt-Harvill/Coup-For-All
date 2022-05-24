@@ -2,7 +2,8 @@ import io from "socket.io-client";
 
 let url;
 if (process.env.NODE_ENV === "development") {
-  url = "http://localhost";
+  // url = "http://localhost";
+  url = "http://192.168.1.236";
 } else {
   url = "https://game-website-sockets.herokuapp.com";
 }
