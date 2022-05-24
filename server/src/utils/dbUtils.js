@@ -124,7 +124,12 @@ export const updateUserAndGame = async (user, game, update) => {
             await gameOver(updatedGame);
           } else {
             const player = getTurnProp(game.gameID, "player");
-            if (user && !updatedGame.players.includes(user)) {
+            const attacked = getTurnProp(game.gameID, "attacking");
+            if (
+              user &&
+              !updatedGame.players.includes(user) &&
+              (user === player || user === attacked)
+            ) {
               await endTurn(updatedGame);
             }
           }
