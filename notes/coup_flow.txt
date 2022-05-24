@@ -26,10 +26,6 @@ For swapping roles, make it like the lose roles where it isn't automatic (looks 
 As of now, once a challenge happens, no more chance to block.
 I will need to restructure everything such that only one target at a time and that the end of callout lets blocking for certain roles
 
-At any given time there will only be one turnTarget - DONE
-Possible stages: selectAction, callout, block (another callout), completeAction 
-New names: selectAction, challengeRole, blockAction, loseSwapRoles, completeAction
-
 // Income -> selectAction
 // ForeignAid -> selectAction, blockAction (challengeRole (loseSwapRoles)), completeAction
 // Tax -> selectAction, challengeRole (loseSwapRoles), completeAction
@@ -40,4 +36,5 @@ New names: selectAction, challengeRole, blockAction, loseSwapRoles, completeActi
 
 prepareAssassinate could possibly halt the game if DB can't be committed to
 
-fixed the block stage, now I need to fix the assassinate action
+Want to make it so that auto lose role doesn't show the lose role button
+

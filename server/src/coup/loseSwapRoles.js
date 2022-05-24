@@ -49,10 +49,10 @@ const endOfLoseRoleAuto = (game, loseSwapObj, stillNeedToLoseRole) => {
   }
 };
 
-export const loseRoleAuto = async (game, player, numRolesLosing) => {
+export const loseRoleAuto = async (game, player) => {
   const loseSwapObj = getTurnProp(game.gameID, "loseSwap");
   const pStat = game.pStats.find((pStat) => pStat.player === player);
-  console.log("pStat, player", pStat, player, "in loseRoleAuto");
+
   const playerRoles = pStat.roles;
   const numRoles = playerRoles.length;
 
@@ -61,8 +61,8 @@ export const loseRoleAuto = async (game, player, numRolesLosing) => {
   // Cases:
   // Attempt to remove specific role fails -> do nothing (cleanup tho)
   // remove one of two roles (not automatically) -> do nothing (cleanup tho)
-  // remove one of two roles (automatically - both are same or it is specified and found)
-  // remove one/one or two/two (player is out)
+  // remove one of two roles (automatically - if it is specified and found)
+  // remove one/one (player is out)
 
   // Specific role to lose is specified
   if (loseSwapObj.losing.role) {
@@ -82,17 +82,7 @@ export const loseRoleAuto = async (game, player, numRolesLosing) => {
   }
   // Specific role to lose is not specified
   else {
-    // Player will not lose from this role loss
-    if (numRolesLosing < numRoles) {
-      // Both roles are the same
-      if (playerRoles[0] === playerRoles[1]) {
-        // Changing so that not automatically lose even if they have the same role
-        // removeOneRole = true;
-        // roleToLose = playerRoles[0];
-      }
-    }
-    // Player will lose from this role loss
-    else {
+    if (numRoles === 1) {
       playerOut = true;
     }
   }

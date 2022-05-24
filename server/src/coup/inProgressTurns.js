@@ -126,6 +126,7 @@ export const startNewStage = async (game) => {
         const attackedPlayer = getTurnProp(game.gameID, "attacking");
         challenging = [attackedPlayer];
       }
+      // console.log(`blockAction started, challenging: ${challenging}`);
       timeRemMS = 10000;
       setTurn(game, { timeRemMS: timeRemMS, challenging: challenging });
       break;
@@ -153,7 +154,7 @@ export const startNewStage = async (game) => {
       // Handle losing role(s)
       const losing = loseSwap.losing;
       if (losing && losing.player) {
-        stageEnding = await loseRoleAuto(game, losing.player, 1);
+        stageEnding = await loseRoleAuto(game, losing.player);
         if (stageEnding) {
           return;
         }

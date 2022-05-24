@@ -11,6 +11,7 @@ import { getGame, updateUserAndGame } from "../../utils/dbUtils.js";
 
 export const assassinateEndStage = async (game, stage) => {
   const target = getTurnProp(game.gameID, "target");
+  // console.log(`Assassin end stage ${stage} called`);
 
   switch (stage) {
     case "selectAction":
@@ -23,7 +24,7 @@ export const assassinateEndStage = async (game, stage) => {
       } else {
         // Assassinate has been selected and not contested
         if (target.action === "assassinate") {
-          prepareAssassinate(game);
+          await prepareAssassinate(game);
         }
         // Assassinate has been prepared and then blocked
         else if (target.action === "blockAssassinate") {
@@ -38,7 +39,6 @@ export const assassinateEndStage = async (game, stage) => {
       // Assassinate block not attempted, so go through with it
       if (target.action === "assassinate") {
         setTurn(game, { stage: "completeAction" });
-        completeAssassinate(game);
       }
       // Assassinate block attempted, check if block defends
       else if (target.action === "blockAssassinate") {
@@ -50,19 +50,17 @@ export const assassinateEndStage = async (game, stage) => {
     case "loseSwapRoles":
       const actionSuccess = getTurnProp(game.gameID, "actionSuccess");
       if (actionSuccess) {
+        const assassinating = getTurnProp(game.gameID, "assassinating");
+        // If assassinating, this was final stage
+        if (assassinating) {
+          endTurn(game);
+          return;
+        }
         // Assassinate has been selected and not contested
-        if (target.action === "assassinate") {
-          prepareAssassinate(game);
+        else if (target.action === "assassinate") {
+          await prepareAssassinate(game);
         } else if (target.action === "blockAssassinate") {
-          const assassinating = getTurnProp(game.gameID, "assassinating");
-          // Assassinate has been selected and not contested
-          if (assassinating) {
-            endTurn(game); // If assassinating, this was final stage
-            return;
-          } else {
-            setTurn(game, { stage: "completeAction" }); // If not assassinating, go to complete it
-            completeAssassinate(game);
-          }
+          setTurn(game, { stage: "completeAction" }); // If not assassinating, go to complete it
         } else {
           throw `${target.action} not valid target action in assassinate`;
         }
@@ -76,10 +74,14 @@ export const assassinateEndStage = async (game, stage) => {
       setTurn(game, { stage: "loseSwapRoles" });
       break;
     default:
-      throw `${stage} not valid endStage for tax`;
+      throw `${stage} not valid endStage for assassinate`;
   }
 
-  startNewStage(game);
+  await startNewStage(game);
+  const newStage = getTurnProp(game.gameID, "stage");
+  if (newStage === "completeAction") {
+    completeAssassinate(game);
+  }
 };
 
 const prepareAssassinate = async (game) => {
@@ -94,6 +96,11 @@ const prepareAssassinate = async (game) => {
   if (!pStat) {
     console.log(`Error preparing assassinate for ${player}`);
   } else {
+    // If player doesn't have enough coins, don't allow the assassination
+    if (pStat.coins < 0) {
+      return;
+    }
+
     const committed = await updateUserAndGame(player, game, "updateGame");
     if (!committed) {
       console.log(`Error committing assassinate prep for ${player}`);

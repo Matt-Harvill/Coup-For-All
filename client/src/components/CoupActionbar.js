@@ -65,6 +65,13 @@ export default function CoupActionbar() {
     const otherPlayers = getOtherPlayers();
     const roleNames = ["Ambassador", "Assassin", "Captain", "Contessa", "Duke"];
 
+    const assassinateButtonInfo = {
+      title: "Assassinate",
+      targets: otherPlayers,
+      onClick: action,
+      onClickArgs: ["assassinate", "target"],
+    };
+
     const coupButtonInfo = {
       title: "Coup ",
       secondText: "For ",
@@ -128,12 +135,6 @@ export default function CoupActionbar() {
               onClick: action,
               onClickArgs: ["exchange"],
             },
-            {
-              title: "Assassinate",
-              targets: otherPlayers,
-              onClick: action,
-              onClickArgs: ["assassinate", "target"],
-            },
           ];
 
           // If player can steal, add that button
@@ -147,6 +148,9 @@ export default function CoupActionbar() {
             regularButtonInfos.push(stealButtonInfo);
           }
 
+          if (pStat.coins >= 3) {
+            regularButtonInfos.push(assassinateButtonInfo);
+          }
           if (pStat.coins < 10) {
             buttonInfos = regularButtonInfos;
           }
@@ -235,6 +239,7 @@ export default function CoupActionbar() {
         if (!turn.challenging.includes(userObj.username)) {
           return;
         } else {
+          console.log(`${turn.challenging} in blockAction buttonStuff`);
           let actionTitle, title, roles;
           let onClickArgs = ["blockAction", turn.action];
 
