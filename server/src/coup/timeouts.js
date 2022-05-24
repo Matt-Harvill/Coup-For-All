@@ -112,12 +112,29 @@ export const completeActionTimeout = async (game) => {
     const turnAction = getTurnProp(game.gameID, "action");
 
     if (turnAction === "exchange") {
-      const newExchangingRoles = getTurnProp(game.gameID, "exchangingRoles");
-      const allExchangingRoles = pStat.roles.concat(newExchangingRoles);
+      let allExchangingRoles = [];
+      const newExchangeRoles = getTurnProp(game.gameID, "exchangeRoles");
+
+      // Add new and old roles to allExchangingRoles
+      for (const newRole of newExchangeRoles) {
+        allExchangingRoles.push({
+          role: newRole,
+          isNew: true,
+        });
+      }
+      for (const oldRole of pStat.roles) {
+        allExchangingRoles.push({
+          role: oldRole,
+          isNew: false,
+        });
+      }
       shuffleArray(allExchangingRoles);
 
+      const numPlayerRoles = pStat.roles.length;
+      const exchangeRoles = allExchangingRoles.splice(0, numPlayerRoles);
+
       // Complete Exchange ends the stage
-      await completeExchange(userObj, allExchangingRoles);
+      await completeExchange(userObj, exchangeRoles);
     }
   }
 };
