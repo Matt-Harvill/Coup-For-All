@@ -9,7 +9,7 @@ import { getGame, updateUserAndGame, getUserObj } from "../../utils/dbUtils.js";
 
 // ForeignAid -> selectAction, blockAction (challengeRole (loseSwapRoles)), completeAction
 
-export const foreignAidEndStage = (game, stage) => {
+export const foreignAidEndStage = async (game, stage) => {
   switch (stage) {
     case "selectAction":
       setTurn(game, { stage: "blockAction" });
@@ -21,7 +21,6 @@ export const foreignAidEndStage = (game, stage) => {
         setTurn(game, { stage: "challengeRole" });
       } else {
         setTurn(game, { stage: "completeAction" });
-        completeForeignAid(game);
       }
       break;
     case "challengeRole":
@@ -38,7 +37,6 @@ export const foreignAidEndStage = (game, stage) => {
       const actionSuccess = getTurnProp(game.gameID, "actionSuccess");
       if (actionSuccess) {
         setTurn(game, { stage: "completeAction" });
-        completeForeignAid(game);
       } else {
         endTurn(game);
         return;
@@ -52,6 +50,10 @@ export const foreignAidEndStage = (game, stage) => {
   }
 
   startNewStage(game);
+  const newStage = getTurnProp(game.gameID, "stage");
+  if (newStage === "completeAction") {
+    completeForeignAid(game);
+  }
 };
 
 export const completeForeignAid = async (game) => {

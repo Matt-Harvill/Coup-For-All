@@ -9,7 +9,7 @@ import { getGame, updateUserAndGame, getUserObj } from "../../utils/dbUtils.js";
 
 // Tax -> selectAction, challengeRole (loseSwapRoles), completeAction
 
-export const taxEndStage = (game, stage) => {
+export const taxEndStage = async (game, stage) => {
   switch (stage) {
     case "selectAction":
       setTurn(game, { stage: "challengeRole" });
@@ -21,14 +21,15 @@ export const taxEndStage = (game, stage) => {
       } else {
         // No one challenged tax
         setTurn(game, { stage: "completeAction" });
-        completeTax(game);
       }
       break;
     case "loseSwapRoles":
       const actionSuccess = getTurnProp(game.gameID, "actionSuccess");
+      console.log(
+        `actionSuccess in tax loseSwapRoles complete ${actionSuccess}`
+      );
       if (actionSuccess) {
         setTurn(game, { stage: "completeAction" });
-        completeTax(game);
       } else {
         endTurn(game);
         return;
@@ -42,6 +43,10 @@ export const taxEndStage = (game, stage) => {
   }
 
   startNewStage(game);
+  const newStage = getTurnProp(game.gameID, "stage");
+  if (newStage === "completeAction") {
+    completeTax(game);
+  }
 };
 
 export const completeTax = async (game) => {

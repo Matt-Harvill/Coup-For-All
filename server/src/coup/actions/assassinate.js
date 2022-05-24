@@ -77,7 +77,7 @@ export const assassinateEndStage = async (game, stage) => {
       throw `${stage} not valid endStage for assassinate`;
   }
 
-  await startNewStage(game);
+  startNewStage(game);
   const newStage = getTurnProp(game.gameID, "stage");
   if (newStage === "completeAction") {
     completeAssassinate(game);

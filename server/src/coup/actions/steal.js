@@ -71,7 +71,7 @@ export const stealEndStage = async (game, stage) => {
       throw `${stage} not valid endStage for tax`;
   }
 
-  await startNewStage(game);
+  startNewStage(game);
   const newStage = getTurnProp(game.gameID, "stage");
   if (newStage === "completeAction") {
     completeSteal(game);
