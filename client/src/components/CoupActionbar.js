@@ -92,7 +92,7 @@ export default function CoupActionbar() {
 
     const coupButtonInfo = {
       title: "Coup ",
-      secondText: "For ",
+      secondText: "for ",
       targets: otherPlayers,
       roles: roleNames,
       onClick: action,
@@ -158,7 +158,7 @@ export default function CoupActionbar() {
           // If player can steal, add that button
           if (stealablePlayers && stealablePlayers.length > 0) {
             const stealButtonInfo = {
-              title: "Steal (up to 2 coins) From",
+              title: "Steal (up to 2 coins) from",
               targets: stealablePlayers,
               onClick: action,
               onClickArgs: ["steal", "target"],
@@ -407,13 +407,13 @@ export default function CoupActionbar() {
           !turn.challenging ||
           (turn.challenging && turn.challenging.length === 0)
         ) {
-          textToDisplay = `Finishing up Blocking...`;
+          textToDisplay = `Finishing up blocking...`;
         } else {
           if (turn.challenging.includes(userObj.username)) {
-            textToDisplay = `Pass or Block`;
+            textToDisplay = `Pass or block`;
           } else {
             const challenging = turn.challenging.join(", ");
-            textToDisplay = `Waiting for ${challenging} to Pass or Block...`;
+            textToDisplay = `Waiting for ${challenging} to pass or block...`;
           }
         }
         break;
@@ -422,34 +422,34 @@ export default function CoupActionbar() {
           !turn.challenging ||
           (turn.challenging && turn.challenging.length === 0)
         ) {
-          textToDisplay = `Finishing up Challenging...`;
+          textToDisplay = `Finishing up challenging...`;
         } else {
           if (turn.challenging.includes(userObj.username)) {
-            textToDisplay = `Pass or Challenge`;
+            textToDisplay = `Pass or challenge`;
           } else {
             const challenging = turn.challenging.join(", ");
-            textToDisplay = `Waiting for ${challenging} to Pass or Challenge...`;
+            textToDisplay = `Waiting for ${challenging} to pass or challenge...`;
           }
         }
         break;
       case "loseSwapRoles":
         const loseSwap = turn.loseSwap;
         if (loseSwap.losing && loseSwap.losing.player === userObj.username) {
-          textToDisplay = "Lose a Role";
+          textToDisplay = "Lose a role";
         } else if (
           loseSwap.swapping &&
           loseSwap.swapping.player === userObj.username
         ) {
-          textToDisplay = "Switching a Role";
+          textToDisplay = "Switching a role";
         } else {
           if (loseSwap.losing && loseSwap.swapping) {
-            textToDisplay = `Waiting for ${loseSwap.losing.player} to Lose their Role and ${loseSwap.swapping.player} to Switch their Role`;
+            textToDisplay = `Waiting for ${loseSwap.losing.player} to lose their role and ${loseSwap.swapping.player} to switch their role`;
           } else if (loseSwap.losing) {
-            textToDisplay = `Waiting for ${loseSwap.losing.player} to Lose their Role`;
+            textToDisplay = `Waiting for ${loseSwap.losing.player} to lose their role`;
           } else if (loseSwap.swapping) {
-            textToDisplay = `Waiting for ${loseSwap.swapping.player} to Switch their Role`;
+            textToDisplay = `Waiting for ${loseSwap.swapping.player} to switch their role`;
           } else {
-            textToDisplay = "Finishing up Role Losing/Switching...";
+            textToDisplay = "Finishing up role losing/switching...";
           }
         }
         break;
