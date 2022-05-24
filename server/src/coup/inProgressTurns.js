@@ -27,6 +27,7 @@
 //       player: String,
 //       role: String,
 //     },
+//     displayLoseButtons: Boolean,
 //   },
 
 //   exchangeRoles: Array,
@@ -159,6 +160,7 @@ export const startNewStage = async (game) => {
           return;
         }
       }
+      setTurn(game, { displayLoseButtons: true });
       break;
     default:
       throw `Not valid turn stage for gameID ${game.gameID}`;
@@ -282,6 +284,7 @@ export const createTurn = (game) => {
         losing: null,
         swapping: null,
       },
+      displayLoseButtons: false,
 
       exchangeRoles: null,
     };

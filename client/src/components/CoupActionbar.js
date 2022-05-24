@@ -205,8 +205,8 @@ export default function CoupActionbar() {
         }
         break;
       case "loseSwapRoles":
-        // If the player has roles, check them to see if they need to chose a role to lose
-        if (pStat && pStat.roles) {
+        // If the player has roles, check them to see if they need to chose a role to lose (and displayLoseButtons is true)
+        if (pStat && pStat.roles && turn.displayLoseButtons) {
           const loseSwap = turn.loseSwap;
           const playerRoles = pStat.roles;
           if (loseSwap.losing && loseSwap.losing.player === userObj.username) {

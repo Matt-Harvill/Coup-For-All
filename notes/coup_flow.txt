@@ -36,5 +36,4 @@ I will need to restructure everything such that only one target at a time and th
 
 prepareAssassinate could possibly halt the game if DB can't be committed to
 
-Want to make it so that auto lose role doesn't show the lose role button
 
