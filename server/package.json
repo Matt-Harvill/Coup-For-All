@@ -16,7 +16,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "watch": "nodemon src/index.js",
+    "watch": "set \"NODE_ENV=development\" && nodemon src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

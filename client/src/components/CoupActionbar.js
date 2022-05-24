@@ -1,8 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import {
-  longTurnTime,
-  shortTurnTime,
-} from "../../../server/src/coup/turnTimes";
+import { longTurnTime, shortTurnTime } from "../coupTurnTimes";
 import { socket } from "../socket";
 import AppContext from "./AppContext";
 import CoupActionButton from "./CoupActionButton";
