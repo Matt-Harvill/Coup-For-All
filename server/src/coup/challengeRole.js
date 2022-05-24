@@ -1,5 +1,9 @@
 import { getGame } from "../utils/dbUtils.js";
 import { endStage, getTurnProp, setTurn } from "./inProgressTurns.js";
+import AsyncLock from "async-lock";
+
+const lock = new AsyncLock();
+const key = "challengeKey";
 
 const challengeHandler = (game, user, target, targetRoles, targetAction) => {
   let roleToCheck;
@@ -77,17 +81,38 @@ const challengeHandler = (game, user, target, targetRoles, targetAction) => {
   endStage(game);
 };
 
+const lockedChallengeRole = async (user, target) => {
+  const game = await getGame(user.gameTitle, user.gameID);
+  if (game) {
+    const gameID = game.gameID;
+    // Get action (to compare to roles)
+    const targetObj = getTurnProp(gameID, "target");
+    const targetAction = targetObj.action;
+
+    // Get roles for target (to compare to action)
+    const targetPStat = game.pStats.find((pStat) => pStat.player === target);
+    const targetRoles = targetPStat.roles;
+
+    challengeHandler(game, user, target, targetRoles, targetAction);
+  }
+};
+
 export const challengeRole = async (user, target) => {
   const game = await getGame(user.gameTitle, user.gameID);
-  const gameID = game.gameID;
+  if (game) {
+    const gameID = game.gameID;
+    const stageID = getTurnProp(gameID, "stageID");
 
-  // Get action (to compare to roles)
-  const targetObj = getTurnProp(gameID, "target");
-  const targetAction = targetObj.action;
-
-  // Get roles for target (to compare to action)
-  const targetPStat = game.pStats.find((pStat) => pStat.player === target);
-  const targetRoles = targetPStat.roles;
-
-  challengeHandler(game, user, target, targetRoles, targetAction);
+    lock.acquire(key, () => {
+      const challenged = getTurnProp(gameID, "challenged");
+      if (
+        getTurnProp(gameID, "stage") === "challengeRole" &&
+        getTurnProp(gameID, "stageID") === stageID &&
+        !challenged
+      ) {
+        setTurn(game, { challenged: true });
+        lockedChallengeRole(user, target);
+      }
+    });
+  }
 };

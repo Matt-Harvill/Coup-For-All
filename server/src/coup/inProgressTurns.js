@@ -3,6 +3,7 @@
 //   timeRemMS: String,
 //   interval: Function,
 //   stage: String, // selectAction, challengeRole, blockAction, loseSwapRoles, completeAction
+//   stageID: Number,
 
 //   player: String,
 //   action: String,
@@ -32,7 +33,12 @@
 //   },
 
 //   exchangeRoles: Array,
+
+//   challenged: Boolean,
+//   blocked: Boolean,
+
 // };
+import crypto from "crypto";
 
 import { getSocket } from "../utils/socketUtils.js";
 import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
@@ -112,8 +118,15 @@ export const startNewStage = async (game) => {
 
   let challenging, timeRemMS;
 
-  // At each new stage, set displayLoseButtons to false to reset it
-  setTurn(game, { displayLoseButtons: false });
+  // At each new stage, Reset certain props
+  // set displayLoseButtons, challenged, blocked to false
+  // set stageID to new random hex string
+  setTurn(game, {
+    displayLoseButtons: false,
+    challenged: false,
+    blocked: false,
+    stageID: crypto.randomBytes(6).toString("hex"),
+  });
 
   switch (stage) {
     case "selectAction":
@@ -275,6 +288,7 @@ export const createTurn = (game) => {
       timeRemMS: null,
       interval: null,
       stage: "selectAction", // non-null
+      stageID: crypto.randomBytes(6).toString("hex"), // non-null
 
       player: game.players[0], // non-null
       action: null,
@@ -291,9 +305,12 @@ export const createTurn = (game) => {
         losing: null,
         swapping: null,
       },
-      displayLoseButtons: false,
+      displayLoseButtons: false, // non-null
 
       exchangeRoles: null,
+
+      challenged: false, // non-null
+      blocked: false, // non-null
     };
 
     startNewStage(game);

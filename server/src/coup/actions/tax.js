@@ -25,9 +25,6 @@ export const taxEndStage = async (game, stage) => {
       break;
     case "loseSwapRoles":
       const actionSuccess = getTurnProp(game.gameID, "actionSuccess");
-      console.log(
-        `actionSuccess in tax loseSwapRoles complete ${actionSuccess}`
-      );
       if (actionSuccess) {
         setTurn(game, { stage: "completeAction" });
       } else {
