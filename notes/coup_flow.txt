@@ -40,8 +40,6 @@ next items of business are fixing possible concurrency problems (mostly in thing
 - if two challenges at the same time, nothing happens -> fix it so only one challenge allowed
 - think about other actions that are like this (like blocking foreign aid)
 
-Fixed the assassination challenge -> now ends turn correctly
-
 
 Game updates show buttons (like when player gets three coins -> shows assassination button)
 Also lose role for the auto showed up again in assassination steps -> look into it

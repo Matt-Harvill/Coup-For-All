@@ -13,6 +13,23 @@ export default function CoupActionbar() {
   const [maxTimeRem, setMaxTimeRem] = useState(longTurnTime);
   const timeRem = turn.timeRemMS;
 
+  let actionString;
+  if (turn.action) {
+    switch (turn.action) {
+      case "foreignAid":
+        actionString = "foreign aid";
+        break;
+      case "assassinate":
+        actionString = "assassination";
+        break;
+      default:
+        break;
+    }
+    if (!actionString) {
+      actionString = turn.action;
+    }
+  }
+
   useEffect(() => {
     if (turn.stage) {
       switch (turn.stage) {
@@ -157,6 +174,11 @@ export default function CoupActionbar() {
           }
           if (pStat.coins >= 7) {
             buttonInfos.push(coupButtonInfo);
+          }
+
+          // If buttons are not to be displayed, reset buttonInfos
+          if (!turn.displayRegularButtons) {
+            buttonInfos = [];
           }
         } else {
           return;
@@ -360,7 +382,11 @@ export default function CoupActionbar() {
     switch (turn.stage) {
       case "selectAction":
         if (turn.player === userObj.username) {
-          textToDisplay = "Select your action";
+          if (turn.displayRegularButtons) {
+            textToDisplay = "Select your action";
+          } else {
+            textToDisplay = `Completing your income`;
+          }
         } else {
           textToDisplay = `${turn.player} is selecting their action...`;
         }
@@ -370,10 +396,10 @@ export default function CoupActionbar() {
           if (turn.exchangeRoles) {
             textToDisplay = "Exchange roles";
           } else {
-            textToDisplay = "Completing your action...";
+            textToDisplay = `Completing your ${actionString}...`;
           }
         } else {
-          textToDisplay = `${turn.player} is completing their ${turn.action}...`;
+          textToDisplay = `${turn.player} is completing their ${actionString}...`;
         }
         break;
       case "blockAction":

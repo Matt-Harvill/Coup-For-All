@@ -29,6 +29,7 @@ export const selectAndCompleteIncome = async (user) => {
     if (!pStat) {
       console.log(`Error completing income for ${user.username}`);
     } else {
+      setTurn(game, { displayRegularButtons: false });
       const committed = await updateUserAndGame(
         user.username,
         game,
@@ -36,6 +37,7 @@ export const selectAndCompleteIncome = async (user) => {
       );
       if (!committed) {
         console.log(`Error committing income for ${user.username}`);
+        setTurn(game, { displayRegularButtons: true });
       } else {
         setTurn(game, { action: "income" });
 

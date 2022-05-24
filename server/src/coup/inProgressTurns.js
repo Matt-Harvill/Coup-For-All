@@ -7,6 +7,7 @@
 //   player: String,
 //   action: String,
 //   attacking: String,
+//   displayRegularButtons: Boolean,
 
 //   actionSuccess: Boolean,
 //   assassinating: Boolean,
@@ -276,6 +277,7 @@ export const createTurn = (game) => {
       player: game.players[0], // non-null
       action: null,
       attacking: null,
+      displayRegularButtons: true, // non-null
 
       actionSuccess: true, // non-null
       assassinating: null,
