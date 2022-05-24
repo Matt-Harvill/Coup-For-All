@@ -5,6 +5,7 @@ import gameSchemaSwitch from "../gameSchemaSwitch.js";
 import {
   createTurn,
   deleteTurn,
+  endTurn,
   getTurnProp,
 } from "../coup/inProgressTurns.js";
 import { gameOver } from "../coup/gameOver.js";
@@ -97,17 +98,17 @@ export const updateUserAndGame = async (user, game, update) => {
     await session.commitTransaction();
     session.endSession();
 
-    let gameToUpdate;
+    let updatedGame;
     // Only send a game update if game is in progress, in which case, update all players
     if (game.status === "in progress") {
-      gameToUpdate = await getGame(game.gameTitle, game.gameID);
+      updatedGame = await getGame(game.gameTitle, game.gameID);
       if (update === "leaveGame") {
         usersUpdated.push(...allPlayers);
       }
     }
     // Update all the players in the game
     for (const user of usersUpdated) {
-      sendUpdatesSingle(user, gameToUpdate);
+      sendUpdatesSingle(user, updatedGame);
     }
 
     switch (update) {
@@ -116,23 +117,19 @@ export const updateUserAndGame = async (user, game, update) => {
         deleteTurn(game.gameID);
         break;
       case "updateGame":
-        // If only one player is left, set game to "completed" with the winner as the last player
-        if (gameToUpdate && gameToUpdate.players.length === 1) {
-          await gameOver(gameToUpdate);
-        }
-        break;
       case "leaveGame":
         // If only one player is left, set game to "completed" with the winner as the last player
-        if (gameToUpdate && gameToUpdate.players.length === 1) {
-          await gameOver(gameToUpdate);
-        } else {
-          const player = getTurnProp(game.gameID, "player");
-          if (player === user) {
-            deleteTurn(game.gameID);
-            // Then create a new turn
-            createTurn(game);
+        if (updatedGame && updatedGame.players) {
+          if (updatedGame.players.length === 1) {
+            await gameOver(updatedGame);
+          } else {
+            const player = getTurnProp(game.gameID, "player");
+            if (user && !updatedGame.players.includes(user)) {
+              await endTurn(updatedGame);
+            }
           }
         }
+        break;
       default:
         break;
     }

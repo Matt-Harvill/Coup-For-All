@@ -209,30 +209,32 @@ export const endStage = (game) => {
   const action = getTurnProp(game.gameID, "action");
   const stage = getTurnProp(game.gameID, "stage");
 
-  switch (action) {
-    case "income":
-      incomeEndStage(game, stage);
-      break;
-    case "foreignAid":
-      foreignAidEndStage(game, stage);
-      break;
-    case "tax":
-      taxEndStage(game, stage);
-      break;
-    case "exchange":
-      exchangeEndStage(game, stage);
-      break;
-    case "coup":
-      coupEndStage(game, stage);
-      break;
-    case "steal":
-      stealEndStage(game, stage);
-      break;
-    case "assassinate":
-      assassinateEndStage(game, stage);
-      break;
-    default:
-      throw `${action} not valid (in endStage)`;
+  if (action && stage) {
+    switch (action) {
+      case "income":
+        incomeEndStage(game, stage);
+        break;
+      case "foreignAid":
+        foreignAidEndStage(game, stage);
+        break;
+      case "tax":
+        taxEndStage(game, stage);
+        break;
+      case "exchange":
+        exchangeEndStage(game, stage);
+        break;
+      case "coup":
+        coupEndStage(game, stage);
+        break;
+      case "steal":
+        stealEndStage(game, stage);
+        break;
+      case "assassinate":
+        assassinateEndStage(game, stage);
+        break;
+      default:
+        throw `${action} not valid (in endStage)`;
+    }
   }
 };
 

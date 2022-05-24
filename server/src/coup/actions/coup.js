@@ -48,7 +48,11 @@ export const selectAndCompleteCoup = async (user, target, role) => {
         return;
       }
 
-      const committed = await updateUserAndGame(user, game, "updateGame");
+      const committed = await updateUserAndGame(
+        user.username,
+        game,
+        "updateGame"
+      );
       if (!committed) {
         console.log(`Error committing coup for ${user.username}`);
       } else {

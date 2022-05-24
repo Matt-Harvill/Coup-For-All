@@ -96,7 +96,11 @@ export const completeExchange = async (user, selectedRoles) => {
 
       setTurn(game, { exchangeRoles: null }); // so exchangeButton hides before game update
 
-      const committed = await updateUserAndGame(user, game, "updateGame");
+      const committed = await updateUserAndGame(
+        user.username,
+        game,
+        "updateGame"
+      );
 
       if (!committed) {
         console.log(`Error committing exchange for ${user.username}`);

@@ -58,7 +58,11 @@ export const completeTax = async (game) => {
   if (!pStat) {
     console.log(`Error completing tax for ${user.username}`);
   } else {
-    const committed = await updateUserAndGame(user, game, "updateGame");
+    const committed = await updateUserAndGame(
+      user.username,
+      game,
+      "updateGame"
+    );
     if (!committed) {
       console.log(`Error committing tax for ${user.username}`);
     } else {
