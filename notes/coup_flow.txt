@@ -36,4 +36,4 @@ I will need to restructure everything such that only one target at a time and th
 
 prepareAssassinate could possibly halt the game if DB can't be committed to
 
-
+next items of business are fixing possible concurrency problems (mostly in things like challengeRole etc.)

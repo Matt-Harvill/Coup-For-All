@@ -49,6 +49,7 @@ import { exchangeEndStage } from "./actions/exchange.js";
 import { coupEndStage } from "./actions/coup.js";
 import { stealEndStage } from "./actions/steal.js";
 import { assassinateEndStage } from "./actions/assassinate.js";
+import { longTurnTime, shortTurnTime } from "./turnTimes.js";
 
 // Store the inProgress games' turn stages (mapped by gameID)
 const turns = {};
@@ -114,7 +115,7 @@ export const startNewStage = async (game) => {
   switch (stage) {
     case "selectAction":
     case "completeAction":
-      timeRemMS = 15000;
+      timeRemMS = longTurnTime;
       break;
     case "blockAction":
       const action = getTurnProp(game.gameID, "action");
@@ -128,19 +129,19 @@ export const startNewStage = async (game) => {
         challenging = [attackedPlayer];
       }
       // console.log(`blockAction started, challenging: ${challenging}`);
-      timeRemMS = 10000;
+      timeRemMS = shortTurnTime;
       setTurn(game, { timeRemMS: timeRemMS, challenging: challenging });
       break;
     case "challengeRole":
       const target = getTurnProp(game.gameID, "target");
-      timeRemMS = 10000;
+      timeRemMS = shortTurnTime;
       challenging = game.players.filter(
         (gamePlayer) => gamePlayer !== target.target
       );
       setTurn(game, { timeRemMS: timeRemMS, challenging: challenging });
       break;
     case "loseSwapRoles":
-      timeRemMS = 10000;
+      timeRemMS = shortTurnTime;
       setTurn(game, { timeRemMS: timeRemMS });
       const loseSwap = getTurnProp(game.gameID, "loseSwap");
       let stageEnding;

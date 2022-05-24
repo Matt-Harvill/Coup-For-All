@@ -1,4 +1,8 @@
 import { useContext, useEffect, useState } from "react";
+import {
+  longTurnTime,
+  shortTurnTime,
+} from "../../../server/src/coup/turnTimes";
 import { socket } from "../socket";
 import AppContext from "./AppContext";
 import CoupActionButton from "./CoupActionButton";
@@ -9,7 +13,7 @@ import TimeLeft from "./TimeLeft";
 export default function CoupActionbar() {
   const { turn, game } = useContext(CoupGameContext);
   const { userObj } = useContext(AppContext);
-  const [maxTimeRem, setMaxTimeRem] = useState(15000);
+  const [maxTimeRem, setMaxTimeRem] = useState(longTurnTime);
   const timeRem = turn.timeRemMS;
 
   useEffect(() => {
@@ -18,11 +22,11 @@ export default function CoupActionbar() {
         case "blockAction":
         case "challengeRole":
         case "loseSwapRoles":
-          setMaxTimeRem(10000);
+          setMaxTimeRem(shortTurnTime);
           break;
         case "selectAction":
         case "completeAction":
-          setMaxTimeRem(15000);
+          setMaxTimeRem(longTurnTime);
           break;
         default:
           alert(`${turn.stage} is not a valid turn stage`);
