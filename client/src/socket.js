@@ -2,12 +2,12 @@ import io from "socket.io-client";
 
 let url;
 if (process.env.NODE_ENV === "development") {
-  url = "localhost";
+  url = "http://localhost";
 } else {
-  url = "game-website-sockets.herokuapp.com";
+  url = "https://game-website-sockets.herokuapp.com";
 }
 
-export const socket = io(`http://${url}:80`, {
+export const socket = io(url, {
   transports: ["websocket"],
 });
 
