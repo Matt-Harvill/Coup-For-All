@@ -364,7 +364,11 @@ export default function CoupActionbar() {
 
       return (
         <div
-          style={{ backgroundColor: "white", padding: 10, textAlign: "center" }}
+          style={{
+            backgroundColor: "#108A8F",
+            padding: 10,
+            textAlign: "center",
+          }}
         >
           <h5>Roles Out of Play</h5>
           <p>{unavailRoleStrings.join(", ")}</p>
@@ -464,7 +468,11 @@ export default function CoupActionbar() {
     if (game && game.outPlayers && game.outPlayers.includes(userObj.username)) {
       return (
         <div
-          style={{ backgroundColor: "white", padding: 10, textAlign: "center" }}
+          style={{
+            backgroundColor: "#108A8F",
+            padding: 10,
+            textAlign: "center",
+          }}
         >
           <h5>You Are Spectating</h5>
         </div>
@@ -485,7 +493,7 @@ export default function CoupActionbar() {
         style={{
           minHeight: 100,
           width: "100%",
-          backgroundColor: "#c4c4c4",
+          backgroundColor: "#464646",
           padding: 10,
           display: "grid",
           gridTemplateColumns: "1fr 2fr 1fr",
@@ -501,7 +509,7 @@ export default function CoupActionbar() {
         style={{
           minHeight: 100,
           width: "100%",
-          backgroundColor: "#c4c4c4",
+          backgroundColor: "#464646",
           padding: 10,
           display: "grid",
           gridTemplateColumns: "1fr 2fr 1fr",

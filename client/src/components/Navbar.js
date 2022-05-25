@@ -3,11 +3,14 @@ import AppContext from "./AppContext";
 import "../styles/Navbar.css";
 import { socket } from "../socket";
 
+const defaultColor = "#14FFEC";
+const hoverColor = "white";
+
 export default function Navbar() {
   const { setNewPage, auth, userObj } = useContext(AppContext);
-  const [gamesLinkColor, setGamesLinkColor] = useState("black");
-  const [coupLinkColor, setCoupLinkColor] = useState("black");
-  const [splendorLinkColor, setSplendorLinkColor] = useState("black");
+  const [gamesLinkColor, setGamesLinkColor] = useState(defaultColor);
+  const [coupLinkColor, setCoupLinkColor] = useState(defaultColor);
+  const [splendorLinkColor, setSplendorLinkColor] = useState(defaultColor);
 
   const logout = async () => {
     const response = await fetch("/logout", {
@@ -34,8 +37,8 @@ export default function Navbar() {
           onClick={() => {
             setNewPage("games");
           }}
-          onMouseEnter={() => setGamesLinkColor("white")}
-          onMouseLeave={() => setGamesLinkColor("black")}
+          onMouseEnter={() => setGamesLinkColor(hoverColor)}
+          onMouseLeave={() => setGamesLinkColor(defaultColor)}
         >
           Games
         </span>
@@ -49,8 +52,8 @@ export default function Navbar() {
           onClick={() => {
             setNewPage("coup");
           }}
-          onMouseEnter={() => setCoupLinkColor("white")}
-          onMouseLeave={() => setCoupLinkColor("black")}
+          onMouseEnter={() => setCoupLinkColor(hoverColor)}
+          onMouseLeave={() => setCoupLinkColor(defaultColor)}
         >
           Coup Lobby
         </span>
@@ -62,15 +65,15 @@ export default function Navbar() {
           onClick={() => {
             setNewPage("splendor");
           }}
-          onMouseEnter={() => setSplendorLinkColor("white")}
-          onMouseLeave={() => setSplendorLinkColor("black")}
+          onMouseEnter={() => setSplendorLinkColor(hoverColor)}
+          onMouseLeave={() => setSplendorLinkColor(defaultColor)}
         >
           Splendor
         </span>
       )} */}
 
       {userObj.gameStatus === "in progress" && (
-        <button onClick={leaveGame} style={{ backgroundColor: "#FF5A5A" }}>
+        <button onClick={leaveGame} style={{ backgroundColor: defaultColor }}>
           Leave Game
         </button>
       )}

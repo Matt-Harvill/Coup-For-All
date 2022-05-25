@@ -13,12 +13,12 @@ export default function CoupPlayerCard(props) {
   const style = {
     minHeight: 100,
     width: width,
-    backgroundColor: "#c4c4c4",
+    backgroundColor: "#464646",
     padding: 10,
   };
 
   if (pStat.player === activePlayer) {
-    style.boxShadow = "0px 0px 20px #FF5A5A";
+    style.boxShadow = "0px 0px 20px #14FFEC";
   }
 
   return (

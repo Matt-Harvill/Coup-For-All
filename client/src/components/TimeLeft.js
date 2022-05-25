@@ -10,7 +10,7 @@ export default function TimeLeft(props) {
         modTimeLeft = timeLeft;
       }
 
-      let timeLeftColor = "#FF5A5A";
+      let timeLeftColor = "#14FFEC";
       // if (modTimeLeft <= maxTimeLeft * 0.2) {
       //   timeLeftColor = "red";
       // } else if (modTimeLeft <= maxTimeLeft * 0.4) {

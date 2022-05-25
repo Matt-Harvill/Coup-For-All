@@ -54,7 +54,7 @@ export default function CoupCreateGame() {
         return (
           <button
             onClick={deleteGame}
-            style={{ width: "100%", backgroundColor: "#FF5A5A" }}
+            style={{ width: "100%", backgroundColor: "#14FFEC" }}
           >
             Delete Game
           </button>
@@ -63,7 +63,7 @@ export default function CoupCreateGame() {
         return (
           <button
             onClick={leaveGame}
-            style={{ width: "100%", backgroundColor: "#FF5A5A" }}
+            style={{ width: "100%", backgroundColor: "#14FFEC" }}
           >
             Leave Game
           </button>

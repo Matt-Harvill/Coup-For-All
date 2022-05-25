@@ -41,24 +41,30 @@ export default function Register() {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        gap: 10,
       }}
     >
       <h1>Register</h1>
-      <input
-        onChange={handleChange}
-        value={user.username}
-        autoFocus
-        autoComplete="off"
-        name="username"
-        placeholder="Username..."
-      ></input>
-      <input
-        onChange={handleChange}
-        value={user.password}
-        name="password"
-        type="password"
-        placeholder="Password..."
-      ></input>
+      <div>
+        <input
+          onChange={handleChange}
+          value={user.username}
+          autoFocus
+          autoComplete="off"
+          name="username"
+          placeholder="Username..."
+          style={{ display: "block" }}
+        ></input>
+        <input
+          onChange={handleChange}
+          value={user.password}
+          name="password"
+          type="password"
+          placeholder="Password..."
+          style={{ display: "block" }}
+        ></input>
+      </div>
+
       <button onClick={handleSubmit}>
         {!loading && "Register"}
         {loading && (
@@ -69,13 +75,21 @@ export default function Register() {
       </button>
 
       <div style={{ display: "block" }}>
-        <p
-          style={{ textDecoration: "underline", cursor: "pointer" }}
-          onClick={() => {
-            setNewPage("login");
-          }}
-        >
-          Login
+        <p style={{ display: "inline" }}>
+          Already have an account?{" "}
+          <p
+            style={{
+              textDecoration: "underline",
+              cursor: "pointer",
+              display: "inline",
+              color: "#14FFEC",
+            }}
+            onClick={() => {
+              setNewPage("login");
+            }}
+          >
+            Login
+          </p>
         </p>
       </div>
     </div>

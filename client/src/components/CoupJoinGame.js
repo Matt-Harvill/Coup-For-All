@@ -51,7 +51,7 @@ export default function CoupJoinGame(props) {
         <div
           style={{
             display: "flex",
-            backgroundColor: "#c4c4c4",
+            backgroundColor: "#464646",
             padding: 10,
             gap: 10,
             alignItems: "center",
@@ -73,7 +73,7 @@ export default function CoupJoinGame(props) {
         <div
           style={{
             display: "flex",
-            backgroundColor: "#c4c4c4",
+            backgroundColor: "#464646",
             padding: 10,
             gap: 10,
             alignItems: "center",
@@ -141,7 +141,9 @@ export default function CoupJoinGame(props) {
   const displayPlayerCount = () => {
     return (
       <div>
-        <strong>{`${numPlayers}/${maxPlayers}`}</strong>
+        {/* <strong> */}
+        {`${numPlayers}/${maxPlayers}`}
+        {/* </strong> */}
       </div>
     );
   };
@@ -165,11 +167,12 @@ export default function CoupJoinGame(props) {
       <div
         style={{
           display: "flex",
-          backgroundColor: "#c4c4c4",
+          backgroundColor: "#0D7377",
+          color: "#14FFEC",
           padding: 10,
           gap: 10,
           alignItems: "center",
-          // borderRadius: 10,
+          borderRadius: 10,
         }}
       >
         <div
@@ -178,7 +181,9 @@ export default function CoupJoinGame(props) {
             display: "inline",
           }}
         >
-          <strong>{`${game.founder}'s game`}</strong>
+          {/* <strong> */}
+          {`${game.founder}'s game`}
+          {/* </strong> */}
         </div>
 
         {displayPrivacy()}

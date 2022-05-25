@@ -40,7 +40,7 @@ export default function CoupExchangeButton(props) {
     } else {
       style = {
         margin: 5,
-        backgroundColor: "#FF5A5A",
+        backgroundColor: "#14FFEC",
       };
     }
 

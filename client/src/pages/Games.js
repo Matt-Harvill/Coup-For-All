@@ -21,12 +21,12 @@ export default function Games() {
   };
 
   const mouseOverGameCard = (e) => {
-    e.currentTarget.style.background = "#d3d3d3";
+    e.currentTarget.style.color = "#14FFEC";
     // e.currentTarget.querySelector("img").style.transform = "scale(1.275)";
   };
 
   const mouseOutGameCard = (e) => {
-    e.currentTarget.style.background = "#c4c4c4";
+    e.currentTarget.style.color = "#108A8F";
     // e.currentTarget.querySelector("img").style.transform = "scale(1.0)";
   };
 
@@ -34,10 +34,12 @@ export default function Games() {
     return (
       <div
         style={{
+          borderRadius: 10,
           padding: 20,
           width: 300,
           minHeight: 150,
-          backgroundColor: "#c4c4c4",
+          backgroundColor: "#464646",
+          // color: "#14FFEC",
           overflow: "hidden",
         }}
         // onMouseOver={mouseOverGameCard}
@@ -50,7 +52,7 @@ export default function Games() {
             height: 150,
             objectFit: "cover",
             objectPosition: "center",
-            border: "1px solid darkgrey",
+            // border: "1px solid darkgrey",
           }}
           alt={gameInfo.title}
           src={gameInfo.image}
