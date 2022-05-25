@@ -5,7 +5,7 @@ if (process.env.NODE_ENV === "development") {
   // url = "http://localhost";
   url = "http://192.168.1.236";
 } else {
-  url = "https://game-website-sockets.herokuapp.com";
+  url = "https://www.mharvillgames.com";
 }
 
 export const socket = io(url, {
