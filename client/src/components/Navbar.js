@@ -5,7 +5,7 @@ import { socket } from "../socket";
 
 export default function Navbar() {
   const { setNewPage, auth, userObj } = useContext(AppContext);
-  const [homeLinkColor, setHomeLinkColor] = useState("black");
+  const [gamesLinkColor, setGamesLinkColor] = useState("black");
   const [coupLinkColor, setCoupLinkColor] = useState("black");
   const [splendorLinkColor, setSplendorLinkColor] = useState("black");
 
@@ -30,20 +30,20 @@ export default function Navbar() {
 
       {auth === "auth" && (
         <span
-          style={{ cursor: "pointer", color: homeLinkColor }}
+          style={{ cursor: "pointer", color: gamesLinkColor }}
           onClick={() => {
-            setNewPage("home");
+            setNewPage("games");
           }}
-          onMouseEnter={() => setHomeLinkColor("white")}
-          onMouseLeave={() => setHomeLinkColor("black")}
+          onMouseEnter={() => setGamesLinkColor("white")}
+          onMouseLeave={() => setGamesLinkColor("black")}
         >
-          Home
+          Games
         </span>
       )}
 
       <div style={{ flex: 1 }}></div>
 
-      {auth === "auth" && (
+      {/* {auth === "auth" && (
         <span
           style={{ cursor: "pointer", color: coupLinkColor }}
           onClick={() => {
@@ -54,9 +54,9 @@ export default function Navbar() {
         >
           Coup
         </span>
-      )}
+      )} */}
 
-      {auth === "auth" && (
+      {/* {auth === "auth" && (
         <span
           style={{ cursor: "pointer", color: splendorLinkColor }}
           onClick={() => {
@@ -67,7 +67,7 @@ export default function Navbar() {
         >
           Splendor
         </span>
-      )}
+      )} */}
 
       {userObj.gameStatus === "in progress" && (
         <button onClick={leaveGame} style={{ backgroundColor: "#FF5A5A" }}>

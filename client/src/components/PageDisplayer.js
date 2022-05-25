@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import AppContext from "./AppContext";
 import CoupLobby from "../pages/CoupLobby";
-import Home from "../pages/Home";
+import Games from "../pages/Games";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import Splendor from "../pages/Splendor";
@@ -16,8 +16,8 @@ export default function PageDisplayer() {
         return <Login />;
       case "register":
         return <Register />;
-      case "home":
-        return <Home />;
+      case "games":
+        return <Games />;
       case "coup":
         return <CoupLobby />;
       case "coupGame":

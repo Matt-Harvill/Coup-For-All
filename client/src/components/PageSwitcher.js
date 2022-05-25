@@ -8,7 +8,7 @@ export default function PageSwitcher() {
   useEffect(() => {
     switch (auth) {
       case "auth":
-        setNewPage("home");
+        setNewPage("games");
         break;
       case "no auth":
         setNewPage("login");
@@ -40,7 +40,7 @@ export default function PageSwitcher() {
             setNewPage("coup");
             break;
           default:
-            setNewPage("home");
+            setNewPage("games");
         }
         break;
       default:
