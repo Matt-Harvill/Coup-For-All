@@ -11,23 +11,24 @@ export default function TimeLeft(props) {
       }
 
       const timeLeftColor = "#0D7377";
-      const windowWidth = window.innerWidth;
-      let timeBarStart;
-      if (windowWidth > 1000) {
-        timeBarStart = 3;
-      } else if (windowWidth > 600) {
-        timeBarStart = 5;
-      } else {
-        timeBarStart = 7;
-      }
 
-      let progressWidth;
-      const progress = (1 - modTimeLeft / maxTimeLeft) * 100;
-      if (progress < timeBarStart) {
-        progressWidth = timeBarStart;
-      } else {
-        progressWidth = progress;
-      }
+      // With actionBar padding of 10 left and right
+      const actionBarPaddingLeft = 10;
+      const actionBarPaddingRight = 10;
+      // With buttonBlock margins 20 each side
+      const buttonsMarginLeft = 20;
+      const buttonsMarginRight = 20;
+
+      const progressBarWidth =
+        (window.innerWidth - actionBarPaddingLeft - actionBarPaddingRight) / 2 -
+        buttonsMarginLeft -
+        buttonsMarginRight;
+
+      const startingWidth = 14;
+
+      const progressWidth =
+        startingWidth +
+        (1 - modTimeLeft / maxTimeLeft) * (progressBarWidth - startingWidth);
 
       return (
         <div
@@ -43,7 +44,7 @@ export default function TimeLeft(props) {
             aria-valuemin="0"
             aria-valuemax={maxTimeLeft.toString()}
             style={{
-              width: `${progressWidth}%`,
+              width: progressWidth,
               backgroundColor: timeLeftColor,
               borderRadius: 10,
               margin: 1,
