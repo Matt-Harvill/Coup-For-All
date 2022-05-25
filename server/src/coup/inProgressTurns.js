@@ -193,8 +193,8 @@ export const startNewStage = async (game) => {
     // Update the timeRem
     setTurn(game, { timeRemMS: timeRem() - updatePeriod });
 
-    // Timeout Handler
-    if (timeRem() === 0) {
+    // Timeout Handler (Add some delay -300 instead of 0)
+    if (timeRem() === -300) {
       switch (stage) {
         case "selectAction":
           selectActionTimeout(game);

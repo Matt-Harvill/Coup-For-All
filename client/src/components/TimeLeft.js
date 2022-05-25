@@ -10,17 +10,24 @@ export default function TimeLeft(props) {
         modTimeLeft = timeLeft;
       }
 
-      let timeLeftColor = "#14FFEC";
-      // if (modTimeLeft <= maxTimeLeft * 0.2) {
-      //   timeLeftColor = "red";
-      // } else if (modTimeLeft <= maxTimeLeft * 0.4) {
-      //   timeLeftColor = "yellow";
-      // } else if (modTimeLeft <= maxTimeLeft) {
-      //   timeLeftColor = "green";
-      // }
+      const timeLeftColor = "#0D7377";
+      const windowWidth = window.innerWidth;
+      let timeBarStart;
+      if (windowWidth > 1000) {
+        timeBarStart = 3;
+      } else if (windowWidth > 600) {
+        timeBarStart = 5;
+      } else {
+        timeBarStart = 7;
+      }
 
       return (
-        <div className="progress">
+        <div
+          className="progress"
+          style={{
+            borderRadius: 10,
+          }}
+        >
           <div
             className="progress-bar"
             role="progressbar"
@@ -28,8 +35,10 @@ export default function TimeLeft(props) {
             aria-valuemin="0"
             aria-valuemax={maxTimeLeft.toString()}
             style={{
-              width: `${(1 - modTimeLeft / maxTimeLeft) * 100}%`,
+              width: `${(1 - modTimeLeft / maxTimeLeft) * 100 + timeBarStart}%`,
               backgroundColor: timeLeftColor,
+              borderRadius: 10,
+              margin: 1,
             }}
           ></div>
         </div>
