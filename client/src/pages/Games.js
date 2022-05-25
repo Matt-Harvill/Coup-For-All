@@ -46,7 +46,7 @@ export default function Games() {
             gameCardClicked(gameInfo.page);
           }}
         >
-          Go to {gameInfo.title} lobby
+          Go to {gameInfo.title} Lobby
         </button>
       </div>
     );

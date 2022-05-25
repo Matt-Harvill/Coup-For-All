@@ -129,6 +129,9 @@ export default function Coup() {
 
   return (
     <div className="page">
+      <h1 style={{ textAlign: "center", paddingTop: 20, paddingBottom: 20 }}>
+        Coup Lobby
+      </h1>
       <div className="coupGrid">
         <div className="coupTile">
           <h3>Chats</h3>
