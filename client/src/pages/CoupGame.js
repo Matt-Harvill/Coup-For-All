@@ -17,7 +17,7 @@ export default function CoupGame() {
     setTurn: setTurn,
   };
 
-  const coupCardWidth = 200;
+  const coupCardWidth = 240;
 
   // Setup coup socket listener
   useEffect(() => {

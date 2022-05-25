@@ -6,6 +6,11 @@ html, body, #root {
   background-color: #212121;
   color: #108A8F;
   color: #14FFEC;
+
+  /* font-family: 'Acme', sans-serif;
+  font-family: 'Lobster', cursive; */
+  font-family: 'Righteous', cursive;
+  /* font-family: 'Ethnocentric Rg', sans-serif; */
 }
 
 .page {
@@ -25,6 +30,14 @@ button {
   border-radius: 8px;
 }
 
+h1 {
+  font-size: 3.5rem;
+}
+
+h1, h2 {
+  font-style: italic;
+}
+
 div {
   border-radius: 10px;
 }
@@ -33,6 +46,10 @@ textarea {
 }
 input {
   border-radius: 10px;
+}
+
+p {
+  margin-bottom: 0;
 }
 
 ::placeholder {

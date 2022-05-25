@@ -370,7 +370,7 @@ export default function CoupActionbar() {
             textAlign: "center",
           }}
         >
-          <h5>Roles Out of Play</h5>
+          <h5 style={{ color: "white" }}>Roles out of play</h5>
           <p>{unavailRoleStrings.join(", ")}</p>
         </div>
       );
@@ -474,7 +474,7 @@ export default function CoupActionbar() {
             textAlign: "center",
           }}
         >
-          <h5>You Are Spectating</h5>
+          <h5 style={{ color: "white" }}>You are spectating</h5>
         </div>
       );
     }
@@ -497,6 +497,7 @@ export default function CoupActionbar() {
           padding: 10,
           display: "grid",
           gridTemplateColumns: "1fr 2fr 1fr",
+          borderRadius: 0,
         }}
       >
         <div></div>
@@ -513,6 +514,7 @@ export default function CoupActionbar() {
           padding: 10,
           display: "grid",
           gridTemplateColumns: "1fr 2fr 1fr",
+          borderRadius: 0,
         }}
       >
         {displayUnavailRoles()}

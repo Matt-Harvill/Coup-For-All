@@ -21,12 +21,12 @@ export default function Games() {
   };
 
   const mouseOverGameCard = (e) => {
-    e.currentTarget.style.color = "#14FFEC";
+    e.currentTarget.style.color = "white";
     // e.currentTarget.querySelector("img").style.transform = "scale(1.275)";
   };
 
   const mouseOutGameCard = (e) => {
-    e.currentTarget.style.color = "#108A8F";
+    e.currentTarget.style.color = "#14FFEC";
     // e.currentTarget.querySelector("img").style.transform = "scale(1.0)";
   };
 
@@ -57,12 +57,13 @@ export default function Games() {
           alt={gameInfo.title}
           src={gameInfo.image}
         ></img>
-        <h4 style={{ paddingTop: 10 }}>{gameInfo.title}</h4>
+        <h4 style={{ paddingTop: 10, color: "white" }}>{gameInfo.title}</h4>
         <p>{gameInfo.description}</p>
         <button
           onClick={() => {
             gameCardClicked(gameInfo.page);
           }}
+          style={{ marginTop: 10 }}
         >
           Go to {gameInfo.title} Lobby
         </button>

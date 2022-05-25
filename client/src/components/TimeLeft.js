@@ -21,6 +21,14 @@ export default function TimeLeft(props) {
         timeBarStart = 7;
       }
 
+      let progressWidth;
+      const progress = (1 - modTimeLeft / maxTimeLeft) * 100;
+      if (progress < timeBarStart) {
+        progressWidth = timeBarStart;
+      } else {
+        progressWidth = progress;
+      }
+
       return (
         <div
           className="progress"
@@ -35,7 +43,7 @@ export default function TimeLeft(props) {
             aria-valuemin="0"
             aria-valuemax={maxTimeLeft.toString()}
             style={{
-              width: `${(1 - modTimeLeft / maxTimeLeft) * 100 + timeBarStart}%`,
+              width: `${progressWidth}%`,
               backgroundColor: timeLeftColor,
               borderRadius: 10,
               margin: 1,

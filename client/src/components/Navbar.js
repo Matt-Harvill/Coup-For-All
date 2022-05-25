@@ -29,7 +29,7 @@ export default function Navbar() {
 
   return (
     <div className="appNavbar">
-      {auth === "no auth" && <span>Game Website</span>}
+      {auth === "no auth" && <span>Matthew's Game Website</span>}
 
       {auth === "auth" && (
         <span

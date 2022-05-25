@@ -94,7 +94,7 @@ export default function CoupCreateGame() {
             <select
               onChange={selectPlayers}
               value={numPlayers}
-              style={{ height: 32 }}
+              style={{ height: 32, width: 36 }}
             >
               <option value="2">2</option>
               <option value="3">3</option>

@@ -82,7 +82,7 @@ export default function Login() {
               textDecoration: "underline",
               cursor: "pointer",
               display: "inline",
-              color: "#14FFEC",
+              color: "white",
             }}
             onClick={() => {
               setNewPage("register");

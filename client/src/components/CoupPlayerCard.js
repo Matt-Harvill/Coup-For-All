@@ -23,9 +23,11 @@ export default function CoupPlayerCard(props) {
 
   return (
     <div style={style}>
-      <p>
-        <strong>{pStat.player}</strong>
-      </p>
+      <h4>
+        {/* <strong> */}
+        {pStat.player}
+        {/* </strong> */}
+      </h4>
       <p>Coins: {pStat.coins}</p>
       <p>Roles: {pStat.roles.join(", ")}</p>
     </div>

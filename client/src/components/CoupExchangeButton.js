@@ -35,12 +35,12 @@ export default function CoupExchangeButton(props) {
     if (isSelected[index]) {
       style = {
         margin: 5,
-        backgroundColor: "#93C572",
+        backgroundColor: "#14FFEC",
       };
     } else {
       style = {
         margin: 5,
-        backgroundColor: "#14FFEC",
+        // backgroundColor: "#D4D4D4",
       };
     }
 
@@ -78,7 +78,12 @@ export default function CoupExchangeButton(props) {
     <div>
       <button
         className={"selectButton"}
-        style={{ width: "100%", height: "100%", padding: 10 }}
+        style={{
+          width: "100%",
+          height: "100%",
+          padding: 10,
+          backgroundColor: "#c4c4c4",
+        }}
         onClick={() => {
           // Button itself does nothing
           return;
