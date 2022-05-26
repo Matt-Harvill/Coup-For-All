@@ -7,6 +7,7 @@ import { leaveGame } from "./leaveGame.js";
 import { createGame } from "./createGame.js";
 import { joinGame } from "./joinGame.js";
 import { deleteGame } from "./deleteGame.js";
+import { deleteFormingGame } from "../formingGameStuff.js";
 
 // Set of splendor players in lobby
 const splendorOnlinePlayers = new Set();
@@ -55,8 +56,9 @@ const playerOnlineHandler = async (username) => {
   sendOnline();
 };
 
-const playerOfflineHandler = (username) => {
-  removePlayer(username);
+const playerOfflineHandler = async (user) => {
+  removePlayer(user.username);
+  await deleteFormingGame(user);
   sendOnline();
 };
 
@@ -97,7 +99,7 @@ export const eventSwitch = async (event, socket, ...args) => {
       playerOnlineHandler(user.username);
       break;
     case "playerOffline":
-      playerOfflineHandler(user.username);
+      playerOfflineHandler(user);
       break;
     case "getGameState":
       getSplendorGameState(socket);

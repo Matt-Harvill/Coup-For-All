@@ -22,6 +22,7 @@ import { selectAndCompleteCoup } from "./actions/coup.js";
 import { completeExchange, selectExchange } from "./actions/exchange.js";
 import { selectSteal } from "./actions/steal.js";
 import { selectAssassinate } from "./actions/assassinate.js";
+import { deleteFormingGame } from "../formingGameStuff.js";
 
 // Set of coup players in lobby
 const coupOnlinePlayers = new Set();
@@ -70,8 +71,9 @@ const playerOnlineHandler = async (username) => {
   sendOnline();
 };
 
-const playerOfflineHandler = (username) => {
-  removePlayer(username);
+const playerOfflineHandler = async (user) => {
+  removePlayer(user.username);
+  await deleteFormingGame(user);
   sendOnline();
 };
 
@@ -111,7 +113,7 @@ export const eventSwitch = async (event, socket, ...args) => {
       await playerOnlineHandler(user.username);
       break;
     case "playerOffline":
-      playerOfflineHandler(user.username);
+      playerOfflineHandler(user);
       break;
     case "getGameState":
       getGameState(socket);

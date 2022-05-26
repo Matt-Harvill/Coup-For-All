@@ -13,6 +13,7 @@ import { User } from "./schemas.js";
 import gameSwitch from "./gameSwitch.js";
 import { getSocket, socketIDMap } from "./utils/socketUtils.js";
 import { allOnlinePlayers } from "./utils/socketUtils.js";
+import { deleteFormingGame } from "./formingGameStuff.js";
 
 // Dirname Setup
 const __filename = fileURLToPath(import.meta.url);
@@ -139,7 +140,8 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("Client disconnected");
     if (socket.request.user) {
-      const username = socket.request.user.username;
+      const user = socket.request.user;
+      const username = user.username;
       for (const [group, playerSet] of allOnlinePlayers.entries()) {
         if (playerSet.has(username)) {
           playerSet.delete(username);
@@ -147,6 +149,9 @@ io.on("connection", (socket) => {
           break;
         }
       }
+
+      // Delete the game if it is forming
+      deleteFormingGame(user);
     }
   });
 });
