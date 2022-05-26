@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from "react";
-import CoupCreateGame from "../components/coup/CoupCreateGame";
 import { socket } from "../socket";
 import unlock from "../images/unlock.png";
 import "../styles/Splendor.css";
-import CoupLobbyGamesContext from "../components/coup/CoupLobbyGamesContext";
-import CoupJoinGame from "../components/coup/CoupJoinGame";
+import SplendorCreateGame from "../components/splendor/SplendorCreateGame";
+import SplendorLobbyGamesContext from "../components/splendor/SplendorLobbyGamesContext";
+import SplendorJoinGame from "../components/splendor/SplendorJoinGame";
 import AppContext from "../components/AppContext";
 
 export default function SplendorLobby() {
@@ -20,7 +20,7 @@ export default function SplendorLobby() {
   const [numPlayers, setNumPlayers] = useState("2");
   const [inGame, setInGame] = useState(false);
   const [ownsGame, setOwnsGame] = useState(false);
-  const coupGameState = {
+  const splendorGameState = {
     games,
     setGames,
     inGame,
@@ -56,42 +56,42 @@ export default function SplendorLobby() {
     }
   }, [games, userObj.username]);
 
-  // Setup coup socket listener
-  // useEffect(() => {
-  //   socket.on("splendor", (event, ...args) => {
-  //     switch (event) {
-  //       case "online":
-  //         const users = args[0];
-  //         setOnlineUsers(users);
-  //         break;
-  //       case "formingGames":
-  //         const games = args[0];
-  //         setGames(games);
-  //         break;
-  //       case "chat":
-  //         const user = args[0];
-  //         const message = args[1];
-  //         setChats((oldChats) => [...oldChats, [user, message]]);
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   });
+  // Setup splendor socket listener
+  useEffect(() => {
+    socket.on("splendor", (event, ...args) => {
+      switch (event) {
+        case "online":
+          const users = args[0];
+          setOnlineUsers(users);
+          break;
+        case "formingGames":
+          const games = args[0];
+          setGames(games);
+          break;
+        case "chat":
+          const user = args[0];
+          const message = args[1];
+          setChats((oldChats) => [...oldChats, [user, message]]);
+          break;
+        default:
+          break;
+      }
+    });
 
-  //   socket.emit("splendor", "playerOnline");
-  //   socket.emit("splendor", "formingGames");
+    socket.emit("splendor", "playerOnline");
+    socket.emit("splendor", "formingGames");
 
-  //   return () => {
-  //     socket.off("splendor"); // remove coup online listener
-  //     socket.emit("splendor", "playerOffline");
-  //   };
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+    return () => {
+      socket.off("splendor"); // remove splendor online listener
+      socket.emit("splendor", "playerOffline");
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  // const sendChat = () => {
-  //   socket.emit("splendor", "chat", newChat);
-  //   setNewChat("");
-  // };
+  const sendChat = () => {
+    socket.emit("splendor", "chat", newChat);
+    setNewChat("");
+  };
 
   const displayChats = (chat) => {
     return (
@@ -117,7 +117,7 @@ export default function SplendorLobby() {
   };
 
   const displayGames = (game) => {
-    return <CoupJoinGame game={game} />;
+    return <SplendorJoinGame game={game} />;
   };
 
   const handleChange = (e) => {
@@ -141,10 +141,7 @@ export default function SplendorLobby() {
             onChange={handleChange}
             style={{ width: "100%" }}
           ></textarea>
-          <button
-            style={{ width: "100%" }}
-            // onClick={sendChat}
-          >
+          <button style={{ width: "100%" }} onClick={sendChat}>
             Submit
           </button>
         </div>
@@ -161,7 +158,7 @@ export default function SplendorLobby() {
             {onlineUsers.map(displayPlayers)}
           </div>
         </div>
-        <CoupLobbyGamesContext.Provider value={coupGameState}>
+        <SplendorLobbyGamesContext.Provider value={splendorGameState}>
           <div className="splendorTile">
             <h3>Games</h3>
             <div
@@ -172,9 +169,9 @@ export default function SplendorLobby() {
               {games.map(displayGames)}
             </div>
 
-            <CoupCreateGame />
+            <SplendorCreateGame />
           </div>
-        </CoupLobbyGamesContext.Provider>
+        </SplendorLobbyGamesContext.Provider>
       </div>
     </div>
   );

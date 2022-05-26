@@ -77,7 +77,7 @@ export const eventSwitch = async (event, socket, ...args) => {
       break;
     case "createGame":
       const [privacy, maxPlayers] = args;
-      createGame(socket, privacy, maxPlayers);
+      createGame(socket, privacy, maxPlayers, 15);
       break;
     case "deleteGame":
       deleteGame(socket);
