@@ -1,11 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import { longTurnTime, shortTurnTime } from "../coupTurnTimes";
-import { socket } from "../socket";
-import AppContext from "./AppContext";
+import { longTurnTime, shortTurnTime } from "../../coupTurnTimes";
+import { socket } from "../../socket";
+import AppContext from "../AppContext";
 import CoupActionButton from "./CoupActionButton";
 import CoupExchangeButton from "./CoupExchangeButton";
 import CoupGameContext from "./CoupGameContext";
-import TimeLeft from "./TimeLeft";
+import TimeLeft from "../TimeLeft";
 
 export default function CoupActionbar() {
   const { turn, game } = useContext(CoupGameContext);

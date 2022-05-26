@@ -4,7 +4,7 @@ import CoupLobby from "../pages/CoupLobby";
 import Games from "../pages/Games";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
-import Splendor from "../pages/Splendor";
+import SplendorLobby from "../pages/SplendorLobby";
 import CoupGame from "../pages/CoupGame";
 
 export default function PageDisplayer() {
@@ -23,7 +23,7 @@ export default function PageDisplayer() {
       case "coupGame":
         return <CoupGame />;
       case "splendor":
-        return <Splendor />;
+        return <SplendorLobby />;
       default:
         return <h1>Error with page selection</h1>;
     }

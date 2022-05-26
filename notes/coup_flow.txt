@@ -36,8 +36,7 @@ I will need to restructure everything such that only one target at a time and th
 
 prepareAssassinate could possibly halt the game if DB can't be committed to
 
-next items of business are fixing possible concurrency problems (mostly in things like challengeRole etc.)
-- if two challenges at the same time, nothing happens -> fix it so only one challenge allowed
-- think about other actions that are like this (like blocking foreign aid)
 
-Hid lose role button on assassination role loss
+Need to resume game from turn stage instead of beginning of turn
+
+Add display of current online players in games

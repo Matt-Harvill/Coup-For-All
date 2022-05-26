@@ -34,7 +34,7 @@ export default function Login() {
 
   return (
     <div
-      className="page"
+      className="page loginPage"
       style={{
         flex: 1,
         display: "flex",
@@ -44,7 +44,11 @@ export default function Login() {
         gap: 10,
       }}
     >
-      <h1>Login</h1>
+      <h1
+      // style={{ color: "#14FFEC" }}
+      >
+        Login
+      </h1>
       <div>
         <input
           onChange={handleChange}

@@ -2,12 +2,12 @@ import { useState, useEffect, useContext } from "react";
 import CoupCreateGame from "../components/coup/CoupCreateGame";
 import { socket } from "../socket";
 import unlock from "../images/unlock.png";
-import "../styles/Coup.css";
+import "../styles/Splendor.css";
 import CoupLobbyGamesContext from "../components/coup/CoupLobbyGamesContext";
 import CoupJoinGame from "../components/coup/CoupJoinGame";
 import AppContext from "../components/AppContext";
 
-export default function CoupLobby() {
+export default function SplendorLobby() {
   const { userObj } = useContext(AppContext);
 
   const [newChat, setNewChat] = useState("");
@@ -33,13 +33,10 @@ export default function CoupLobby() {
     setNumPlayers,
   };
 
-  // Check if user has created a game or owns a game (or is in a game (but lost))
+  // Check if user has created a game or owns a game
   useEffect(() => {
     const userGame = games.find((game) => {
-      return (
-        game.players.includes(userObj.username) ||
-        game.outPlayers.includes(userObj.username)
-      );
+      return game.players.includes(userObj.username);
     });
 
     if (userGame === undefined) {
@@ -60,41 +57,41 @@ export default function CoupLobby() {
   }, [games, userObj.username]);
 
   // Setup coup socket listener
-  useEffect(() => {
-    socket.on("coup", (event, ...args) => {
-      switch (event) {
-        case "online":
-          const users = args[0];
-          setOnlineUsers(users);
-          break;
-        case "formingGames":
-          const games = args[0];
-          setGames(games);
-          break;
-        case "chat":
-          const user = args[0];
-          const message = args[1];
-          setChats((oldChats) => [...oldChats, [user, message]]);
-          break;
-        default:
-          break;
-      }
-    });
+  // useEffect(() => {
+  //   socket.on("splendor", (event, ...args) => {
+  //     switch (event) {
+  //       case "online":
+  //         const users = args[0];
+  //         setOnlineUsers(users);
+  //         break;
+  //       case "formingGames":
+  //         const games = args[0];
+  //         setGames(games);
+  //         break;
+  //       case "chat":
+  //         const user = args[0];
+  //         const message = args[1];
+  //         setChats((oldChats) => [...oldChats, [user, message]]);
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //   });
 
-    socket.emit("coup", "playerOnline");
-    socket.emit("coup", "formingGames");
+  //   socket.emit("splendor", "playerOnline");
+  //   socket.emit("splendor", "formingGames");
 
-    return () => {
-      socket.off("coup"); // remove coup online listener
-      socket.emit("coup", "playerOffline");
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  //   return () => {
+  //     socket.off("splendor"); // remove coup online listener
+  //     socket.emit("splendor", "playerOffline");
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
-  const sendChat = () => {
-    socket.emit("coup", "chat", newChat);
-    setNewChat("");
-  };
+  // const sendChat = () => {
+  //   socket.emit("splendor", "chat", newChat);
+  //   setNewChat("");
+  // };
 
   const displayChats = (chat) => {
     return (
@@ -128,14 +125,14 @@ export default function CoupLobby() {
   };
 
   return (
-    <div className="page coupPage">
+    <div className="page splendorPage">
       <h1 style={{ textAlign: "center", paddingTop: 20, paddingBottom: 20 }}>
-        Coup Lobby
+        Splendor Lobby
       </h1>
-      <div className="coupGrid">
-        <div className="coupTile">
+      <div className="splendorGrid">
+        <div className="splendorTile">
           <h3>Chats</h3>
-          <div readOnly={true} className="coupText">
+          <div readOnly={true} className="splendorText">
             {chats.map(displayChats)}
           </div>
           <textarea
@@ -144,16 +141,19 @@ export default function CoupLobby() {
             onChange={handleChange}
             style={{ width: "100%" }}
           ></textarea>
-          <button style={{ width: "100%" }} onClick={sendChat}>
+          <button
+            style={{ width: "100%" }}
+            // onClick={sendChat}
+          >
             Submit
           </button>
         </div>
 
-        <div className="coupTile">
+        <div className="splendorTile">
           <h3>Online Players</h3>
           <div
             readOnly={true}
-            className="coupText"
+            className="splendorText"
             style={{
               textAlign: "center",
             }}
@@ -162,11 +162,11 @@ export default function CoupLobby() {
           </div>
         </div>
         <CoupLobbyGamesContext.Provider value={coupGameState}>
-          <div className="coupTile">
+          <div className="splendorTile">
             <h3>Games</h3>
             <div
               readOnly={true}
-              className="coupText"
+              className="splendorText"
               style={{ display: "flex", flexDirection: "column", gap: 10 }}
             >
               {games.map(displayGames)}

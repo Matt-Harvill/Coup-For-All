@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import AppContext from "../components/AppContext";
-import CoupActionbar from "../components/CoupActionbar";
-import CoupGameContext from "../components/CoupGameContext";
-import CoupPlayerCard from "../components/CoupPlayerCard";
+import CoupActionbar from "../components/coup/CoupActionbar";
+import CoupGameContext from "../components/coup/CoupGameContext";
+import CoupPlayerCard from "../components/coup/CoupPlayerCard";
 import { socket } from "../socket";
 
 export default function CoupGame() {

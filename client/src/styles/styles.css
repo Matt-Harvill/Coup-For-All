@@ -4,6 +4,7 @@ html, body, #root {
   flex-direction: column;
 
   background-color: #212121;
+
   color: #108A8F;
   color: #14FFEC;
 
@@ -16,6 +17,7 @@ html, body, #root {
 .page {
   flex: 1;
   width: 100%;
+  border-radius: 0;
 }
 
 button:hover {
@@ -36,6 +38,7 @@ h1 {
 
 h1, h2 {
   font-style: italic;
+  color: #464646;
 }
 
 div {
@@ -54,4 +57,24 @@ p {
 
 ::placeholder {
   color: #323232;
+}
+
+.loginPage {
+  background: linear-gradient(#FFDE7D , #F6416C );
+}
+
+.registerPage {
+  background: linear-gradient(#FFCEF3 , #0092b3);
+}
+
+.gamesPage {
+  background: linear-gradient(#ffbd93 , #e15eff );
+}
+
+.coupPage {
+  background: linear-gradient(#bebebe, #D72323);
+}
+
+.splendorPage {
+  background: linear-gradient(#fdde56, #185f72);
 }

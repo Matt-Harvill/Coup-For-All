@@ -2,6 +2,7 @@ import { useContext } from "react";
 import AppContext from "../components/AppContext";
 import "../styles/styles.css";
 import coupImage from "../images/coup.jpg";
+import splendorImage from "../images/splendor.jpg";
 
 export default function Games() {
   const { setNewPage } = useContext(AppContext);
@@ -13,6 +14,13 @@ export default function Games() {
       description:
         "You are head of a family in an Italian city-state, a city run by a weak and corrupt court. You need to manipulate, bluff and bribe your way to power. Your object is to destroy the influence of all the other families, forcing them into exile. Only one family will survive...",
       page: "coup",
+    },
+    {
+      title: "Splendor",
+      image: splendorImage,
+      description:
+        "Splendor is a game of chip-collecting and card development. Players are merchants of the Renaissance trying to buy gem mines, means of transportation, shops—all in order to acquire the most prestige points. If you're wealthy enough, you might even receive a visit from a noble at some point, which of course will further increase your prestige.",
+      page: "splendor",
     },
   ];
 
@@ -41,6 +49,8 @@ export default function Games() {
           backgroundColor: "#464646",
           // color: "#14FFEC",
           overflow: "hidden",
+          display: "flex",
+          flexDirection: "column",
         }}
         // onMouseOver={mouseOverGameCard}
         // onMouseOut={mouseOutGameCard}
@@ -59,6 +69,7 @@ export default function Games() {
         ></img>
         <h4 style={{ paddingTop: 10, color: "white" }}>{gameInfo.title}</h4>
         <p>{gameInfo.description}</p>
+        <div style={{ flex: 1 }}></div>
         <button
           onClick={() => {
             gameCardClicked(gameInfo.page);
@@ -71,7 +82,7 @@ export default function Games() {
     );
   };
   return (
-    <div className="page">
+    <div className="page gamesPage">
       <h1 style={{ textAlign: "center", paddingTop: 20 }}>Games</h1>
       <div
         style={{

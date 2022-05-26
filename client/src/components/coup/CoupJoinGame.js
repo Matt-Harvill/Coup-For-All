@@ -1,11 +1,11 @@
-import unlock from "../images/unlock.png";
-import lock from "../images/lock.png";
-import dropdown from "../images/dropdown.png";
-import dropup from "../images/dropup.png";
+import unlock from "../../images/unlock.png";
+import lock from "../../images/lock.png";
+import dropdown from "../../images/dropdown.png";
+import dropup from "../../images/dropup.png";
 import { useContext, useState } from "react";
 import CoupLobbyGamesContext from "./CoupLobbyGamesContext";
-import AppContext from "./AppContext";
-import { socket } from "../socket";
+import AppContext from "../AppContext";
+import { socket } from "../../socket";
 
 export default function CoupJoinGame(props) {
   const { inGame } = useContext(CoupLobbyGamesContext);

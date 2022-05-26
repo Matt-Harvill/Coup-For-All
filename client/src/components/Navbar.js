@@ -55,11 +55,11 @@ export default function Navbar() {
           onMouseEnter={() => setCoupLinkColor(hoverColor)}
           onMouseLeave={() => setCoupLinkColor(defaultColor)}
         >
-          Coup Lobby
+          Coup
         </span>
       )}
 
-      {/* {auth === "auth" && (
+      {auth === "auth" && (
         <span
           style={{ cursor: "pointer", color: splendorLinkColor }}
           onClick={() => {
@@ -70,7 +70,7 @@ export default function Navbar() {
         >
           Splendor
         </span>
-      )} */}
+      )}
 
       {userObj.gameStatus === "in progress" && (
         <button onClick={leaveGame} style={{ backgroundColor: defaultColor }}>

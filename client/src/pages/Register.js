@@ -34,7 +34,7 @@ export default function Register() {
 
   return (
     <div
-      className="page"
+      className="page registerPage"
       style={{
         flex: 1,
         display: "flex",
@@ -44,7 +44,11 @@ export default function Register() {
         gap: 10,
       }}
     >
-      <h1>Register</h1>
+      <h1
+      //  style={{ color: "#14FFEC" }}
+      >
+        Register
+      </h1>
       <div>
         <input
           onChange={handleChange}

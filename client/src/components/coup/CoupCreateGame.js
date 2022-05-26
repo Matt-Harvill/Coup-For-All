@@ -1,9 +1,9 @@
-import "../styles/Coup.css";
-import unlock from "../images/unlock.png";
-import lock from "../images/lock.png";
+import "../../styles/Coup.css";
+import unlock from "../../images/unlock.png";
+import lock from "../../images/lock.png";
 import { useContext } from "react";
 import CoupLobbyGamesContext from "./CoupLobbyGamesContext";
-import { socket } from "../socket";
+import { socket } from "../../socket";
 
 export default function CoupCreateGame() {
   const { inGame, ownsGame, privacy, setPrivacy, numPlayers, setNumPlayers } =

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../styles/CoupActionButton.css";
+import "../../styles/CoupActionButton.css";
 
 export default function CoupActionButton(props) {
   const { title, secondText, targets, roles, onClick, onClickArgs } = props;

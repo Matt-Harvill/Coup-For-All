@@ -1,0 +1,127 @@
+Total game state:
+
+- 10 Noble tiles
+- 40 level 1 cards
+- 30 level 2 cards
+- 20 level 3 cards
+- 7x each regular token (green, blue, red, black, white)
+- 5x wild token (yellow)
+
+Once the game starts (with n players):
+
+- 4 active cards for each level (or less if less in the decks)
+- (n+1) Noble cards
+- 5 wild tokens
+- switch(n):
+    case 2:
+      4x each regular tokens
+    case 3:
+      5x each regular tokens
+    case 4:
+      7x each regular tokens
+
+Game Object:
+
+game: {
+  gameTitle: String, // "Splendor"
+  gameID: String,
+  founder: String,
+  status: String, // 'forming', 'in progress', 'completed'
+  privacy: String, // 'public', 'private'
+  maxPlayers: Number, // 4
+  players: [String],
+  pStats: [pStat],
+  activeCards: { // Max 4 per level
+    level1: [card],
+    level2: [card],
+    level3: [card],
+  }
+  inactiveCards: { // Remaining cards not owned yet, next card is popped off each level
+    level1: [card],
+    level2: [card],
+    level3: [card],
+  }
+  nobles: [noble],
+  coins: {
+    green: Number,
+    blue: Number,
+    red: Number,
+    black: Number,
+    white: Number,
+    yellow: Number
+  },
+  winner: String,
+}
+
+Noble Object:
+
+noble: {
+  points: Number,
+  cardRequirements: {
+    green: Number,
+    blue: Number,
+    red: Number,
+    black: Number,
+    white: Number
+  }
+}
+
+Card Object:
+
+card: {
+  points: Number,
+  resource: {
+    color: String,
+    count: Number // 1 for regular game
+  },
+  requirements: {
+    green: Number,
+    blue: Number,
+    red: Number,
+    black: Number,
+    white: Number
+  }
+}
+
+Player stats in the game:
+
+pStat: {
+  player: String,
+  points: Number,
+  permanentResources: {
+    green: Number,
+    blue: Number,
+    red: Number,
+    black: Number,
+    white: Number
+  },
+  coins: { // Can't be more than 10
+    green: Number,
+    blue: Number,
+    red: Number,
+    black: Number,
+    white: Number,
+    yellow: Number
+  },
+  cardsInHand: [card], // Max length is 3
+  cardsOwned: [card],
+},
+
+Turn options:
+
+- Take 3 gems (all different colors)
+- Take 2 gems (same color) - must be 4 of that type
+- Reserve a card (possibly take yellow token too)
+- Buy card from board or hand
+- (Auto) Take a noble if requirements are satisfied
+
+We could add things to the current version of Splendor:
+
+- Make random cards based on a distribution of requirements (each game set is unique)
+- Make game point goal determined at game creation
+
+General notes:
+
+- Don't update DB until turn is over, including noble acquisition (for now)
+- Reuse a lot of the items from the coup lobby but change colors/fonts to make it distinguishable
+- Set up flow to make creation of new splendor games pretty easy
