@@ -10,6 +10,7 @@ import AppContext from "../components/AppContext";
 export default function SplendorLobby() {
   const { userObj } = useContext(AppContext);
 
+  const chatClipSize = 120;
   const [newChat, setNewChat] = useState("");
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [chats, setChats] = useState([]);
@@ -121,7 +122,9 @@ export default function SplendorLobby() {
   };
 
   const handleChange = (e) => {
-    setNewChat(e.target.value);
+    const chatString = e.target.value;
+    const restrictedSizeString = chatString.substring(0, chatClipSize);
+    setNewChat(restrictedSizeString);
   };
 
   return (
@@ -141,6 +144,11 @@ export default function SplendorLobby() {
             onChange={handleChange}
             style={{ width: "100%" }}
           ></textarea>
+          {newChat.length === chatClipSize && (
+            <p style={{ color: "#14FFEC" }}>
+              Max characters reached ({chatClipSize})
+            </p>
+          )}
           <button style={{ width: "100%" }} onClick={sendChat}>
             Submit
           </button>
