@@ -6,6 +6,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import SplendorLobby from "../pages/SplendorLobby";
 import CoupGame from "../pages/CoupGame";
+import SplendorGame from "../pages/SplendorGame";
 
 export default function PageDisplayer() {
   const { page } = useContext(AppContext);
@@ -24,8 +25,10 @@ export default function PageDisplayer() {
         return <CoupGame />;
       case "splendor":
         return <SplendorLobby />;
+      case "splendorGame":
+        return <SplendorGame />;
       default:
-        return <h1>Error with page selection</h1>;
+        return <h1>Error with page selection, {page} is not a valid page</h1>;
     }
   };
 

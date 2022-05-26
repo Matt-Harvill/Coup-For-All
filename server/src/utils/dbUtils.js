@@ -111,32 +111,41 @@ export const updateUserAndGame = async (user, game, update) => {
       sendUpdatesSingle(user, updatedGame);
     }
 
-    switch (update && game.gameTitle === "coup") {
-      case "deleteGame":
-        // If game is deleted, delete the turn
-        deleteTurn(game.gameID);
-        break;
-      case "updateGame":
-      case "leaveGame":
-        // If only one player is left, set game to "completed" with the winner as the last player
-        if (updatedGame && updatedGame.players) {
-          if (updatedGame.players.length === 1) {
-            await gameOver(updatedGame);
-          } else {
-            const player = getTurnProp(game.gameID, "player");
-            const attacked = getTurnProp(game.gameID, "attacking");
-            if (
-              user &&
-              !updatedGame.players.includes(user) &&
-              (user === player || user === attacked)
-            ) {
-              await endTurn(updatedGame);
+    // Do stuff for specific game (coup)
+    if (game && game.gameTitle && game.gameTitle === "coup") {
+      switch (update) {
+        case "deleteGame":
+          // If game is deleted, delete the turn
+          deleteTurn(game.gameID);
+          break;
+        case "updateGame":
+        case "leaveGame":
+          // If only one player is left, set game to "completed" with the winner as the last player
+          if (updatedGame && updatedGame.players) {
+            if (updatedGame.players.length === 1) {
+              await gameOver(updatedGame);
+            } else {
+              const player = getTurnProp(game.gameID, "player");
+              const attacked = getTurnProp(game.gameID, "attacking");
+              if (
+                user &&
+                !updatedGame.players.includes(user) &&
+                (user === player || user === attacked)
+              ) {
+                await endTurn(updatedGame);
+              }
             }
           }
-        }
-        break;
-      default:
-        break;
+          break;
+        default:
+          break;
+      }
+    } else {
+      if (!game || !game.gameTitle) {
+        console.log(`Not game or gameTitle`);
+      } else {
+        // Other game stuff
+      }
     }
   } else {
     await session.abortTransaction();

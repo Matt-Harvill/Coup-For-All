@@ -12,6 +12,12 @@ export const allowedPage = (userObj, auth, currPage, desiredPage) => {
             }
             newPage = "coupGame";
             break;
+          case "splendor":
+            if (desiredPage !== "splendorGame") {
+              wantedDiffPage = true;
+            }
+            newPage = "splendorGame";
+            break;
           default:
             break;
         }

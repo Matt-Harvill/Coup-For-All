@@ -28,16 +28,22 @@ export default function PageSwitcher() {
           case "coup":
             setNewPage("coupGame");
             break;
-
+          case "splendor":
+            setNewPage("splendorGame");
+            break;
           default:
             break;
         }
         break;
-      case "":
+      case "": // If player just left a game, send them to that game's lobby
         switch (page) {
           case "coup":
           case "coupGame":
             setNewPage("coup");
+            break;
+          case "splendor":
+          case "splendorGame":
+            setNewPage("splendor");
             break;
           default:
             setNewPage("games");
