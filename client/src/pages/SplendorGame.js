@@ -51,7 +51,7 @@ export default function SplendorGame() {
   };
 
   return (
-    <div className="page">
+    <div className="page splendorPage">
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <SplendorGameContext.Provider value={gameContext}>
           <h1
@@ -59,7 +59,9 @@ export default function SplendorGame() {
           >
             Splendor
           </h1>
-          <span>{JSON.stringify(game, null, "\t")}</span>
+          <pre style={{ color: "black" }}>
+            Game: {JSON.stringify(game, null, "\t")}
+          </pre>
           {/* <span>{JSON.stringify(turn)}</span> */}
           <div
             style={{

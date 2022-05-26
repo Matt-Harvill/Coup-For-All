@@ -50,7 +50,7 @@ export default function CoupGame() {
   };
 
   return (
-    <div className="page">
+    <div className="page coupPage">
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
         <CoupGameContext.Provider value={gameContext}>
           <h1
