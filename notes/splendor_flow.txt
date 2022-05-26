@@ -114,6 +114,7 @@ Turn options:
 - Reserve a card (possibly take yellow token too)
 - Buy card from board or hand
 - (Auto) Take a noble if requirements are satisfied
+  - Requires user input if player can get two different nobles
 
 We could add things to the current version of Splendor:
 
