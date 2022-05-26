@@ -52,15 +52,17 @@ export default function CoupJoinGame(props) {
           style={{
             display: "flex",
             backgroundColor: "#464646",
+            color: "white",
             padding: 10,
             gap: 10,
-            alignItems: "center",
+            borderRadius: "0px 0px 10px 10px",
+            marginLeft: 10,
+            marginRight: 10,
           }}
         >
-          <strong>Game ID:</strong>
-          <div></div>
+          <div>Game ID:</div>
           <div style={{ border: "1px solid", paddingLeft: 5, paddingRight: 5 }}>
-            <strong>{gameID}</strong>
+            {gameID}
           </div>
         </div>
       );
@@ -76,8 +78,9 @@ export default function CoupJoinGame(props) {
             backgroundColor: "#464646",
             padding: 10,
             gap: 10,
-            alignItems: "center",
-            // borderRadius: 10,
+            borderRadius: "0px 0px 10px 10px",
+            marginLeft: 10,
+            marginRight: 10,
           }}
         >
           <input
