@@ -111,7 +111,7 @@ export const updateUserAndGame = async (user, game, update) => {
       sendUpdatesSingle(user, updatedGame);
     }
 
-    switch (update) {
+    switch (update && game.gameTitle === "coup") {
       case "deleteGame":
         // If game is deleted, delete the turn
         deleteTurn(game.gameID);

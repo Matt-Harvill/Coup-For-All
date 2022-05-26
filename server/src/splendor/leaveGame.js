@@ -1,6 +1,9 @@
-import * as dbUtils from "../utils/dbUtils.js";
-import { CoupGame } from "../schemas.js";
-import { coupFormingGames, sendFormingGames } from "./coupEventHandler.js";
+import { SplendorGame } from "../schemas.js";
+import { updateUserAndGame } from "../utils/dbUtils.js";
+import {
+  sendFormingGames,
+  splendorFormingGames,
+} from "./splendorEventHandler.js";
 
 export const leaveGame = async (socket) => {
   const userObj = socket.request.user;
@@ -10,47 +13,45 @@ export const leaveGame = async (socket) => {
   const user = userObj.username;
 
   // Get the game
-  const game = await CoupGame.findOne({
+  const game = await SplendorGame.findOne({
     gameID: userObj.gameID,
   }).exec();
 
   let gameDeleted, committed;
   // If game will be empty now, delete the game
   if (game.players.length === 1 && game.players.includes(user)) {
-    committed = await dbUtils.updateUserAndGame(user, game, "deleteGame");
+    committed = await updateUserAndGame(user, game, "deleteGame");
     gameDeleted = committed;
   } else {
     // Update players
     game.players = game.players.filter((player) => {
       return player !== user;
     });
-    // Update outPlayers
-    game.outPlayers = game.outPlayers.filter((player) => {
-      return player !== user;
-    });
     // Update pStats
     game.pStats = game.pStats.filter((pStat) => {
-      return pStat.player !== user;
+      if (pStat.player) {
+        return pStat.player !== user;
+      }
     });
 
     // Otherwise just indicate a player left the game
-    committed = await dbUtils.updateUserAndGame(user, game, "leaveGame");
+    committed = await updateUserAndGame(user, game, "leaveGame");
     gameDeleted = false;
   }
 
   if (committed) {
     // Update game in memory
     let gameToDelete;
-    coupFormingGames.forEach((gameInSet) => {
+    splendorFormingGames.forEach((gameInSet) => {
       if (gameInSet.gameID === game.gameID) {
         gameToDelete = gameInSet;
       }
     });
     if (gameToDelete) {
-      coupFormingGames.delete(gameToDelete);
+      splendorFormingGames.delete(gameToDelete);
       // If game still exists, add the updated version
       if (!gameDeleted) {
-        coupFormingGames.add(game);
+        splendorFormingGames.add(game);
       }
     }
 

@@ -29,6 +29,8 @@ export const getGameState = async (socket) => {
   if (!user) {
     return;
   }
+
+  const game = await dbUtils.getGame(user.gameTitle, user.gameID);
   // Start the game's turns if it hasn't yet
   if (
     user.gameTitle &&
@@ -36,11 +38,9 @@ export const getGameState = async (socket) => {
     user.gameStatus &&
     user.gameStatus === "in progress"
   ) {
-    const game = await dbUtils.getGame(user.gameTitle, user.gameID);
     createTurn(game);
   }
 
-  const game = await dbUtils.getGame(user.gameTitle, user.gameID);
   const publicGame = publicGameState(game, user.username);
   socket.emit("coup", "updateGame", user.gameID, publicGame);
 };
