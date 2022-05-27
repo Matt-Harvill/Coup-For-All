@@ -5,6 +5,13 @@ import {
   sendFormingGames,
   splendorFormingGames,
 } from "./splendorEventHandler.js";
+import {
+  get5Nobles,
+  getNewLevel1Cards,
+  getNewLevel2Cards,
+  getNewLevel3Cards,
+  getNewPStat,
+} from "./splendorStartingItems.js";
 
 export const createGame = async (socket, privacy, maxPlayers, maxPoints) => {
   const userObj = socket.request.user;
@@ -22,6 +29,25 @@ export const createGame = async (socket, privacy, maxPlayers, maxPoints) => {
   const user = userObj.username;
   const gameTitle = "splendor";
   const gameID = crypto.randomBytes(6).toString("hex");
+  const newPStat = getNewPStat(user);
+  const allLevel1Cards = getNewLevel1Cards();
+  const allLevel2Cards = getNewLevel2Cards();
+  const allLevel3Cards = getNewLevel3Cards();
+  const nobles = get5Nobles();
+  let numCoins;
+  switch (maxPlayers) {
+    case 2:
+      numCoins = 4;
+      break;
+    case 3:
+      numCoins = 5;
+      break;
+    case 4:
+      numCoins = 7;
+      break;
+    default:
+      break;
+  }
 
   const game = new SplendorGame({
     gameTitle: gameTitle,
@@ -30,45 +56,28 @@ export const createGame = async (socket, privacy, maxPlayers, maxPoints) => {
     status: "forming", // 'forming', 'in progress', 'completed'
     privacy: privacy, // 'public', 'private'
     maxPoints: maxPoints,
-    maxPlayers: maxPlayers, // 4
+    maxPlayers: maxPlayers,
     players: [user],
-    pStats: [
-      {
-        player: user,
-        points: 0,
-        permanentResources: {
-          green: 0,
-          blue: 0,
-          red: 0,
-          black: 0,
-          white: 0,
-        },
-        coins: {
-          green: 0,
-          blue: 0,
-          red: 0,
-          black: 0,
-          white: 0,
-          yellow: 0,
-        },
-        cardsInHand: [],
-        cardsOwned: [],
-      },
-    ],
+    pStats: [newPStat],
     activeCards: {
-      // Max 4 per level
-      level1: [], // [SplendorCardSchema.obj]
-      level2: [], // [SplendorCardSchema.obj]
-      level3: [], // [SplendorCardSchema.obj]
+      level1: allLevel1Cards.slice(0, 4),
+      level2: allLevel2Cards.slice(0, 4),
+      level3: allLevel3Cards.slice(0, 4),
     },
     inactiveCards: {
-      // Remaining cards not owned yet, next card is popped off each level
-      level1: [], // [SplendorCardSchema.obj]
-      level2: [], // [SplendorCardSchema.obj]
-      level3: [], // [SplendorCardSchema.obj]
+      level1: allLevel1Cards.slice(4),
+      level2: allLevel2Cards.slice(4),
+      level3: allLevel3Cards.slice(4),
     },
-    nobles: [], // [SplendorNobleSchema.obj]
-    coins: {}, // [...Splendor5ColorSchema.obj, yellow: Number]
+    nobles: nobles,
+    coins: {
+      green: numCoins,
+      blue: numCoins,
+      red: numCoins,
+      black: numCoins,
+      white: numCoins,
+      yellow: 5,
+    },
     winner: null,
   });
 
