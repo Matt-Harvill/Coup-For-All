@@ -30,7 +30,7 @@ export default function SplendorActiveCard(props) {
   for (const [key, value] of Object.entries(card.requirements)) {
     let color;
     if (key === "black") {
-      color = "white";
+      color = "#EAEAEA";
     } else {
       color = "#464646";
     }
@@ -70,20 +70,31 @@ export default function SplendorActiveCard(props) {
           justifyContent: "flex-end",
         }}
       >
-        <h4
-          style={{
-            display: "flex",
-            backgroundColor: "#EAEAEA",
-            border: "1px solid #464646",
-            height: 30,
-            width: 30,
-            borderRadius: 5,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {card.points}
-        </h4>
+        {card.points > 0 && (
+          <h4
+            style={{
+              display: "flex",
+              backgroundColor: "#EAEAEA",
+              border: "1px solid #464646",
+              height: 30,
+              width: 30,
+              borderRadius: 5,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {card.points}
+          </h4>
+        )}
+        {card.points <= 0 && (
+          // eslint-disable-next-line jsx-a11y/heading-has-content
+          <h4
+            style={{
+              height: 30,
+              width: 30,
+            }}
+          ></h4>
+        )}
       </div>
 
       <div style={{ display: "flex" }}>{requirementsArr}</div>

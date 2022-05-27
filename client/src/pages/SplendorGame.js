@@ -89,10 +89,11 @@ export default function SplendorGame() {
             style={{
               marginLeft: 20,
               marginRight: 20,
+              marginBottom: 20,
               padding: 20,
               display: "grid",
               gap: 20,
-              gridTemplateColumns: "repeat(4, 1fr)",
+              gridTemplateColumns: "repeat(auto-fill, minmax(104px,1fr))",
               backgroundColor: "#464646",
             }}
           >
