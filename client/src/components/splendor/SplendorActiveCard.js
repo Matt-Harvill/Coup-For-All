@@ -60,8 +60,12 @@ export default function SplendorActiveCard(props) {
     <div
       style={{
         backgroundColor: getNewBackgroundColor(card.resource.color),
+        border: `1px solid #464646`,
         padding: 10,
         color: "#464646",
+        display: "flex",
+        flexDirection: "column",
+        height: props.maxHeight,
       }}
     >
       <div
@@ -96,8 +100,16 @@ export default function SplendorActiveCard(props) {
           ></h4>
         )}
       </div>
-
-      <div style={{ display: "flex" }}>{requirementsArr}</div>
+      <div style={{ flex: 1 }}></div>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap-reverse",
+          width: 40,
+        }}
+      >
+        {requirementsArr}
+      </div>
     </div>
   );
 }

@@ -1,2 +1,4 @@
 Each in progress game automatically runs on server start
 - eventually delete in progress games after certain time limit (or remove inactive players)
+
+Need to make a condensed navbar on smaller sizes

@@ -46,7 +46,7 @@ export default function Navbar() {
 
       <div style={{ flex: 1 }}></div>
 
-      {auth === "auth" && (
+      {/* {auth === "auth" && (
         <span
           style={{ cursor: "pointer", color: coupLinkColor }}
           onClick={() => {
@@ -70,7 +70,7 @@ export default function Navbar() {
         >
           Splendor
         </span>
-      )}
+      )} */}
 
       {userObj.gameStatus === "in progress" && (
         <button onClick={leaveGame} style={{ backgroundColor: defaultColor }}>
