@@ -4,8 +4,11 @@ import SplendorActiveCard from "../components/splendor/SplendorActiveCard";
 // import SplendorActionbar from "../components/splendor/SplendorActionbar";
 import SplendorGameContext from "../components/splendor/SplendorGameContext";
 import SplendorInactiveCard from "../components/splendor/SplendorInactiveCard";
+import SplendorNobleCard from "../components/splendor/SplendorNobleCard";
+import SplendorPlayerCard from "../components/splendor/SplendorPlayerCard";
 // import SplendorPlayerCard from "../components/splendor/SplendorPlayerCard";
 import { socket } from "../socket";
+import splendorNewBackgroundColor from "../splendorNewBackgroundColor";
 
 export default function SplendorGame() {
   const { userObj } = useContext(AppContext);
@@ -48,8 +51,8 @@ export default function SplendorGame() {
   }, []);
 
   const displayPlayer = (pStat) => {
-    return <div>{JSON.stringify(pStat)}</div>;
-    // return <SplendorPlayerCard width={splendorCardWidth} pStat={pStat} />;
+    // return <div>{JSON.stringify(pStat)}</div>;
+    return <SplendorPlayerCard width={splendorCardWidth} pStat={pStat} />;
   };
 
   let allActiveCards, level1cards, level2cards, level3cards;
@@ -94,6 +97,45 @@ export default function SplendorGame() {
     return <SplendorInactiveCard level={level} maxHeight={maxCardHeight} />;
   };
 
+  const displayNobleCard = (card) => {
+    return <SplendorNobleCard card={card} />;
+  };
+
+  const displayCoins = () => {
+    const coins = game.coins;
+    const coinSize = 50;
+
+    let coinDivs = [];
+    for (const [key, value] of Object.entries(coins)) {
+      let color;
+      if (key === "black") {
+        color = "#EAEAEA";
+      } else {
+        color = "#464646";
+      }
+      coinDivs.push(
+        <div
+          style={{
+            display: "flex",
+            backgroundColor: splendorNewBackgroundColor(key),
+            color: color,
+            height: coinSize,
+            width: coinSize,
+            borderRadius: coinSize,
+            justifyContent: "center",
+            alignItems: "center",
+            border: `1px solid ${color}`,
+            fontSize: coinSize / 2,
+          }}
+        >
+          {value}
+        </div>
+      );
+    }
+
+    return coinDivs;
+  };
+
   return (
     <div className="page splendorPage">
       <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
@@ -107,6 +149,104 @@ export default function SplendorGame() {
             Game: {JSON.stringify(game, null, "\t")}
           </pre> */}
           {/* <span>{JSON.stringify(turn)}</span> */}
+
+          <div
+            style={{
+              marginLeft: 20,
+              marginRight: 20,
+              marginBottom: 20,
+              padding: 20,
+              backgroundColor: "#464646",
+            }}
+          >
+            {game.nobles && (
+              <div
+                style={{
+                  backgroundColor: "#f4deff",
+                  padding: 10,
+                  display: "grid",
+                  gap: 10,
+                  gridTemplateColumns: "repeat(auto-fit, minmax(62px,1fr))",
+                  marginBottom: 20,
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  maxWidth: 460,
+                }}
+              >
+                {game.nobles.map(displayNobleCard)}
+              </div>
+            )}
+
+            <div
+              style={{
+                display: "grid",
+                gap: 20,
+                gridTemplateColumns: "repeat(auto-fit, minmax(190px,1fr))",
+              }}
+            >
+              {level3cards && (
+                <div
+                  style={{
+                    backgroundColor: "#f4deff",
+                    padding: 10,
+                    display: "grid",
+                    gap: 10,
+                    gridTemplateColumns: "repeat(auto-fit, minmax(62px,1fr))",
+                  }}
+                >
+                  {inactiveLevel3cards && displayInActiveCard(3)}
+                  {level3cards.map(displayActiveCard)}
+                </div>
+              )}
+              {level2cards && (
+                <div
+                  style={{
+                    backgroundColor: "#f4deff",
+                    padding: 10,
+                    display: "grid",
+                    gap: 10,
+                    gridTemplateColumns: "repeat(auto-fit, minmax(62px,1fr))",
+                  }}
+                >
+                  {inactiveLevel2cards && displayInActiveCard(2)}
+                  {level2cards.map(displayActiveCard)}
+                </div>
+              )}
+              {level1cards && (
+                <div
+                  style={{
+                    backgroundColor: "#f4deff",
+                    padding: 10,
+                    display: "grid",
+                    gap: 10,
+                    gridTemplateColumns: "repeat(auto-fit, minmax(62px,1fr))",
+                  }}
+                >
+                  {inactiveLevel1cards && displayInActiveCard(1)}
+                  {level1cards.map(displayActiveCard)}
+                </div>
+              )}
+            </div>
+
+            {game.coins && (
+              <div
+                style={{
+                  backgroundColor: "#f4deff",
+                  padding: 10,
+                  display: "grid",
+                  gap: 10,
+                  gridTemplateColumns: "repeat(auto-fit, minmax(50px,1fr))",
+                  marginTop: 20,
+                  marginLeft: "auto",
+                  marginRight: "auto",
+                  maxWidth: 370,
+                }}
+              >
+                {displayCoins()}
+              </div>
+            )}
+          </div>
+
           <div
             style={{
               marginLeft: 20,
@@ -115,54 +255,13 @@ export default function SplendorGame() {
               padding: 20,
               display: "grid",
               gap: 20,
-              // gridTemplateColumns: "repeat(auto-fit, minmax(62px,1fr))",
               gridTemplateColumns: "repeat(auto-fit, minmax(190px,1fr))",
-              backgroundColor: "#464646",
+              backgroundColor: "#EAEAEA",
             }}
           >
-            {level3cards && (
-              <div
-                style={{
-                  backgroundColor: "#f4deff",
-                  padding: 10,
-                  display: "grid",
-                  gap: 10,
-                  gridTemplateColumns: "repeat(auto-fit, minmax(62px,1fr))",
-                }}
-              >
-                {inactiveLevel3cards && displayInActiveCard(3)}
-                {level3cards.map(displayActiveCard)}
-              </div>
-            )}
-            {level2cards && (
-              <div
-                style={{
-                  backgroundColor: "#f4deff",
-                  padding: 10,
-                  display: "grid",
-                  gap: 10,
-                  gridTemplateColumns: "repeat(auto-fit, minmax(62px,1fr))",
-                }}
-              >
-                {inactiveLevel2cards && displayInActiveCard(2)}
-                {level2cards.map(displayActiveCard)}
-              </div>
-            )}
-            {level1cards && (
-              <div
-                style={{
-                  backgroundColor: "#f4deff",
-                  padding: 10,
-                  display: "grid",
-                  gap: 10,
-                  gridTemplateColumns: "repeat(auto-fit, minmax(62px,1fr))",
-                }}
-              >
-                {inactiveLevel1cards && displayInActiveCard(1)}
-                {level1cards.map(displayActiveCard)}
-              </div>
-            )}
+            {game && game.pStats && game.pStats.map(displayPlayer)}
           </div>
+
           {/* Add flex 1 object to move actionbar to the bottom */}
           <div style={{ flex: 1 }}></div>
           {/* <div>

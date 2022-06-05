@@ -35,6 +35,8 @@ export const createGame = async (socket, privacy, maxPlayers, maxPoints) => {
   const allLevel3Cards = getNewLevel3Cards();
   const nobles = get5Nobles();
   let numCoins;
+  // Case maxPlayers to Number
+  maxPlayers = Number(maxPlayers);
   switch (maxPlayers) {
     case 2:
       numCoins = 4;

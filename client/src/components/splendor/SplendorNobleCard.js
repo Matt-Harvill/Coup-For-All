@@ -1,10 +1,10 @@
 import splendorNewBackgroundColor from "../../splendorNewBackgroundColor";
 
-export default function SplendorActiveCard(props) {
+export default function SplendorNobleCard(props) {
   const card = props.card;
 
   let requirementsArr = [];
-  for (const [key, value] of Object.entries(card.requirements)) {
+  for (const [key, value] of Object.entries(card.cardRequirements)) {
     let color;
     if (key === "black") {
       color = "#EAEAEA";
@@ -21,7 +21,7 @@ export default function SplendorActiveCard(props) {
             color: color,
             height: 20,
             width: 20,
-            borderRadius: 20,
+            borderRadius: 4,
             justifyContent: "center",
             alignItems: "center",
             border: `1px solid ${color}`,
@@ -36,7 +36,8 @@ export default function SplendorActiveCard(props) {
   return (
     <div
       style={{
-        backgroundColor: splendorNewBackgroundColor(card.resource.color),
+        background:
+          "linear-gradient(217deg, rgba(255,0,0,.8), rgba(255,0,0,0) 70.71%), linear-gradient(127deg, rgba(0,255,0,.8), rgba(0,255,0,0) 70.71%), linear-gradient(336deg, rgba(0,0,255,.8), rgba(0,0,255,0) 70.71%)",
         border: `1px solid #464646`,
         padding: 10,
         color: "#464646",
