@@ -22,8 +22,6 @@ export default function SplendorGame() {
     setTurn: setTurn,
   };
 
-  const splendorCardWidth = 240;
-
   // Setup splendor socket listener
   useEffect(() => {
     socket.on("splendor", (event, gameID, ...args) => {
@@ -52,7 +50,7 @@ export default function SplendorGame() {
 
   const displayPlayer = (pStat) => {
     // return <div>{JSON.stringify(pStat)}</div>;
-    return <SplendorPlayerCard width={splendorCardWidth} pStat={pStat} />;
+    return <SplendorPlayerCard pStat={pStat} />;
   };
 
   let allActiveCards, level1cards, level2cards, level3cards;
@@ -252,11 +250,11 @@ export default function SplendorGame() {
               marginLeft: 20,
               marginRight: 20,
               marginBottom: 20,
-              padding: 20,
+              // padding: 20,
               display: "grid",
               gap: 20,
-              gridTemplateColumns: "repeat(auto-fit, minmax(190px,1fr))",
-              backgroundColor: "#EAEAEA",
+              gridTemplateColumns: "repeat(auto-fill, minmax(245px,1fr))",
+              // backgroundColor: "#464646",
             }}
           >
             {game && game.pStats && game.pStats.map(displayPlayer)}

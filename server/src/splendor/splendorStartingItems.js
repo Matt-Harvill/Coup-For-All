@@ -1,5 +1,32 @@
 import { shuffleArray } from "../utils/shuffleArray.js";
 
+// const randomStartingValues = [];
+// for (let i = 0; i < 12; i++) {
+//   randomStartingValues.push(Math.floor(Math.random() * 5));
+// }
+//
+// const startingPStat = {
+//   player: null,
+//   points: randomStartingValues[0],
+//   permanentResources: {
+//     green: 1,
+//     blue: 0,
+//     red: randomStartingValues[3],
+//     black: randomStartingValues[4],
+//     white: randomStartingValues[5],
+//   },
+//   coins: {
+//     green: 0,
+//     blue: 0,
+//     red: randomStartingValues[8],
+//     black: randomStartingValues[9],
+//     white: randomStartingValues[10],
+//     yellow: randomStartingValues[11],
+//   },
+//   cardsInHand: [],
+//   cardsOwned: [],
+// };
+
 const startingPStat = {
   player: null,
   points: 0,

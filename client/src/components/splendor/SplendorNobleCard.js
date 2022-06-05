@@ -19,7 +19,7 @@ export default function SplendorNobleCard(props) {
             display: "flex",
             backgroundColor: splendorNewBackgroundColor(key),
             color: color,
-            height: 20,
+            height: 28,
             width: 20,
             borderRadius: 4,
             justifyContent: "center",
