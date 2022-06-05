@@ -1,5 +1,5 @@
 .splendorText {
-  overflow-y: scroll;
+  overflow-y: auto;
   padding: 10px;
   width: 100%;
   flex: 1;

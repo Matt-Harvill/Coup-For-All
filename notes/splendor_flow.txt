@@ -126,3 +126,26 @@ General notes:
 - Don't update DB until turn is over, including noble acquisition (for now)
 - Reuse a lot of the items from the coup lobby but change colors/fonts to make it distinguishable
 - Set up flow to make creation of new splendor games pretty easy
+
+
+Highlight the selectedCard one color, highlight purchaseable/reservable cards another color
+
+User can either take coins, reserve a card, or buy a card
+Then after selection -> confirm or cancel
+
+turn = {
+  timeRemMS: String,
+  interval: Function,
+  stage: selectAction/selectNoble,
+  action: takeCoins, reserveCard, buyCard, selectNoble, null
+  
+  selectedCard: (need to add cardID for each card),
+  selectedCoins: {
+    green: Number,
+    blue: Number,
+    green: Number,
+    blue: Number,
+    green: Number,
+    yellow: Number,
+  }
+}
