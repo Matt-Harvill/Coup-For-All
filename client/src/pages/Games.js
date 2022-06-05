@@ -44,7 +44,7 @@ export default function Games() {
         style={{
           borderRadius: 10,
           padding: 20,
-          width: 300,
+          width: 260,
           minHeight: 150,
           backgroundColor: "#464646",
           // color: "#14FFEC",
@@ -88,8 +88,8 @@ export default function Games() {
         style={{
           padding: 20,
           display: "grid",
-          gridGap: 20,
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: 20,
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
           justifyItems: "center",
         }}
       >

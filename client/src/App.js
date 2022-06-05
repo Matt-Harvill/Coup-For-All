@@ -38,13 +38,35 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return (
-    <AppContext.Provider value={state}>
-      {/* {JSON.stringify(userObj)} */}
-      <Navbar />
-      <PageDisplayer />
-      <PageSwitcher />
-      <UserObjUpdater />
-    </AppContext.Provider>
-  );
+  const screenWidth = window.innerWidth;
+
+  const displayApp = () => {
+    if (screenWidth >= 300) {
+      return (
+        <AppContext.Provider value={state}>
+          {/* {JSON.stringify(userObj)} */}
+          <Navbar />
+          <PageDisplayer />
+          <PageSwitcher />
+          <UserObjUpdater />
+        </AppContext.Provider>
+      );
+    } else {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            margin: "auto",
+            padding: 50,
+          }}
+        >
+          <div>Please switch to a screen at least 300 pixels wide</div>
+        </div>
+      );
+    }
+  };
+
+  return displayApp();
 }
