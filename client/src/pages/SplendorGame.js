@@ -149,14 +149,6 @@ export default function SplendorGame() {
         className="page splendorPage"
         style={{ height: "100%", overflowY: "auto" }}
       >
-        {/* <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            overflowY: "scroll",
-            flex: 0,
-          }}
-        > */}
         <h1 style={{ textAlign: "center", paddingTop: 20, paddingBottom: 20 }}>
           Splendor
         </h1>

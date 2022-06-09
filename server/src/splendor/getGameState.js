@@ -1,4 +1,5 @@
 import { getGame } from "../utils/dbUtils.js";
+import { createTurn } from "./turns.js";
 
 export const getSplendorGameState = async (socket) => {
   const user = socket.request.user;
@@ -15,7 +16,7 @@ export const getSplendorGameState = async (socket) => {
     user.gameStatus === "in progress"
   ) {
     // Will create a turn for splendor games in future
-    // createTurn(game);
+    createTurn(game);
   }
 
   socket.emit("splendor", "updateGame", user.gameID, game);

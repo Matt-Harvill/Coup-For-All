@@ -11,30 +11,31 @@ export default function TimeLeft(props) {
       }
 
       const timeLeftColor = "#0D7377";
+      const progressBarMargin = 1;
 
-      // With actionBar padding of 10 left and right
-      const actionBarPaddingLeft = 10;
-      const actionBarPaddingRight = 10;
-      // With buttonBlock margins 20 each side
-      const buttonsMarginLeft = 20;
-      const buttonsMarginRight = 20;
-
-      const progressBarWidth =
-        (window.innerWidth - actionBarPaddingLeft - actionBarPaddingRight) / 2 -
-        buttonsMarginLeft -
-        buttonsMarginRight;
+      const progressOuterDiv = document.getElementById("progressOuterDiv");
+      // If the progressOuterDiv exists, set the width accordingly
+      const progressBarWidth = progressOuterDiv
+        ? progressOuterDiv.clientWidth
+        : 0;
 
       const startingWidth = 14;
 
-      const progressWidth =
+      let progressWidth =
         startingWidth +
         (1 - modTimeLeft / maxTimeLeft) * (progressBarWidth - startingWidth);
 
+      if (progressWidth > progressBarWidth - progressBarMargin * 2) {
+        progressWidth = progressBarWidth - progressBarMargin * 2;
+      }
+
       return (
         <div
+          id="progressOuterDiv"
           className="progress"
           style={{
             borderRadius: 10,
+            width: "100%",
           }}
         >
           <div
@@ -47,7 +48,7 @@ export default function TimeLeft(props) {
               width: progressWidth,
               backgroundColor: timeLeftColor,
               borderRadius: 10,
-              margin: 1,
+              margin: progressBarMargin,
             }}
           ></div>
         </div>

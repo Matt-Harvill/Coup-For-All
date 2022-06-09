@@ -6,10 +6,25 @@ import TimeLeft from "../TimeLeft";
 import SplendorGameContext from "./SplendorGameContext";
 
 export default function SplendorActionbar() {
-  const { game } = useContext(SplendorGameContext);
+  const { turn, game } = useContext(SplendorGameContext);
   const { userObj } = useContext(AppContext);
-  // const [maxTimeRem, setMaxTimeRem] = useState(longTurnTime);
-  // const timeRem = turn.timeRemMS;
+  const [maxTimeRem, setMaxTimeRem] = useState(longTurnTime);
+  const timeRem = turn.timeRemMS;
+
+  useEffect(() => {
+    if (turn.stage) {
+      switch (turn.stage) {
+        case "selectNoble":
+          setMaxTimeRem(shortTurnTime);
+          break;
+        case "selectAction":
+          setMaxTimeRem(longTurnTime);
+          break;
+        default:
+          alert(`${turn.stage} is not a valid turn stage`);
+      }
+    }
+  }, [turn.stage]);
 
   if (game.winner) {
     let name;
@@ -52,6 +67,10 @@ export default function SplendorActionbar() {
         <div></div>
         <div>
           <h4 style={{ textAlign: "center" }}>Splendor Actionbar</h4>
+          <TimeLeft timeLeft={timeRem} maxTimeLeft={maxTimeRem} />
+          {/* <p>
+            {timeRem}/{maxTimeRem}
+          </p> */}
         </div>
       </div>
     );
