@@ -139,7 +139,7 @@ turn = {
   stage: selectAction/selectNoble,
   action: takeCoins, reserveCard, buyCard, selectNoble, null
   
-  selectedCard: (need to add cardID for each card),
+  selectedCardID: (need to add cardID for each card),
   selectedCoins: {
     green: Number,
     blue: Number,

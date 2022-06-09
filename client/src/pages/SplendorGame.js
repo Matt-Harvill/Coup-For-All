@@ -100,14 +100,6 @@ export default function SplendorGame() {
     return <SplendorNobleCard card={card} />;
   };
 
-  const displayActionbar = () => {
-    if (game && game.players) {
-      if (game.players[0] === userObj.username) {
-        return <SplendorActionbar />;
-      }
-    }
-  };
-
   const displayCoins = () => {
     const coins = game.coins;
     const coinSize = 50;
@@ -265,7 +257,7 @@ export default function SplendorGame() {
           {game && game.pStats && game.pStats.map(displayPlayer)}
         </div>
       </div>
-      {displayActionbar()}
+      {game && <SplendorActionbar />}
     </SplendorGameContext.Provider>
   );
 }

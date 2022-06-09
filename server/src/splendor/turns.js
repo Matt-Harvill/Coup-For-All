@@ -5,7 +5,7 @@
 //   stage: selectAction/selectNoble,
 //   action: takeCoins, reserveCard, buyCard, selectNoble, null
 
-//   selectedCard: (need to add cardID for each card),
+//   selectedCardID: (need to add cardID for each card),
 //   selectedCoins: {
 //     green: Number,
 //     blue: Number,
@@ -179,7 +179,7 @@ export const createTurn = (game) => {
       player: game.players[0], // non-null
       stage: "selectAction", // non-null - can be selectAction/selectNoble
       action: null, // can be takeCoins, reserveCard, buyCard, selectNoble, null
-      selectedCard: null,
+      selectedCardID: null,
       selectedCoins: {
         green: 0,
         blue: 0,

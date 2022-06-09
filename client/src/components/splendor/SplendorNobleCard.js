@@ -1,6 +1,12 @@
 import splendorNewBackgroundColor from "../../splendorNewBackgroundColor";
+import { useContext } from "react";
+import { socket } from "../../socket";
+import AppContext from "../AppContext";
+import SplendorGameContext from "./SplendorGameContext";
 
 export default function SplendorNobleCard(props) {
+  const { turn } = useContext(SplendorGameContext);
+  const { userObj } = useContext(AppContext);
   const card = props.card;
 
   let requirementsArr = [];
@@ -33,23 +39,38 @@ export default function SplendorNobleCard(props) {
     }
   }
 
+  const cardClicked = () => {
+    if (turn.player === userObj.username) {
+      // If card isn't already selected
+      if (turn.selectedCardID !== card._id) {
+        socket.emit("splendor", "selectCard", card._id);
+      }
+    }
+  };
+
+  const cardStyle = {
+    background:
+      "linear-gradient(217deg, rgba(255,0,0,.8), rgba(255,0,0,0) 70.71%), linear-gradient(127deg, rgba(0,255,0,.8), rgba(0,255,0,0) 70.71%), linear-gradient(336deg, rgba(0,0,255,.8), rgba(0,0,255,0) 70.71%)",
+    boxSizing: "border-box",
+    border: `1px solid #464646`,
+    padding: 10,
+    color: "#464646",
+    display: "flex",
+    flexDirection: "column",
+    height: props.maxHeight,
+  };
+
+  if (turn.selectedCardID === card._id) {
+    cardStyle.boxShadow = "0px 0px 0px 4px #000000";
+  }
+
   return (
-    <div
-      style={{
-        background:
-          "linear-gradient(217deg, rgba(255,0,0,.8), rgba(255,0,0,0) 70.71%), linear-gradient(127deg, rgba(0,255,0,.8), rgba(0,255,0,0) 70.71%), linear-gradient(336deg, rgba(0,0,255,.8), rgba(0,0,255,0) 70.71%)",
-        border: `1px solid #464646`,
-        padding: 10,
-        color: "#464646",
-        display: "flex",
-        flexDirection: "column",
-        height: props.maxHeight,
-      }}
-    >
+    <div style={cardStyle} onClick={cardClicked}>
       <div
         style={{
           display: "flex",
           justifyContent: "flex-end",
+          height: "100%",
         }}
       >
         {card.points > 0 && (

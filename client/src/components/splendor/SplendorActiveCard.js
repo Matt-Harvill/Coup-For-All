@@ -1,6 +1,12 @@
+import { useContext } from "react";
+import { socket } from "../../socket";
 import splendorNewBackgroundColor from "../../splendorNewBackgroundColor";
+import AppContext from "../AppContext";
+import SplendorGameContext from "./SplendorGameContext";
 
 export default function SplendorActiveCard(props) {
+  const { turn } = useContext(SplendorGameContext);
+  const { userObj } = useContext(AppContext);
   const card = props.card;
 
   let requirementsArr = [];
@@ -33,18 +39,32 @@ export default function SplendorActiveCard(props) {
     }
   }
 
+  const cardClicked = () => {
+    if (turn.player === userObj.username) {
+      // If card isn't already selected
+      if (turn.selectedCardID !== card._id) {
+        socket.emit("splendor", "selectCard", card._id);
+      }
+    }
+  };
+
+  const cardStyle = {
+    backgroundColor: splendorNewBackgroundColor(card.resource.color),
+    boxSizing: "border-box",
+    border: `1px solid #464646`,
+    padding: 10,
+    color: "#464646",
+    display: "flex",
+    flexDirection: "column",
+    height: props.maxHeight,
+  };
+
+  if (turn.selectedCardID === card._id) {
+    cardStyle.boxShadow = "0px 0px 0px 4px #000000";
+  }
+
   return (
-    <div
-      style={{
-        backgroundColor: splendorNewBackgroundColor(card.resource.color),
-        border: `1px solid #464646`,
-        padding: 10,
-        color: "#464646",
-        display: "flex",
-        flexDirection: "column",
-        height: props.maxHeight,
-      }}
-    >
+    <div style={cardStyle} onClick={cardClicked}>
       <div
         style={{
           display: "flex",
