@@ -1,9 +1,11 @@
 import { useContext, useEffect, useState } from "react";
 import { longTurnTime, shortTurnTime } from "../../coupTurnTimes";
-import { socket } from "../../socket";
 import AppContext from "../AppContext";
 import TimeLeft from "../TimeLeft";
 import SplendorGameContext from "./SplendorGameContext";
+import SplendorActionButton from "./SplendorActionButton";
+import SplendorSubmitButton from "./SplendorSubmitButton";
+import SplendorCancelButton from "./SplendorCancelButton";
 
 export default function SplendorActionbar() {
   const { turn, game } = useContext(SplendorGameContext);
@@ -71,6 +73,68 @@ export default function SplendorActionbar() {
     return <h4 style={{ textAlign: "center" }}>{actionTitle}</h4>;
   };
 
+  const displayButtons = () => {
+    const thisPlayersTurn = userObj.username === turn.player;
+
+    let buttons = [];
+    let submitButtonTitle;
+
+    if (thisPlayersTurn) {
+      if (turn.action) {
+        // can be takeCoins, reserveCard, buyCard, selectNoble, null
+        switch (turn.action) {
+          case "takeCoins":
+            submitButtonTitle = "Take selected coins";
+            break;
+          case "reserveCard":
+            submitButtonTitle = "Reserve selected card";
+            break;
+          case "buyCard":
+            submitButtonTitle = "Buy selected card";
+            break;
+          case "selectNoble":
+            submitButtonTitle = "Take selected noble";
+            break;
+          default:
+            break;
+        }
+        buttons.push(
+          <SplendorSubmitButton canSubmit={true} title={submitButtonTitle} />
+        );
+        if (turn.stage === "selectAction") {
+          buttons.push(<SplendorCancelButton />);
+        }
+      } else {
+        if (turn.stage === "selectAction") {
+          buttons.push(
+            <SplendorActionButton title={"Take coins"} action={"takeCoins"} />
+          );
+          buttons.push(
+            <SplendorActionButton
+              title={"Reserve a card"}
+              action={"reserveCard"}
+            />
+          );
+          buttons.push(
+            <SplendorActionButton title={"Buy a card"} action={"buyCard"} />
+          );
+        }
+      }
+    }
+
+    return (
+      <div
+        style={{
+          display: "grid",
+          gridGap: 20,
+          gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))",
+        }}
+      >
+        {buttons}
+      </div>
+    );
+  };
+
   if (game.winner) {
     let name;
     if (userObj.username === game.winner) {
@@ -112,6 +176,8 @@ export default function SplendorActionbar() {
         <div></div>
         <div>
           {displayTitle()}
+          {displayButtons()}
+          <div style={{ height: 10 }}></div>
           <TimeLeft timeLeft={timeRem} maxTimeLeft={maxTimeRem} />
         </div>
       </div>

@@ -3,7 +3,7 @@ import io from "socket.io-client";
 let url;
 if (process.env.NODE_ENV === "development") {
   // url = "http://localhost";
-  url = "http://192.168.10.22";
+  url = "http://192.168.56.1";
 } else {
   url = "https://www.mharvillgames.com";
 }

@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { socket } from "../../socket";
+import { canSelectCard, cardSelected } from "../../splendorLogic/selectCard";
 import splendorNewBackgroundColor from "../../splendorNewBackgroundColor";
 import AppContext from "../AppContext";
 import SplendorGameContext from "./SplendorGameContext";
@@ -39,15 +40,6 @@ export default function SplendorActiveCard(props) {
     }
   }
 
-  const cardClicked = () => {
-    if (turn.player === userObj.username) {
-      // If card isn't already selected
-      if (turn.selectedCardID !== card._id) {
-        socket.emit("splendor", "selectCard", card._id);
-      }
-    }
-  };
-
   const cardStyle = {
     backgroundColor: splendorNewBackgroundColor(card.resource.color),
     boxSizing: "border-box",
@@ -64,7 +56,17 @@ export default function SplendorActiveCard(props) {
   }
 
   return (
-    <div style={cardStyle} onClick={cardClicked}>
+    <div
+      style={cardStyle}
+      onClick={() => {
+        return cardSelected(
+          card._id,
+          turn.player,
+          userObj.username,
+          canSelectCard("activeCard", turn.action)
+        );
+      }}
+    >
       <div
         style={{
           display: "flex",

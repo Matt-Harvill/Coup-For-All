@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { socket } from "../../socket";
 import AppContext from "../AppContext";
 import SplendorGameContext from "./SplendorGameContext";
+import { canSelectCard, cardSelected } from "../../splendorLogic/selectCard";
 
 export default function SplendorNobleCard(props) {
   const { turn } = useContext(SplendorGameContext);
@@ -39,15 +40,6 @@ export default function SplendorNobleCard(props) {
     }
   }
 
-  const cardClicked = () => {
-    if (turn.player === userObj.username) {
-      // If card isn't already selected
-      if (turn.selectedCardID !== card._id) {
-        socket.emit("splendor", "selectCard", card._id);
-      }
-    }
-  };
-
   const cardStyle = {
     background:
       "linear-gradient(217deg, rgba(255,0,0,.8), rgba(255,0,0,0) 70.71%), linear-gradient(127deg, rgba(0,255,0,.8), rgba(0,255,0,0) 70.71%), linear-gradient(336deg, rgba(0,0,255,.8), rgba(0,0,255,0) 70.71%)",
@@ -65,7 +57,17 @@ export default function SplendorNobleCard(props) {
   }
 
   return (
-    <div style={cardStyle} onClick={cardClicked}>
+    <div
+      style={cardStyle}
+      onClick={() => {
+        return cardSelected(
+          card._id,
+          turn.player,
+          userObj.username,
+          canSelectCard("nobleCard", turn.action)
+        );
+      }}
+    >
       <div
         style={{
           display: "flex",

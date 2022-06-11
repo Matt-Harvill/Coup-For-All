@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { socket } from "../../socket";
+import { canSelectCard, cardSelected } from "../../splendorLogic/selectCard";
 import AppContext from "../AppContext";
 import SplendorGameContext from "./SplendorGameContext";
 
@@ -52,7 +53,17 @@ export default function SplendorInactiveCard(props) {
   }
 
   return (
-    <div style={cardStyle} onClick={cardClicked}>
+    <div
+      style={cardStyle}
+      onClick={() => {
+        return cardSelected(
+          level,
+          turn.player,
+          userObj.username,
+          canSelectCard("inactiveCard", turn.action)
+        );
+      }}
+    >
       <div style={{ flex: 1 }}></div>
       <div
         style={{
