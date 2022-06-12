@@ -9,6 +9,10 @@ export default function SplendorInactiveCard(props) {
   const { userObj } = useContext(AppContext);
   const level = props.level;
 
+  if (!props.cardsRemaining) {
+    return <div style={{ height: props.maxHeight }}></div>;
+  }
+
   const displayLevelBubbles = () => {
     let bubbles = [];
     for (let i = 0; i < level; i++) {
@@ -28,15 +32,6 @@ export default function SplendorInactiveCard(props) {
     return bubbles;
   };
 
-  const cardClicked = () => {
-    if (turn.player === userObj.username) {
-      // If card isn't already selected (set the cardID to level)
-      if (turn.selectedCardID !== level) {
-        socket.emit("splendor", "selectCard", level);
-      }
-    }
-  };
-
   const cardStyle = {
     backgroundColor: "#9A86A4",
     boxSizing: "border-box",
@@ -48,7 +43,7 @@ export default function SplendorInactiveCard(props) {
     height: props.maxHeight,
   };
 
-  if (turn.selectedCardID === level) {
+  if (turn.selectedCardID === `level${level}`) {
     cardStyle.boxShadow = "0px 0px 0px 4px #000000";
   }
 
@@ -57,7 +52,9 @@ export default function SplendorInactiveCard(props) {
       style={cardStyle}
       onClick={() => {
         return cardSelected(
-          level,
+          turn.selectedCardID === level,
+          `level${level}`,
+          "inactiveCard",
           turn.player,
           userObj.username,
           canSelectCard("inactiveCard", turn.action)

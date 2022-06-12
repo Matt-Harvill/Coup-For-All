@@ -13,6 +13,8 @@ export default function SplendorActionbar() {
   const [maxTimeRem, setMaxTimeRem] = useState(longTurnTime);
   const timeRem = turn.timeRemMS;
 
+  const [canSubmit, setCanSubmit] = useState(false);
+
   useEffect(() => {
     if (turn.stage) {
       if (turn.stage === "selectNoble") {
@@ -24,6 +26,25 @@ export default function SplendorActionbar() {
       }
     }
   }, [turn.stage]);
+
+  useEffect(() => {
+    // If there is a cardID, a card has been selected
+    if (turn.selectedCardID) {
+      if (
+        turn.action === "reserveCard" ||
+        turn.action === "buyCard" ||
+        turn.action === "selectNoble"
+      ) {
+        setCanSubmit(true);
+      }
+    } else {
+      if (turn.action === "takeCoins") {
+        // For now leave false
+      }
+      setCanSubmit(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [turn.selectedCardID]);
 
   //   action: takeCoins, reserveCard, buyCard, selectNoble, null
   const displayTitle = () => {
@@ -40,14 +61,14 @@ export default function SplendorActionbar() {
         break;
       case "reserveCard":
         if (thisPlayersTurn) {
-          actionTitle = "Reserve a card";
+          actionTitle = "Select a card to reserve";
         } else {
           actionTitle = `Wait for ${turn.player} to reserve a card`;
         }
         break;
       case "buyCard":
         if (thisPlayersTurn) {
-          actionTitle = "Buy a card";
+          actionTitle = "Select a card to buy";
         } else {
           actionTitle = `Wait for ${turn.player} to buy a card`;
         }
@@ -99,7 +120,10 @@ export default function SplendorActionbar() {
             break;
         }
         buttons.push(
-          <SplendorSubmitButton canSubmit={true} title={submitButtonTitle} />
+          <SplendorSubmitButton
+            canSubmit={canSubmit}
+            title={submitButtonTitle}
+          />
         );
         if (turn.stage === "selectAction") {
           buttons.push(<SplendorCancelButton />);

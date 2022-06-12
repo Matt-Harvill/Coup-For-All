@@ -262,7 +262,6 @@ export default function CoupActionbar() {
         if (!turn.challenging.includes(userObj.username)) {
           return;
         } else {
-          console.log(`${turn.challenging} in blockAction buttonStuff`);
           let actionTitle, title, roles;
           let onClickArgs = ["blockAction", turn.action];
 

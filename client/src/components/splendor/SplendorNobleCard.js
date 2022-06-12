@@ -61,7 +61,9 @@ export default function SplendorNobleCard(props) {
       style={cardStyle}
       onClick={() => {
         return cardSelected(
+          turn.selectedCardID === card._id,
           card._id,
+          "nobleCard",
           turn.player,
           userObj.username,
           canSelectCard("nobleCard", turn.action)

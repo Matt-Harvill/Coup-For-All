@@ -9,7 +9,7 @@ import { joinGame } from "./joinGame.js";
 import { deleteGame } from "./deleteGame.js";
 import { deleteFormingGame } from "../formingGameStuff.js";
 import { handleSelectCard } from "./handleSelectCard.js";
-import { cancelAction, selectAction } from "./handlingActions.js";
+import { cancelAction, selectAction, submitAction } from "./handlingActions.js";
 
 // Set of splendor players in lobby
 const splendorOnlinePlayers = new Set();
@@ -107,8 +107,8 @@ export const eventSwitch = async (event, socket, ...args) => {
       getSplendorGameState(socket);
       break;
     case "selectCard":
-      const cardID = args[0];
-      handleSelectCard(user, cardID);
+      const [cardID, cardGroup] = args;
+      handleSelectCard(user, cardID, cardGroup);
       break;
     case "selectAction":
       const selectedAction = args[0];
@@ -116,8 +116,7 @@ export const eventSwitch = async (event, socket, ...args) => {
       break;
     case "submitAction":
       const submittedAction = args[0];
-      // submitAction(user, submittedAction);
-      console.log(`submitting splendor action: ${submittedAction}`);
+      submitAction(user);
       break;
     case "cancelAction":
       cancelAction(user);

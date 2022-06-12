@@ -6,14 +6,14 @@ export default async function dbTurnUpdateHandlerSwitch(
   gameTitle,
   updatedGame,
   update,
-  user
+  username
 ) {
   switch (gameTitle) {
     case "coup":
-      await coupDBUpdateTurnHandler(game, updatedGame, update, user);
+      await coupDBUpdateTurnHandler(game, updatedGame, update, username);
       break;
     case "splendor":
-      await splendorDBUpdateTurnHandler(game, updatedGame, update, user);
+      await splendorDBUpdateTurnHandler(game, updatedGame, update, username);
       break;
     default:
       throw `${gameTitle} not valid game title in dbTurnUpdateHandlerSwitch`;

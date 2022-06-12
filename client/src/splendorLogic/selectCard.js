@@ -1,17 +1,17 @@
 import { socket } from "../socket";
 
-export const canSelectCard = (cardType, turnAction) => {
+export const canSelectCard = (cardGroup, turnAction) => {
   switch (turnAction) {
     // reserveCard, buyCard, selectNoble
     case "reserveCard":
     case "buyCard":
-      if (cardType === "activeCard" || cardType === "inactiveCard") {
+      if (cardGroup === "activeCard" || cardGroup === "inactiveCard") {
         return true;
       } else {
         return false;
       }
     case "selectNoble":
-      if (cardType === "nobleCard") {
+      if (cardGroup === "nobleCard") {
         return true;
       } else {
         return false;
@@ -21,8 +21,19 @@ export const canSelectCard = (cardType, turnAction) => {
   }
 };
 
-export const cardSelected = (cardID, turnPlayer, username, canSelect) => {
+export const cardSelected = (
+  cardAlreadySelected,
+  cardID,
+  cardGroup,
+  turnPlayer,
+  username,
+  canSelect
+) => {
   if (turnPlayer === username && canSelect) {
-    socket.emit("splendor", "selectCard", cardID);
+    if (cardAlreadySelected) {
+      socket.emit("splendor", "selectCard", null, null); // Unselect the card
+    } else {
+      socket.emit("splendor", "selectCard", cardID, cardGroup); // select the card
+    }
   }
 };

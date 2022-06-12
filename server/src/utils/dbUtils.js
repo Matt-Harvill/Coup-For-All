@@ -42,7 +42,7 @@ const updateUser = async (
   );
 };
 
-export const updateUserAndGame = async (user, game, update) => {
+export const updateUserAndGame = async (username, game, update) => {
   const session = await conn.startSession();
   session.startTransaction();
 
@@ -85,8 +85,8 @@ export const updateUserAndGame = async (user, game, update) => {
         break;
       case "leaveGame": // Only called if game still has players
         await game.save(); // Uses session by default
-        await updateUser(user, "", "", "", {}, session);
-        usersUpdated.push(user);
+        await updateUser(username, "", "", "", {}, session);
+        usersUpdated.push(username);
         break;
       default:
         throw "No update style specified in updateUserAndGame";
@@ -109,8 +109,8 @@ export const updateUserAndGame = async (user, game, update) => {
       }
     }
     // Update all the players in the game
-    for (const user of usersUpdated) {
-      sendUpdatesSingle(user, updatedGame);
+    for (const username of usersUpdated) {
+      sendUpdatesSingle(username, updatedGame);
     }
 
     // Handle turns
@@ -120,7 +120,7 @@ export const updateUserAndGame = async (user, game, update) => {
         game.gameTitle,
         updatedGame,
         update,
-        user
+        username
       );
     }
 

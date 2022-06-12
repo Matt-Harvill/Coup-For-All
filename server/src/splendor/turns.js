@@ -180,6 +180,7 @@ export const createTurn = (game) => {
       stage: "selectAction", // non-null - can be selectAction/selectNoble
       action: null, // can be takeCoins, reserveCard, buyCard, selectNoble, null
       selectedCardID: null,
+      selectedCardGroup: null,
       selectedCoins: {
         green: 0,
         blue: 0,

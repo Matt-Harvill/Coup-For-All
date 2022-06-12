@@ -10,9 +10,29 @@ export default function SplendorSubmitButton(props) {
     socket.emit("splendor", "submitAction", turn.action);
   };
 
-  return (
-    <button style={{ padding: 10 }} onClick={submitAction}>
-      {title}
-    </button>
-  );
+  const style = {
+    padding: 10,
+  };
+
+  // let className = "";
+  // if (!canSubmit) {
+  //   style.opacity = 0.65;
+  //   className = "disabledButton";
+  // } else {
+  //   style.opacity = 1;
+  // }
+
+  if (canSubmit) {
+    return (
+      <button
+        // className={className}
+        style={style}
+        onClick={submitAction}
+      >
+        {title}
+      </button>
+    );
+  } else {
+    return;
+  }
 }

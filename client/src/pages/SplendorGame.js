@@ -56,6 +56,9 @@ export default function SplendorGame() {
 
   let allActiveCards, level1cards, level2cards, level3cards;
   let inactiveLevel1cards, inactiveLevel2cards, inactiveLevel3cards;
+  let displayInactiveLevel1Card,
+    displayInactiveLevel2Card,
+    displayInactiveLevel3Card;
   let maxCardHeight = 80;
   if (game && game.activeCards) {
     level1cards = game.activeCards.level1;
@@ -64,17 +67,15 @@ export default function SplendorGame() {
     inactiveLevel1cards = game.inactiveCards.level1;
     inactiveLevel2cards = game.inactiveCards.level2;
     inactiveLevel3cards = game.inactiveCards.level3;
-    if (level1cards.length < 4) {
-      level1cards.splice(level1cards.length - 1, 0, null);
-    }
-    if (level2cards.length < 4) {
-      level2cards.splice(level2cards.length - 1, 0, null);
-    }
-    if (level3cards.length < 4) {
-      level3cards.splice(level3cards.length - 1, 0, null);
-    }
+    displayInactiveLevel1Card = inactiveLevel1cards.length > 0;
+    displayInactiveLevel2Card = inactiveLevel2cards.length > 0;
+    displayInactiveLevel3Card = inactiveLevel3cards.length > 0;
+
     allActiveCards = level1cards.concat(level2cards.concat(level3cards));
     for (const card of allActiveCards) {
+      if (!card) {
+        continue;
+      }
       let numRequirements = 0;
       for (const [key, value] of Object.entries(card.requirements)) {
         if (value > 0) {
@@ -92,8 +93,14 @@ export default function SplendorGame() {
     return <SplendorActiveCard card={card} maxHeight={maxCardHeight} />;
   };
 
-  const displayInActiveCard = (level) => {
-    return <SplendorInactiveCard level={level} maxHeight={maxCardHeight} />;
+  const displayInActiveCard = (level, cardsRemaining) => {
+    return (
+      <SplendorInactiveCard
+        cardsRemaining={cardsRemaining}
+        level={level}
+        maxHeight={maxCardHeight}
+      />
+    );
   };
 
   const displayNobleCard = (card) => {
@@ -189,7 +196,8 @@ export default function SplendorGame() {
                   gridTemplateColumns: "repeat(auto-fit, minmax(62px,1fr))",
                 }}
               >
-                {inactiveLevel3cards && displayInActiveCard(3)}
+                {inactiveLevel3cards &&
+                  displayInActiveCard(3, displayInactiveLevel3Card)}
                 {level3cards.map(displayActiveCard)}
               </div>
             )}
@@ -203,7 +211,8 @@ export default function SplendorGame() {
                   gridTemplateColumns: "repeat(auto-fit, minmax(62px,1fr))",
                 }}
               >
-                {inactiveLevel2cards && displayInActiveCard(2)}
+                {inactiveLevel2cards &&
+                  displayInActiveCard(2, displayInactiveLevel2Card)}
                 {level2cards.map(displayActiveCard)}
               </div>
             )}
@@ -217,7 +226,8 @@ export default function SplendorGame() {
                   gridTemplateColumns: "repeat(auto-fit, minmax(62px,1fr))",
                 }}
               >
-                {inactiveLevel1cards && displayInActiveCard(1)}
+                {inactiveLevel1cards &&
+                  displayInActiveCard(1, displayInactiveLevel1Card)}
                 {level1cards.map(displayActiveCard)}
               </div>
             )}

@@ -5,7 +5,7 @@ export const coupDBUpdateTurnHandler = async (
   game,
   updatedGame,
   update,
-  user
+  username
 ) => {
   // Do stuff for specific game (coup)
   switch (update) {
@@ -23,9 +23,9 @@ export const coupDBUpdateTurnHandler = async (
           const player = getTurnProp(game.gameID, "player");
           const attacked = getTurnProp(game.gameID, "attacking");
           if (
-            user &&
-            !updatedGame.players.includes(user) &&
-            (user === player || user === attacked)
+            username &&
+            !updatedGame.players.includes(username) &&
+            (username === player || username === attacked)
           ) {
             await endTurn(updatedGame);
           }

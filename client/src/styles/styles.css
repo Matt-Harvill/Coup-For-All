@@ -20,16 +20,21 @@ html, body, #root {
   border-radius: 0;
 }
 
+button {
+  background-color: rgb(239,239,239);
+  /* color: #108A8F; */
+  border-radius: 8px;
+}
+
 button:hover {
   /* color: #14FFEC; */
   color: white;
   background-color: gray;
 }
 
-button {
+.disabledButton:hover {
+  color: black;
   background-color: rgb(239,239,239);
-  /* color: #108A8F; */
-  border-radius: 8px;
 }
 
 h1 {

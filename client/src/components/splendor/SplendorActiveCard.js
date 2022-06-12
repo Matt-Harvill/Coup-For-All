@@ -10,6 +10,10 @@ export default function SplendorActiveCard(props) {
   const { userObj } = useContext(AppContext);
   const card = props.card;
 
+  if (!card) {
+    return <div style={{ height: props.maxHeight }}></div>;
+  }
+
   let requirementsArr = [];
   for (const [key, value] of Object.entries(card.requirements)) {
     let color;
@@ -60,7 +64,9 @@ export default function SplendorActiveCard(props) {
       style={cardStyle}
       onClick={() => {
         return cardSelected(
+          turn.selectedCardID === card._id,
           card._id,
+          "activeCard",
           turn.player,
           userObj.username,
           canSelectCard("activeCard", turn.action)
