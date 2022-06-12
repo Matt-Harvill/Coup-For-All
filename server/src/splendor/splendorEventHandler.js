@@ -9,7 +9,13 @@ import { joinGame } from "./joinGame.js";
 import { deleteGame } from "./deleteGame.js";
 import { deleteFormingGame } from "../formingGameStuff.js";
 import { handleSelectCard } from "./handleSelectCard.js";
-import { cancelAction, selectAction, submitAction } from "./handlingActions.js";
+import {
+  cancelAction,
+  selectAction,
+  selectCoin,
+  submitAction,
+  unselectCoin,
+} from "./handlingActions.js";
 
 // Set of splendor players in lobby
 const splendorOnlinePlayers = new Set();
@@ -119,6 +125,14 @@ export const eventSwitch = async (event, socket, ...args) => {
       break;
     case "cancelAction":
       cancelAction(user);
+      break;
+    case "selectCoin":
+      const [selectedCoin] = args;
+      selectCoin(user, selectedCoin);
+      break;
+    case "unselectCoin":
+      const [unselectedCoin] = args;
+      unselectCoin(user, unselectedCoin);
       break;
     default:
       throw `${event} is not a valid 'splendor' event`;

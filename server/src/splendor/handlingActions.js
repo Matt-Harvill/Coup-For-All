@@ -1,4 +1,4 @@
-import { getGame } from "../utils/dbUtils.js";
+import { getGame, updateUserAndGame } from "../utils/dbUtils.js";
 import { buyCard } from "./buyCard.js";
 import { takeCoins } from "./takeCoins.js";
 import { endStage, getTurnProp, setTurn } from "./turns.js";
@@ -50,6 +50,52 @@ export const submitAction = async (user) => {
 
     if (success) {
       endStage(game);
+    }
+  }
+};
+
+export const selectCoin = async (user, coin) => {
+  const game = await getGame(user.gameTitle, user.gameID);
+
+  if (game) {
+    const selectedCoins = getTurnProp(game.gameID, "selectedCoins");
+    if (selectedCoins) {
+      const numSelected = selectedCoins[coin];
+      game.coins[coin]--;
+
+      const committed = await updateUserAndGame(
+        user.username,
+        game,
+        "updateGame"
+      );
+      if (committed) {
+        setTurn(game, {
+          selectedCoins: { ...selectedCoins, [coin]: numSelected + 1 },
+        });
+      }
+    }
+  }
+};
+
+export const unselectCoin = async (user, coin) => {
+  const game = await getGame(user.gameTitle, user.gameID);
+
+  if (game) {
+    const selectedCoins = getTurnProp(game.gameID, "selectedCoins");
+    if (selectedCoins) {
+      const numSelected = selectedCoins[coin];
+      game.coins[coin]++;
+
+      const committed = await updateUserAndGame(
+        user.username,
+        game,
+        "updateGame"
+      );
+      if (committed) {
+        setTurn(game, {
+          selectedCoins: { ...selectedCoins, [coin]: numSelected - 1 },
+        });
+      }
     }
   }
 };

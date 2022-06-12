@@ -1,11 +1,15 @@
 import { useContext, useEffect, useState } from "react";
-import { longTurnTime, shortTurnTime } from "../../coupTurnTimes";
 import AppContext from "../AppContext";
 import TimeLeft from "../TimeLeft";
 import SplendorGameContext from "./SplendorGameContext";
 import SplendorActionButton from "./SplendorActionButton";
 import SplendorSubmitButton from "./SplendorSubmitButton";
 import SplendorCancelButton from "./SplendorCancelButton";
+import {
+  longTurnTime,
+  shortTurnTime,
+} from "../../splendorLogic/splendorTurnTimes";
+import SplendorSelectedItems from "./SplendorSelectedItems";
 
 export default function SplendorActionbar() {
   const { turn, game } = useContext(SplendorGameContext);
@@ -198,12 +202,14 @@ export default function SplendorActionbar() {
         }}
       >
         <div></div>
-        <div>
+        <div style={{ display: "flex", flexDirection: "column" }}>
           {displayTitle()}
+          {/* <div style={{ flex: 1 }}></div> */}
           {displayButtons()}
           <div style={{ height: 10 }}></div>
           <TimeLeft timeLeft={timeRem} maxTimeLeft={maxTimeRem} />
         </div>
+        <SplendorSelectedItems />
       </div>
     );
   }

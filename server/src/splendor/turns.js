@@ -184,9 +184,9 @@ export const createTurn = (game) => {
       selectedCoins: {
         green: 0,
         blue: 0,
-        green: 0,
-        blue: 0,
-        green: 0,
+        red: 0,
+        black: 0,
+        white: 0,
         yellow: 0,
       },
     };
