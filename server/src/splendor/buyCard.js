@@ -54,6 +54,7 @@ export const buyCard = async (userObj, game) => {
   // Add points to pStat
   pStat.points += cardToBuy.points;
 
+  // Remove the card that was bought and replace it if needed
   filterCardFromID(cardToBuyID, cardToBuyGroup, game);
   // Check if player can get noble(s)
   // possibleNobles = [];
@@ -92,7 +93,7 @@ export const buyCard = async (userObj, game) => {
   const committed = await updateUserAndGame(username, game, "updateGame");
 
   if (!committed) {
-    console.log(`Error buying card for ${userObj} in buyCard`);
+    console.log(`Error buying card for ${username} in buyCard`);
   }
 
   return committed;

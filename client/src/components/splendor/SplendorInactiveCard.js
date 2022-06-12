@@ -43,8 +43,14 @@ export default function SplendorInactiveCard(props) {
     height: props.maxHeight,
   };
 
+  const canSelect = canSelectCard("inactiveCard", turn.action);
+
+  if (canSelect && turn.player === userObj.username) {
+    cardStyle.boxShadow = "0px 0px 0px 4px #00ff00";
+  }
+
   if (turn.selectedCardID === `level${level}`) {
-    cardStyle.boxShadow = "0px 0px 0px 4px #000000";
+    cardStyle.boxShadow = "0px 0px 0px 4px #FF0000";
   }
 
   return (
@@ -57,7 +63,7 @@ export default function SplendorInactiveCard(props) {
           "inactiveCard",
           turn.player,
           userObj.username,
-          canSelectCard("inactiveCard", turn.action)
+          canSelect
         );
       }}
     >

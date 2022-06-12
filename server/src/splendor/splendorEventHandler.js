@@ -115,7 +115,6 @@ export const eventSwitch = async (event, socket, ...args) => {
       selectAction(user, selectedAction);
       break;
     case "submitAction":
-      const submittedAction = args[0];
       submitAction(user);
       break;
     case "cancelAction":

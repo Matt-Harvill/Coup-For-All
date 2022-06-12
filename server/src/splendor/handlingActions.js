@@ -1,5 +1,6 @@
 import { getGame } from "../utils/dbUtils.js";
 import { buyCard } from "./buyCard.js";
+import { takeCoins } from "./takeCoins.js";
 import { endStage, getTurnProp, setTurn } from "./turns.js";
 
 export const selectAction = async (user, action) => {
@@ -9,7 +10,19 @@ export const selectAction = async (user, action) => {
 
 export const cancelAction = async (user) => {
   const game = await getGame(user.gameTitle, user.gameID);
-  setTurn(game, { action: null });
+  setTurn(game, {
+    action: null,
+    selectedCardID: null,
+    selectedCardGroup: null,
+    selectedCoins: {
+      green: 0,
+      blue: 0,
+      green: 0,
+      blue: 0,
+      green: 0,
+      yellow: 0,
+    },
+  });
 };
 
 export const submitAction = async (user) => {
@@ -20,7 +33,7 @@ export const submitAction = async (user) => {
     let success;
     switch (action) {
       case "takeCoins":
-        // takeCoins();
+        success = await takeCoins(user, {});
         break;
       case "reserveCard":
         // takeCoins();

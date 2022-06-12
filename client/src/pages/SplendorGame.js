@@ -111,6 +111,35 @@ export default function SplendorGame() {
     const coins = game.coins;
     const coinSize = 50;
 
+    const canSelectCoin = (color) => {
+      if (turn.action === "takeCoins") {
+        let totalCoinsSelected = 0;
+        let doubleSelected, colorSelected;
+        for (const [clr, count] of Object.entries(turn.selectedCoins)) {
+          totalCoinsSelected += count;
+          if (count === 2) {
+            doubleSelected = true;
+          }
+          if (color === clr && count > 0) {
+            colorSelected = true;
+          }
+        }
+        if (totalCoinsSelected < 3 && !doubleSelected) {
+          if (colorSelected) {
+            if (totalCoinsSelected > 1 || game.coins[color] <= 2) {
+              return false;
+            }
+          } else {
+            if (game.coins[color] > 0) {
+              return true;
+            }
+          }
+        } else {
+          return false;
+        }
+      }
+    };
+
     let coinDivs = [];
     for (const [key, value] of Object.entries(coins)) {
       let color;
@@ -119,24 +148,25 @@ export default function SplendorGame() {
       } else {
         color = "#464646";
       }
-      coinDivs.push(
-        <div
-          style={{
-            display: "flex",
-            backgroundColor: splendorNewBackgroundColor(key),
-            color: color,
-            height: coinSize,
-            width: coinSize,
-            borderRadius: coinSize,
-            justifyContent: "center",
-            alignItems: "center",
-            border: `1px solid ${color}`,
-            fontSize: coinSize / 2,
-          }}
-        >
-          {value}
-        </div>
-      );
+
+      const coinStyle = {
+        display: "flex",
+        backgroundColor: splendorNewBackgroundColor(key),
+        color: color,
+        height: coinSize,
+        width: coinSize,
+        borderRadius: coinSize,
+        justifyContent: "center",
+        alignItems: "center",
+        border: `1px solid ${color}`,
+        fontSize: coinSize / 2,
+      };
+
+      if (canSelectCoin(key) && turn.player === userObj.username) {
+        coinStyle.boxShadow = "0px 0px 0px 4px #00ff00";
+      }
+
+      coinDivs.push(<div style={coinStyle}>{value}</div>);
     }
 
     return coinDivs;

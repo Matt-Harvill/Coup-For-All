@@ -52,6 +52,12 @@ export default function SplendorNobleCard(props) {
     height: props.maxHeight,
   };
 
+  const canSelect = canSelectCard("nobleCard", turn.action);
+
+  if (canSelect && turn.player === userObj.username) {
+    cardStyle.boxShadow = "0px 0px 0px 4px #00ff00";
+  }
+
   if (turn.selectedCardID === card._id) {
     cardStyle.boxShadow = "0px 0px 0px 4px #000000";
   }
@@ -66,7 +72,7 @@ export default function SplendorNobleCard(props) {
           "nobleCard",
           turn.player,
           userObj.username,
-          canSelectCard("nobleCard", turn.action)
+          canSelect
         );
       }}
     >

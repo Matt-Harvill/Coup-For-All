@@ -1,5 +1,4 @@
 import { useContext } from "react";
-import { socket } from "../../socket";
 import { canSelectCard, cardSelected } from "../../splendorLogic/selectCard";
 import splendorNewBackgroundColor from "../../splendorNewBackgroundColor";
 import AppContext from "../AppContext";
@@ -55,8 +54,14 @@ export default function SplendorActiveCard(props) {
     height: props.maxHeight,
   };
 
+  const canSelect = canSelectCard("activeCard", turn.action);
+
+  if (canSelect && turn.player === userObj.username) {
+    cardStyle.boxShadow = "0px 0px 0px 4px #00ff00";
+  }
+
   if (turn.selectedCardID === card._id) {
-    cardStyle.boxShadow = "0px 0px 0px 4px #000000";
+    cardStyle.boxShadow = "0px 0px 0px 4px #FF0000";
   }
 
   return (
@@ -69,7 +74,7 @@ export default function SplendorActiveCard(props) {
           "activeCard",
           turn.player,
           userObj.username,
-          canSelectCard("activeCard", turn.action)
+          canSelect
         );
       }}
     >
