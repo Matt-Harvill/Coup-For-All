@@ -33,7 +33,7 @@ export const submitAction = async (user) => {
     let success;
     switch (action) {
       case "takeCoins":
-        success = await takeCoins(user, {});
+        success = await takeCoins(user);
         break;
       case "reserveCard":
         // takeCoins();
@@ -55,47 +55,35 @@ export const submitAction = async (user) => {
 };
 
 export const selectCoin = async (user, coin) => {
-  const game = await getGame(user.gameTitle, user.gameID);
+  const turnCoins = getTurnProp(user.gameID, "coins");
+  const selectedCoins = getTurnProp(user.gameID, "selectedCoins");
 
-  if (game) {
-    const selectedCoins = getTurnProp(game.gameID, "selectedCoins");
-    if (selectedCoins) {
-      const numSelected = selectedCoins[coin];
-      game.coins[coin]--;
-
-      const committed = await updateUserAndGame(
-        user.username,
-        game,
-        "updateGame"
-      );
-      if (committed) {
-        setTurn(game, {
-          selectedCoins: { ...selectedCoins, [coin]: numSelected + 1 },
-        });
-      }
+  if (turnCoins && selectedCoins) {
+    const game = await getGame(user.gameTitle, user.gameID);
+    const numCoinPrev = turnCoins[coin];
+    const numSelectedPrev = selectedCoins[coin];
+    if (game) {
+      setTurn(game, {
+        coins: { ...turnCoins, [coin]: numCoinPrev - 1 },
+        selectedCoins: { ...selectedCoins, [coin]: numSelectedPrev + 1 },
+      });
     }
   }
 };
 
 export const unselectCoin = async (user, coin) => {
-  const game = await getGame(user.gameTitle, user.gameID);
+  const turnCoins = getTurnProp(user.gameID, "coins");
+  const selectedCoins = getTurnProp(user.gameID, "selectedCoins");
 
-  if (game) {
-    const selectedCoins = getTurnProp(game.gameID, "selectedCoins");
-    if (selectedCoins) {
-      const numSelected = selectedCoins[coin];
-      game.coins[coin]++;
-
-      const committed = await updateUserAndGame(
-        user.username,
-        game,
-        "updateGame"
-      );
-      if (committed) {
-        setTurn(game, {
-          selectedCoins: { ...selectedCoins, [coin]: numSelected - 1 },
-        });
-      }
+  if (turnCoins && selectedCoins) {
+    const game = await getGame(user.gameTitle, user.gameID);
+    const numCoinPrev = turnCoins[coin];
+    const numSelectedPrev = selectedCoins[coin];
+    if (game) {
+      setTurn(game, {
+        coins: { ...turnCoins, [coin]: numCoinPrev + 1 },
+        selectedCoins: { ...selectedCoins, [coin]: numSelectedPrev - 1 },
+      });
     }
   }
 };

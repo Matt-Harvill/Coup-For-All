@@ -24,32 +24,40 @@ export const buyCard = async (userObj, game) => {
     if (resource !== "yellow") {
       if (requirements[resource] > coinCount) {
         requirements[resource] -= coinCount;
-        coinCount -= coinCount;
+
+        pStat.coins[resource] -= coinCount;
+        game.coins[resource] += coinCount;
       } else if (requirements[resource] > 0) {
-        coinCount -= requirements[resource];
+        pStat.coins[resource] -= requirements[resource];
+        game.coins[resource] += requirements[resource];
+
         requirements[resource] -= requirements[resource];
       }
     } else {
       for (let [res, cnt] of Object.entries(requirements)) {
         if (cnt > 0) {
           if (coinCount >= cnt) {
-            coinCount -= cnt;
+            pStat.coins[resource] -= cnt;
+            game.coins[resource] += cnt;
+
             cnt -= cnt;
           } else {
             cnt -= coinCount;
-            coinCount -= coinCount;
+
+            pStat.coins[resource] -= coinCount;
+            game.coins[resouce] += coinCount;
           }
         }
       }
     }
   }
   // Check if any requirements are > 0
-  // for (const [resource, count] of Object.entries(requirements)) {
-  //   if (count > 0) {
-  //     // Return from function if not enough resources to buy the card
-  //     return;
-  //   }
-  // }
+  for (const [resource, count] of Object.entries(requirements)) {
+    if (count > 0) {
+      // Return from function if not enough resources to buy the card
+      return;
+    }
+  }
 
   // Add points to pStat
   pStat.points += cardToBuy.points;

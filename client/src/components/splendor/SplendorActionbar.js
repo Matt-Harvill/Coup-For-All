@@ -40,15 +40,45 @@ export default function SplendorActionbar() {
         turn.action === "selectNoble"
       ) {
         setCanSubmit(true);
+      } else {
+        setCanSubmit(false);
       }
     } else {
       if (turn.action === "takeCoins") {
-        // For now leave false
+        // If the player has one of three different types, two
+        // of one type, or there are no coins left (other than yellows)
+        // then let them submit
+        let numDiffCoin = 0;
+        let twoSameCoin, coinsToTakeLeft;
+        for (const [key, value] of Object.entries(turn.selectedCoins)) {
+          if (value !== 0) {
+            if (value === 2) {
+              twoSameCoin = true;
+            }
+            numDiffCoin++;
+          }
+        }
+        for (const [key, value] of Object.entries(turn.coins)) {
+          if (value !== 0 && key !== "yellow") {
+            coinsToTakeLeft = true;
+          }
+        }
+        // Conditions for submitting
+        if (twoSameCoin && numDiffCoin === 1) {
+          setCanSubmit(true);
+        } else if (!twoSameCoin && numDiffCoin === 3) {
+          setCanSubmit(true);
+        } else if (numDiffCoin > 0 && !coinsToTakeLeft) {
+          setCanSubmit(true);
+        } else {
+          setCanSubmit(false);
+        }
+      } else {
+        setCanSubmit(false);
       }
-      setCanSubmit(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [turn.selectedCardID]);
+  }, [turn.selectedCardID, turn.selectedCoins]);
 
   //   action: takeCoins, reserveCard, buyCard, selectNoble, null
   const displayTitle = () => {

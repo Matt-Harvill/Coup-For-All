@@ -110,8 +110,8 @@ export default function SplendorGame() {
 
   const displayCoins = () => {
     let coinDivs = [];
-    if (game.coins) {
-      for (const [key, value] of Object.entries(game.coins)) {
+    if (turn.coins) {
+      for (const [key, value] of Object.entries(turn.coins)) {
         if (value > 0) {
           coinDivs.push(
             <SplendorCoin

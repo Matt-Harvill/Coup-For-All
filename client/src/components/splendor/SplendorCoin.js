@@ -5,12 +5,12 @@ import AppContext from "../AppContext";
 import SplendorGameContext from "./SplendorGameContext";
 
 export const SplendorCoin = (props) => {
-  const { turn, game } = useContext(SplendorGameContext);
+  const { turn } = useContext(SplendorGameContext);
   const { userObj } = useContext(AppContext);
   const { coinSize, color, count, selectOnClick } = props;
 
   const canSelectCoin = () => {
-    if (turn.action === "takeCoins") {
+    if (turn.action === "takeCoins" && selectOnClick && color !== "yellow") {
       let totalCoinsSelected = 0;
       let doubleSelected, colorSelected;
       for (const [clr, cnt] of Object.entries(turn.selectedCoins)) {
@@ -24,18 +24,17 @@ export const SplendorCoin = (props) => {
       }
       if (totalCoinsSelected < 3 && !doubleSelected) {
         if (colorSelected) {
-          if (totalCoinsSelected > 1 || game.coins[color] <= 2) {
-            return false;
+          if (totalCoinsSelected <= 1 && turn.coins[color] > 2) {
+            return true;
           }
         } else {
-          if (game.coins[color] > 0) {
+          if (turn.coins[color] > 0) {
             return true;
           }
         }
-      } else {
-        return false;
       }
     }
+    return false;
   };
 
   let textAndBorderColor;
@@ -60,6 +59,12 @@ export const SplendorCoin = (props) => {
 
   if (canSelectCoin() && turn.player === userObj.username) {
     coinStyle.boxShadow = "0px 0px 0px 4px #00ff00";
+  }
+
+  const canClick = canSelectCoin() || !selectOnClick;
+
+  if (canClick) {
+    coinStyle.cursor = "pointer";
   }
 
   return (

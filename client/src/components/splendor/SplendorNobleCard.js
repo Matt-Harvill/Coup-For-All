@@ -6,7 +6,7 @@ import SplendorGameContext from "./SplendorGameContext";
 import { canSelectCard, cardSelected } from "../../splendorLogic/selectCard";
 
 export default function SplendorNobleCard(props) {
-  const { turn } = useContext(SplendorGameContext);
+  const { turn, game } = useContext(SplendorGameContext);
   const { userObj } = useContext(AppContext);
   const card = props.card;
 
@@ -52,7 +52,18 @@ export default function SplendorNobleCard(props) {
     height: props.maxHeight,
   };
 
-  const canSelect = canSelectCard("nobleCard", turn.action);
+  let canSelect;
+  if (game && game.pStats) {
+    const pStat = game.pStats.find(
+      (pStat) => pStat.player === userObj.username
+    );
+    canSelect = canSelectCard(
+      "nobleCard",
+      turn.action,
+      pStat.coins,
+      card.cardRequirements
+    );
+  }
 
   if (canSelect && turn.player === userObj.username) {
     cardStyle.boxShadow = "0px 0px 0px 4px #00ff00";

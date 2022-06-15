@@ -5,7 +5,7 @@ import AppContext from "../AppContext";
 import SplendorGameContext from "./SplendorGameContext";
 
 export default function SplendorActiveCard(props) {
-  const { turn } = useContext(SplendorGameContext);
+  const { turn, game } = useContext(SplendorGameContext);
   const { userObj } = useContext(AppContext);
   const card = props.card;
 
@@ -54,7 +54,18 @@ export default function SplendorActiveCard(props) {
     height: props.maxHeight,
   };
 
-  const canSelect = canSelectCard("activeCard", turn.action);
+  let canSelect;
+  if (game && game.pStats) {
+    const pStat = game.pStats.find(
+      (pStat) => pStat.player === userObj.username
+    );
+    canSelect = canSelectCard(
+      "activeCard",
+      turn.action,
+      pStat.coins,
+      card.requirements
+    );
+  }
 
   if (canSelect && turn.player === userObj.username) {
     cardStyle.boxShadow = "0px 0px 0px 4px #00ff00";

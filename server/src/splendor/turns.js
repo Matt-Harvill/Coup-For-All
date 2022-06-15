@@ -181,6 +181,7 @@ export const createTurn = (game) => {
       action: null, // can be takeCoins, reserveCard, buyCard, selectNoble, null
       selectedCardID: null,
       selectedCardGroup: null,
+      coins: game.coins,
       selectedCoins: {
         green: 0,
         blue: 0,
