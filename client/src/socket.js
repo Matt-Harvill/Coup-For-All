@@ -3,9 +3,8 @@ import io from "socket.io-client";
 let url;
 if (process.env.NODE_ENV === "development") {
   url = "http://localhost";
-  // url = "http://192.168.56.1";
 } else {
-  url = "https://game-website-sockets.herokuapp.com";
+  url = "https://coup-for-all-8b5265fb626c.herokuapp.com";
 }
 
 export const socket = io(url, {
