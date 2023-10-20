@@ -15,13 +15,13 @@ export default function Games() {
         "You are head of a family in an Italian city-state, a city run by a weak and corrupt court. You need to manipulate, bluff and bribe your way to power. Your object is to destroy the influence of all the other families, forcing them into exile. Only one family will survive...",
       page: "coup",
     },
-    {
-      title: "Splendor",
-      image: splendorImage,
-      description:
-        "Splendor is a game of chip-collecting and card development. Players are merchants of the Renaissance trying to buy gem mines, means of transportation, shops—all in order to acquire the most prestige points. If you're wealthy enough, you might even receive a visit from a noble at some point, which of course will further increase your prestige.",
-      page: "splendor",
-    },
+    // {
+    //   title: "Splendor",
+    //   image: splendorImage,
+    //   description:
+    //     "Splendor is a game of chip-collecting and card development. Players are merchants of the Renaissance trying to buy gem mines, means of transportation, shops—all in order to acquire the most prestige points. If you're wealthy enough, you might even receive a visit from a noble at some point, which of course will further increase your prestige.",
+    //   page: "splendor",
+    // },
   ];
 
   const gameCardClicked = (newPage) => {
